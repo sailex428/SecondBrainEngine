@@ -24,13 +24,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -127,7 +128,7 @@ public final class BlockOptionalMeta {
     }
 
     public BlockState getAnyBlockState() {
-        if (blockstates.size() > 0) {
+        if (!blockstates.isEmpty()) {
             return blockstates.iterator().next();
         }
 
@@ -137,21 +138,21 @@ public final class BlockOptionalMeta {
     // TODO check if erasing the metadata of both the block and the drops is a good idea
     private static synchronized List<Item> drops(ServerWorld world, Block b) {
         return drops.computeIfAbsent(b, block -> {
-            Identifier lootTableLocation = block.getLootTableId();
+            RegistryKey<LootTable> lootTableLocation = block.getLootTableKey();
             if (lootTableLocation == LootTables.EMPTY) {
                 return Collections.emptyList();
             } else {
                 List<Item> items = new ArrayList<>();
-
-                world.getServer().getLootManager().getLootTable(lootTableLocation).generateLoot(
+                LootTable table = world.getServer().getReloadableRegistries().getLootTable(lootTableLocation);
+                table.generateLoot(
                     new LootContext.Builder(new LootContextParameterSet.Builder(world)
                             .add(LootContextParameters.ORIGIN, Vec3d.of(BlockPos.ZERO))
                             .add(LootContextParameters.TOOL, ItemStack.EMPTY)
                             .addOptional(LootContextParameters.BLOCK_ENTITY, null)
                             .add(LootContextParameters.BLOCK_STATE, block.getDefaultState())
                             .build(LootContextTypes.BLOCK))
-                        .withRandomSeed(world.getSeed())
-                        .build(null),
+                            .random(world.getSeed())
+                            .build(null),
                     stack -> items.add(stack.getItem())
                 );
                 return items;

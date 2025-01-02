@@ -28,21 +28,18 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class Otomaton implements ModInitializer {
-    public static final Logger LOGGER = LogManager.getLogger("Otomaton");
     public static final String MOD_ID = "otomaton";
 
     public static Identifier id(String path) {
-        return new Identifier(MOD_ID, path);
+        return Identifier.of(MOD_ID, path);
     }
 
     public static final EntityType<PlayerEntity> FAKE_PLAYER = FabricEntityTypeBuilder.<PlayerEntity>createLiving()
             .spawnGroup(SpawnGroup.MISC)
             .entityFactory(FakePlayers.entityFactory(FakeServerPlayerEntity::new))
-            .defaultAttributes(PlayerEntity::createAttributes)
+            .defaultAttributes(FakeServerPlayerEntity::createPlayerAttributes)
             .dimensions(EntityDimensions.changing(EntityType.PLAYER.getWidth(), EntityType.PLAYER.getHeight()))
             .trackRangeBlocks(64)
             .trackedUpdateRate(1)

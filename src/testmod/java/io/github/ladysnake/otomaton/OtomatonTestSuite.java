@@ -18,61 +18,57 @@
 package io.github.ladysnake.otomaton;
 
 import baritone.api.fakeplayer.FakeServerPlayerEntity;
-import io.github.ladysnake.elmendorf.ElmendorfTestContext;
 import io.github.ladysnake.elmendorf.GameTestUtil;
 import io.github.ladysnake.elmendorf.impl.MockClientConnection;
 import io.github.ladysnake.otomaton.mixin.ServerWorldAccessor;
 import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.NetworkSide;
-import net.minecraft.network.packet.s2c.play.SystemMessageS2CPacket;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.server.world.SleepManager;
-import net.minecraft.test.BeforeBatch;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
-import net.minecraft.text.component.TranslatableComponent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import org.quiltmc.qsl.testing.api.game.QuiltGameTest;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.block.Blocks;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.NetworkSide;
 
 import java.util.List;
 
-public class OtomatonTestSuite implements QuiltGameTest {
-    @BeforeBatch(batchId = "sleepingBatch")
-    public void beforeSleepingTests(ServerWorld world) {
-        world.setTimeOfDay(20000);
-        world.calculateAmbientDarkness();   // refreshes light info for sleeping
+public class OtomatonTestSuite {
+
+    @GameTest
+    public void beforeSleepingTests(TestContext ctx) {
+        ServerWorld world = ctx.getWorld();
+        world.setTimeOfDay(20000);  // set time to night
+        world.calculateAmbientDarkness(); // refreshes light info for sleeping
+        ctx.complete();
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE, batchId = "sleepingBatch")
+    @GameTest
     public void shellsDoNotPreventSleeping(TestContext ctx) {
-        ServerPlayerEntity player = ((ElmendorfTestContext) ctx).spawnServerPlayer(1, 0, 1);
+        ServerPlayerEntity player = ctx.spawnServerPlayer(1, 0, 1);
         ServerPlayerEntity fakePlayer = new FakeServerPlayerEntity(Otomaton.FAKE_PLAYER, ctx.getWorld());
-        fakePlayer.copyPositionAndRotation(player);
         ctx.getWorld().spawnEntity(fakePlayer);
-        ItemStack bed = Items.RED_BED.getDefaultStack();
+
+        ItemStack bed = new ItemStack(Items.RED_BED);
         fakePlayer.setStackInHand(Hand.MAIN_HAND, bed);
         BlockPos bedPos = new BlockPos(1, 0, 2);
-        fakePlayer.interactionManager.interactBlock(
-                fakePlayer,
-                fakePlayer.getWorld(),
-                bed,
-                Hand.MAIN_HAND,
-                new BlockHitResult(new Vec3d(0.5, 0.5, 0.5), Direction.UP, ctx.getAbsolutePos(bedPos), false)
+        fakePlayer.interactionManager.interactBlock(fakePlayer, ctx.getWorld(), bed, Hand.MAIN_HAND,
+                new BlockHitResult(new Vec3d(0.5, 0.5, 0.5), Direction.UP, bedPos, false)
         );
         ctx.expectBlock(Blocks.RED_BED, bedPos);
-        player.interactionManager.interactBlock(
-                player, player.getWorld(), ItemStack.EMPTY, Hand.OFF_HAND,
+
+        player.interactionManager.interactBlock(player, ctx.getWorld(), ItemStack.EMPTY, Hand.OFF_HAND,
                 new BlockHitResult(new Vec3d(0.5, 0.5, 0.5), Direction.UP, ctx.getAbsolutePos(bedPos), false)
         );
         List<ServerPlayerEntity> players = List.of(fakePlayer, player);
@@ -83,8 +79,7 @@ public class OtomatonTestSuite implements QuiltGameTest {
         ctx.complete();
     }
 
-
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest
     public void shellsKeepUuidOnReload(TestContext ctx) {
         ServerPlayerEntity fakePlayer = new FakeServerPlayerEntity(Otomaton.FAKE_PLAYER, ctx.getWorld());
         ServerPlayerEntity fakePlayer2 = new FakeServerPlayerEntity(Otomaton.FAKE_PLAYER, ctx.getWorld());
@@ -94,28 +89,27 @@ public class OtomatonTestSuite implements QuiltGameTest {
         ctx.complete();
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest
     public void realPlayersDoBroadcastAdvancements(TestContext ctx) {
-        ServerPlayerEntity player = ((ElmendorfTestContext) ctx).spawnServerPlayer(1, 0, 1);
-        // Needed for getting broadcasted messages
+        ServerPlayerEntity player = ctx.spawnServerPlayer(1, 0, 1);
         ctx.getWorld().getServer().getPlayerManager().getPlayerList().add(player);
         Criteria.INVENTORY_CHANGED.trigger(player, player.getInventory(), new ItemStack(Items.COBBLESTONE));
-        ((ElmendorfTestContext) ctx).verifyConnection(player, conn -> conn.sent(SystemMessageS2CPacket.class, packet -> packet.content().asComponent() instanceof TranslatableComponent tt && tt.getKey().equals("chat.type.advancement.task")).exactly(1));
+        ctx.verifyConnection(player, conn -> conn.sent(GameMessageS2CPacket.class, packet -> packet.content().getString().contains("chat.type.advancement.task")).exactly(1));
         ctx.getWorld().getServer().getPlayerManager().getPlayerList().remove(player);
         player.remove(Entity.RemovalReason.DISCARDED);
         ctx.complete();
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
+    @GameTest
     public void fakePlayersDoNotBroadcastAdvancements(TestContext ctx) {
         ServerPlayerEntity fakePlayer = new FakeServerPlayerEntity(Otomaton.FAKE_PLAYER, ctx.getWorld());
-        fakePlayer.networkHandler = new ServerPlayNetworkHandler(ctx.getWorld().getServer(), new MockClientConnection(NetworkSide.S2C), fakePlayer);
+        fakePlayer.networkHandler = new ServerPlayNetworkHandler(ctx.getWorld().getServer(), new MockClientConnection(NetworkSide.SERVERBOUND), fakePlayer, ConnectedClientData.createDefault(fakePlayer.getGameProfile(), false));
         fakePlayer.setPosition(ctx.getAbsolute(new Vec3d(1, 0, 1)));
         ctx.getWorld().spawnEntity(fakePlayer);
         // Needed for getting broadcasted messages
         ctx.getWorld().getServer().getPlayerManager().getPlayerList().add(fakePlayer);
         Criteria.INVENTORY_CHANGED.trigger(fakePlayer, fakePlayer.getInventory(), new ItemStack(Items.COBBLESTONE));
-        ((ElmendorfTestContext) ctx).verifyConnection(fakePlayer, conn -> conn.allowNoPacketMatch(true).sent(SystemMessageS2CPacket.class, packet -> packet.content().asComponent() instanceof TranslatableComponent tt && tt.getKey().equals("chat.type.advancement.task")).exactly(0));
+        ctx.verifyConnection(fakePlayer, conn -> conn.allowNoPacketMatch(true).sent(GameMessageS2CPacket.class, packet -> packet.content().getString().contains("chat.type.advancement.task")).exactly(0));
         ctx.getWorld().getServer().getPlayerManager().getPlayerList().remove(fakePlayer);
         fakePlayer.remove(Entity.RemovalReason.DISCARDED);
         ctx.complete();

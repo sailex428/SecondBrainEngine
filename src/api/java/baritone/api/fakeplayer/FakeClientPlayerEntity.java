@@ -41,7 +41,6 @@ import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -97,10 +96,5 @@ public class FakeClientPlayerEntity extends OtherClientPlayerEntity implements A
         if (!this.isSilent()) {
             this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), sound, this.getSoundCategory(), volume, pitch, false);
         }
-    }
-
-    @Override
-    public void playSound(SoundEvent event, SoundCategory category, float volume, float pitch) {
-        this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), event, category, volume, pitch, false);
     }
 }

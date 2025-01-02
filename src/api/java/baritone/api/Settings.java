@@ -195,21 +195,21 @@ public final class Settings {
      */
     public final Setting<TagKey<Item>> acceptableThrowawayItems = new Setting<>(TagKey.of(
             RegistryKeys.ITEM,
-            new Identifier("automatone", "throwaway_blocks")
+            Identifier.of("automatone", "throwaway_blocks")
     ));
 
     /**
      * Blocks that Baritone will attempt to avoid (Used in avoidance)
      */
     public final Setting<TagKey<Block>> blocksToAvoid = new Setting<>(TagKey.of(RegistryKeys.BLOCK,
-            new Identifier("automatone", "avoided_blocks")
+            Identifier.of("automatone", "avoided_blocks")
     ));
 
     /**
      * Blocks that Baritone is not allowed to break
      */
     public final Setting<TagKey<Block>> blocksToAvoidBreaking = new Setting<>(TagKey.of(RegistryKeys.BLOCK,
-            new Identifier("automatone", "no_break")
+            Identifier.of("automatone", "no_break")
     ));
 
     /**
@@ -218,7 +218,7 @@ public final class Settings {
      * If a schematic asks for air at a certain position, and that position currently contains a block on this list, it will be treated as correct.
      */
     public final Setting<TagKey<Block>> buildIgnoreBlocks = new Setting<>(TagKey.of(RegistryKeys.BLOCK,
-            new Identifier("automatone", "build/ignored_blocks")
+            Identifier.of("automatone", "build/ignored_blocks")
     ));
 
     /**
@@ -227,7 +227,7 @@ public final class Settings {
      * If a schematic asks for a block on this list, only air will be accepted at that location (and nothing on buildIgnoreBlocks)
      */
     public final Setting<TagKey<Block>> okIfAir = new Setting<>(TagKey.of(RegistryKeys.BLOCK,
-        new Identifier("automatone", "build/ok_if_air")
+        Identifier.of("automatone", "build/ok_if_air")
     ));
 
     /**

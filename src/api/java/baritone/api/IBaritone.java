@@ -45,7 +45,7 @@ import java.util.stream.Stream;
  * @since 9/29/2018
  */
 public interface IBaritone extends AutoSyncedComponent, ServerTickingComponent {
-    ComponentKey<IBaritone> KEY = ComponentRegistry.getOrCreate(new Identifier("automatone", "core"), IBaritone.class);
+    ComponentKey<IBaritone> KEY = ComponentRegistry.getOrCreate(Identifier.of("automatone", "core"), IBaritone.class);
 
     /**
      * @return The {@link IPathingBehavior} instance

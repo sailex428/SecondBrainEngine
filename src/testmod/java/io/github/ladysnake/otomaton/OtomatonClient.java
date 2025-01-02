@@ -19,20 +19,19 @@ package io.github.ladysnake.otomaton;
 
 import baritone.api.fakeplayer.FakeClientPlayerEntity;
 import baritone.api.fakeplayer.FakePlayers;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
 public class OtomatonClient implements ClientModInitializer {
+
     @Override
-    public void onInitializeClient(ModContainer mod) {
+    public void onInitializeClient() {
         FakePlayers.registerClientFactory(Otomaton.FAKE_PLAYER, FakeClientPlayerEntity::new);
         // shh, it's fine
-        @SuppressWarnings("unchecked") EntityType<? extends AbstractClientPlayerEntity> fakePlayerType = (EntityType<? extends AbstractClientPlayerEntity>) (EntityType<? extends PlayerEntity>) Otomaton.FAKE_PLAYER;
+        @SuppressWarnings("unchecked") EntityType<? extends AbstractClientPlayerEntity> fakePlayerType = (EntityType<? extends AbstractClientPlayerEntity>) Otomaton.FAKE_PLAYER;
         EntityRendererRegistry.register(fakePlayerType, (ctx) -> new PlayerEntityRenderer(ctx, false));
     }
 }

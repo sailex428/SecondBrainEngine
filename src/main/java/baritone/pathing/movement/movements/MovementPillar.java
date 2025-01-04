@@ -78,7 +78,7 @@ public class MovementPillar extends Movement {
         int y = start.y;
         int z = start.z;
         EntityDimensions dims = entity.getDimensions(EntityPose.STANDING);
-        int requiredVerticalSpace = MathHelper.ceil(dims.height);
+        int requiredVerticalSpace = MathHelper.ceil(dims.height());
         int requiredSideSpace = CalculationContext.getRequiredSideSpace(dims);
         int sideLength = requiredSideSpace * 2 + 1;
         BetterBlockPos[] ret = new BetterBlockPos[sideLength * sideLength];

@@ -17,15 +17,9 @@
 
 package baritone.cache;
 
-import baritone.Automatone;
-import baritone.api.BaritoneAPI;
 import baritone.api.cache.IContainerMemory;
 import baritone.api.cache.IRememberedInventory;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -43,39 +37,39 @@ public class ContainerMemory implements IContainerMemory {
     // TODO hook up to ServerBlockEntityEvents to remember every inventory ever loaded :)
     private final Map<BlockPos, RememberedInventory> inventories = new HashMap<>();
 
-    public void read(NbtCompound tag) {
-        try {
-            NbtList nbtInventories = tag.getList("inventories", NbtType.COMPOUND);
-            for (int i = 0; i < nbtInventories.size(); i++) {
-                NbtCompound nbtEntry = nbtInventories.getCompound(i);
-                BlockPos pos = NbtHelper.toBlockPos(nbtEntry.getCompound("pos"));
-                RememberedInventory rem = new RememberedInventory();
-                rem.fromNbt(nbtEntry.getList("content", NbtType.LIST));
-                if (rem.items.isEmpty()) {
-                    continue; // this only happens if the list has no elements, not if the list has elements that are all empty item stacks
-                }
-                inventories.put(pos, rem);
-            }
-        } catch (Exception ex) {
-            Automatone.LOGGER.error(ex);
-            inventories.clear();
-        }
-    }
-
-    public NbtCompound toNbt() {
-        NbtCompound tag = new NbtCompound();
-        if (BaritoneAPI.getGlobalSettings().containerMemory.get()) {
-            NbtList list = new NbtList();
-            for (Map.Entry<BlockPos, RememberedInventory> entry : inventories.entrySet()) {
-                NbtCompound nbtEntry = new NbtCompound();
-                nbtEntry.put("pos", NbtHelper.fromBlockPos(entry.getKey()));
-                nbtEntry.put("content", entry.getValue().toNbt());
-                list.add(nbtEntry);
-            }
-            tag.put("inventories", list);
-        }
-        return tag;
-    }
+//    public void read(NbtCompound tag) {
+//        try {
+//            NbtList nbtInventories = tag.getList("inventories", NbtType.COMPOUND);
+//            for (int i = 0; i < nbtInventories.size(); i++) {
+//                NbtCompound nbtEntry = nbtInventories.getCompound(i);
+//                BlockPos pos = NbtHelper.toBlockPos(nbtEntry.getCompound("pos"));
+//                RememberedInventory rem = new RememberedInventory();
+//                rem.fromNbt(nbtEntry.getList("content", NbtType.LIST));
+//                if (rem.items.isEmpty()) {
+//                    continue; // this only happens if the list has no elements, not if the list has elements that are all empty item stacks
+//                }
+//                inventories.put(pos, rem);
+//            }
+//        } catch (Exception ex) {
+//            Automatone.LOGGER.error(ex);
+//            inventories.clear();
+//        }
+//    }
+//
+//    public NbtCompound toNbt() {
+//        NbtCompound tag = new NbtCompound();
+//        if (BaritoneAPI.getGlobalSettings().containerMemory.get()) {
+//            NbtList list = new NbtList();
+//            for (Map.Entry<BlockPos, RememberedInventory> entry : inventories.entrySet()) {
+//                NbtCompound nbtEntry = new NbtCompound();
+//                nbtEntry.put("pos", NbtHelper.fromBlockPos(entry.getKey()));
+//                nbtEntry.put("content", entry.getValue().toNbt());
+//                list.add(nbtEntry);
+//            }
+//            tag.put("inventories", list);
+//        }
+//        return tag;
+//    }
 
     public synchronized void setup(BlockPos pos, int windowId, int slotCount) {
         RememberedInventory inventory = inventories.computeIfAbsent(pos, x -> new RememberedInventory());
@@ -134,20 +128,20 @@ public class ContainerMemory implements IContainerMemory {
             return this.size;
         }
 
-        public NbtList toNbt() {
-            NbtList inv = new NbtList();
-            for (ItemStack item : this.items) {
-                inv.add(item.writeNbt(new NbtCompound()));
-            }
-            return inv;
-        }
-
-        public void fromNbt(NbtList content) {
-            for (int i = 0; i < content.size(); i++) {
-                this.items.add(ItemStack.fromNbt(content.getCompound(i)));
-            }
-            this.size = this.items.size();
-            this.windowId = -1;
-        }
+//        public NbtList toNbt() {
+//            NbtList inv = new NbtList();
+//            for (ItemStack item : this.items) {
+//                inv.add(item.writeNbt(new NbtCompound()));
+//            }
+//            return inv;
+//        }
+//
+//        public void fromNbt(NbtList content) {
+//            for (int i = 0; i < content.size(); i++) {
+//                this.items.add(ItemStack.fromNbt(content.getCompound(i)));
+//            }
+//            this.size = this.items.size();
+//            this.windowId = -1;
+//        }
     }
 }

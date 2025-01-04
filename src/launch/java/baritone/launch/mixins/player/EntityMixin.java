@@ -17,10 +17,9 @@
 
 package baritone.launch.mixins.player;
 
-import baritone.api.fakeplayer.AutomatoneFakePlayer;
+import baritone.api.npc.AutomatoneNPC;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -34,10 +33,9 @@ public abstract class EntityMixin {
     @SuppressWarnings("unused") // makes the field mutable for use by IEntityAccessor
     @Shadow @Mutable @Final private EntityType<?> type;
 
-    @Dynamic("hasPlayerRider player check lambda")
-    @Inject(method = { "m_lsaraprt", "method_31469" }, at = @At(value = "HEAD"), cancellable = true, require = 1, allow = 1)
-    private static void removeFakePlayers(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (entity instanceof AutomatoneFakePlayer) {
+    @Inject(method = "hasPlayerRider", at = @At(value = "HEAD"), cancellable = true, require = 1, allow = 1)
+    private void removeFakePlayers(CallbackInfoReturnable<Boolean> cir) {
+        if (this instanceof AutomatoneNPC) {
             cir.setReturnValue(false);
         }
     }

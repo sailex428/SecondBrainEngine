@@ -43,15 +43,15 @@ public class WorldData implements IWorldData {
         this.dimension = dimension;
     }
 
-    public void readFromNbt(NbtCompound tag) {
-        this.containerMemory.read(tag.getCompound("containers"));
-        this.waypoints.readFromNbt(tag.getCompound("waypoints"));
-    }
-
-    public void writeToNbt(NbtCompound tag) {
-        tag.put("containers", containerMemory.toNbt());
-        tag.put("waypoints", waypoints.toNbt());
-    }
+//    public void readFromNbt(NbtCompound tag) {
+//        this.containerMemory.read(tag.getCompound("containers"));
+//        this.waypoints.readFromNbt(tag.getCompound("waypoints"));
+//    }
+//
+//    public void writeToNbt(NbtCompound tag) {
+//        tag.put("containers", containerMemory.toNbt());
+//        tag.put("waypoints", waypoints.toNbt());
+//    }
 
     @Override
     public ICachedWorld getCachedWorld() {

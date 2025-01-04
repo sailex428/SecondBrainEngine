@@ -17,37 +17,27 @@
 
 package io.github.ladysnake.otomaton;
 
-import baritone.api.fakeplayer.FakePlayers;
-import baritone.api.fakeplayer.FakeServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registry;
 
 public class Otomaton implements ModInitializer {
-    public static final String MOD_ID = "otomaton";
-
-    public static Identifier id(String path) {
-        return Identifier.of(MOD_ID, path);
-    }
-
-    public static final EntityType<PlayerEntity> FAKE_PLAYER = FabricEntityTypeBuilder.<PlayerEntity>createLiving()
-            .spawnGroup(SpawnGroup.MISC)
-            .entityFactory(FakePlayers.entityFactory(FakeServerPlayerEntity::new))
-            .defaultAttributes(FakeServerPlayerEntity::createPlayerAttributes)
-            .dimensions(EntityDimensions.changing(EntityType.PLAYER.getWidth(), EntityType.PLAYER.getHeight()))
-            .trackRangeBlocks(64)
-            .trackedUpdateRate(1)
-            .forceTrackedVelocityUpdates(true)
-            .build();
+//    public static final String MOD_ID = "otomaton";
+//
+//    public static Identifier id(String path) {
+//        return Identifier.of(MOD_ID, path);
+//    }
+//
+//    public static final EntityType<PlayerEntity> FAKE_PLAYER = FabricEntityTypeBuilder.<PlayerEntity>createLiving()
+//            .spawnGroup(SpawnGroup.MISC)
+//            .entityFactory(NPCs.entityFactory(NPCServerPlayerEntity::new))
+//            .defaultAttributes(NPCServerPlayerEntity::createPlayerAttributes)
+//            .dimensions(EntityDimensions.changing(EntityType.PLAYER.getWidth(), EntityType.PLAYER.getHeight()))
+//            .trackRangeBlocks(64)
+//            .trackedUpdateRate(1)
+//            .forceTrackedVelocityUpdates(true)
+//            .build();
 
     @Override
     public void onInitialize() {
-        Registry.register(Registries.ENTITY_TYPE, id("fake_player"), FAKE_PLAYER);
+        //Registry.register(Registries.ENTITY_TYPE, id("fake_player"), FAKE_PLAYER);
     }
 }

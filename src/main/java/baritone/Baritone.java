@@ -48,7 +48,7 @@ import baritone.utils.PathingControlManager;
 import baritone.utils.player.EntityContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.HolderLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -246,37 +246,13 @@ public class Baritone implements IBaritone {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound nbtCompound, HolderLookup.Provider provider) {
         // NO-OP
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(NbtCompound nbtCompound, HolderLookup.Provider provider) {
         // NO-OP
-    }
-
-    @Override
-    public boolean shouldSyncWith(ServerPlayerEntity player) {
-        return player == this.playerContext.entity()
-                || (settings.syncWithOps.get() && player.server.getPermissionLevel(player.getGameProfile()) >= 2);
-    }
-
-    @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
-        buf.writeBoolean(this.isActive());
-        this.pathingBehavior.writeToPacket(buf);
-    }
-
-    @Override
-    public void applySyncPacket(PacketByteBuf buf) {
-        assert this.clientPathingBehaviour != null : "applySyncPacket called on a server world";
-        boolean active = buf.readBoolean();
-        if (active) {
-            AutomatoneClient.renderList.add(this);
-        } else {
-            AutomatoneClient.renderList.remove(this);
-        }
-        this.clientPathingBehaviour.readFromPacket(buf);
     }
 
     @Override

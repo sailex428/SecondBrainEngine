@@ -17,7 +17,7 @@
 
 package baritone.launch.mixins.player;
 
-import baritone.api.fakeplayer.AutomatoneFakePlayer;
+import baritone.api.npc.AutomatoneNPC;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.SleepManager;
 import org.objectweb.asm.Opcodes;
@@ -32,7 +32,7 @@ public abstract class SleepManagerMixin {
 
     @ModifyVariable(method = "update", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/server/world/SleepManager;total:I", ordinal = 1, shift = At.Shift.AFTER))
     private ServerPlayerEntity captureSleepingPlayer(ServerPlayerEntity player) {
-        if (player instanceof AutomatoneFakePlayer) this.total--;
+        if (player instanceof AutomatoneNPC) this.total--;
         return player;
     }
 }

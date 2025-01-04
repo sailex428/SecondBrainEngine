@@ -21,7 +21,6 @@
     "player.EntityMixin",
     "player.PlayerAdvancementTrackerMixin",
     "player.PlayerEntityMixin",
-    "player.ServerPlayerEntityMixin",
     "player.SleepManagerMixin",
     "player.ThreadedAnvilChunkStorageMixin"
   ]

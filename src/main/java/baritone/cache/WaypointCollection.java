@@ -51,43 +51,43 @@ public class WaypointCollection implements IWaypointCollection {
                 .collect(Collectors.toMap(Function.identity(), t -> new HashSet<>())));
     }
 
-    public void readFromNbt(NbtCompound nbt) {
-        for (Waypoint.Tag tag : Waypoint.Tag.values()) {
-            this.waypoints.put(tag, readFromNbt(tag, nbt.getList(tag.name(), NbtType.COMPOUND)));
-        }
-    }
+//    public void readFromNbt(NbtCompound nbt) {
+//        for (Waypoint.Tag tag : Waypoint.Tag.values()) {
+//            this.waypoints.put(tag, readFromNbt(tag, nbt.getList(tag.name(), NbtType.COMPOUND)));
+//        }
+//    }
+//
+//    private synchronized Set<IWaypoint> readFromNbt(Waypoint.Tag tag, NbtList nbt) {
+//        Set<IWaypoint> ret = new HashSet<>();
+//        for (int i = 0; i < nbt.size(); i++) {
+//            NbtCompound in = nbt.getCompound(i);
+//            String name = in.getString("name");
+//            long creationTimestamp = in.getLong("created");
+//            BetterBlockPos pos = new BetterBlockPos(NbtHelper.toBlockPos(in.getCompound("pos")));
+//            ret.add(new Waypoint(name, tag, pos, creationTimestamp));
+//        }
+//        return ret;
+//    }
 
-    private synchronized Set<IWaypoint> readFromNbt(Waypoint.Tag tag, NbtList nbt) {
-        Set<IWaypoint> ret = new HashSet<>();
-        for (int i = 0; i < nbt.size(); i++) {
-            NbtCompound in = nbt.getCompound(i);
-            String name = in.getString("name");
-            long creationTimestamp = in.getLong("created");
-            BetterBlockPos pos = new BetterBlockPos(NbtHelper.toBlockPos(in.getCompound("pos")));
-            ret.add(new Waypoint(name, tag, pos, creationTimestamp));
-        }
-        return ret;
-    }
-
-    public NbtCompound toNbt() {
-        NbtCompound nbt = new NbtCompound();
-        for (IWaypoint.Tag waypointTag : IWaypoint.Tag.values()) {
-            nbt.put(waypointTag.name(), save(waypointTag));
-        }
-        return nbt;
-    }
-
-    private synchronized NbtList save(Waypoint.Tag waypointTag) {
-        NbtList list = new NbtList();
-        for (IWaypoint waypoint : this.waypoints.get(waypointTag)) {
-            NbtCompound serializedWaypoint = new NbtCompound();
-            serializedWaypoint.putString("name", waypoint.getName());
-            serializedWaypoint.putLong("created", waypoint.getCreationTimestamp());
-            serializedWaypoint.put("pos", NbtHelper.fromBlockPos(waypoint.getLocation()));
-            list.add(serializedWaypoint);
-        }
-        return list;
-    }
+//    public NbtCompound toNbt() {
+//        NbtCompound nbt = new NbtCompound();
+//        for (IWaypoint.Tag waypointTag : IWaypoint.Tag.values()) {
+//            nbt.put(waypointTag.name(), save(waypointTag));
+//        }
+//        return nbt;
+//    }
+//
+//    private synchronized NbtList save(Waypoint.Tag waypointTag) {
+//        NbtList list = new NbtList();
+//        for (IWaypoint waypoint : this.waypoints.get(waypointTag)) {
+//            NbtCompound serializedWaypoint = new NbtCompound();
+//            serializedWaypoint.putString("name", waypoint.getName());
+//            serializedWaypoint.putLong("created", waypoint.getCreationTimestamp());
+//            serializedWaypoint.put("pos", NbtHelper.fromBlockPos(waypoint.getLocation()));
+//            list.add(serializedWaypoint);
+//        }
+//        return list;
+//    }
 
     @Override
     public void addWaypoint(IWaypoint waypoint) {

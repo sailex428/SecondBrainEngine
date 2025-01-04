@@ -19,7 +19,6 @@ package baritone.utils.player;
 
 import baritone.api.utils.IPlayerController;
 import baritone.utils.accessor.IServerPlayerInteractionManager;
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
@@ -40,6 +39,7 @@ import net.minecraft.world.World;
  * @since 12/14/2018
  */
 public class ServerPlayerController implements IPlayerController {
+
     private final ServerPlayerEntity player;
     private int sequence;
 
@@ -105,6 +105,6 @@ public class ServerPlayerController implements IPlayerController {
 
     @Override
     public double getBlockReachDistance() {
-        return ReachEntityAttributes.getReachDistance(this.player, this.getGameType().isCreative() ? 5.0 : 4.5);
+        return 4.5;
     }
 }

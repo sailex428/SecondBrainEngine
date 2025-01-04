@@ -35,11 +35,11 @@ import java.util.Optional;
 public enum SchematicSystem implements ISchematicSystem {
     INSTANCE;
 
-    private final Registry<ISchematicFormat> registry = FabricRegistryBuilder.createSimple(ISchematicFormat.class, new Identifier("automatone", "schematics")).buildAndRegister();
+    private final Registry<ISchematicFormat> registry = FabricRegistryBuilder.createSimple(ISchematicFormat.class, Identifier.of("automatone", "schematics")).buildAndRegister();
 
     SchematicSystem() {
         for (DefaultSchematicFormats s : DefaultSchematicFormats.values()) {
-            Registry.register(this.registry, new Identifier("automatone", s.name().toLowerCase(Locale.ROOT)), s);
+            Registry.register(this.registry, Identifier.of("automatone", s.name().toLowerCase(Locale.ROOT)), s);
         }
     }
 

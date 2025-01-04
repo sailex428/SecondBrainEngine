@@ -47,7 +47,6 @@ import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.InfestedBlock;
 import net.minecraft.block.LilyPadBlock;
-import net.minecraft.block.PistonExtensionBlock;
 import net.minecraft.block.ScaffoldingBlock;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.SkullBlock;
@@ -57,6 +56,7 @@ import net.minecraft.block.StainedGlassBlock;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.block.TrapdoorBlock;
 import net.minecraft.block.enums.SlabType;
+import net.minecraft.block.piston.PistonExtensionBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -186,7 +186,7 @@ public interface MovementHelper extends ActionCosts {
         // every block that overrides isPassable with anything more complicated than a "return true;" or "return false;"
         // has already been accounted for above
         // therefore it's safe to not construct a blockpos from our x, y, z ints and instead just pass null
-        return state.canPathfindThrough(bsi.access, BlockPos.ORIGIN, NavigationType.LAND); // workaround for future compatibility =P
+        return state.canPathfindThrough(NavigationType.LAND); // workaround for future compatibility =P
     }
 
     /**
@@ -234,7 +234,7 @@ public interface MovementHelper extends ActionCosts {
             return false;
         }
         // door, fence gate, liquid, trapdoor have been accounted for, nothing else uses the world or pos parameters
-        return state.canPathfindThrough(access, pos, NavigationType.LAND);
+        return state.canPathfindThrough(NavigationType.LAND);
     }
 
     static boolean isReplaceable(int x, int y, int z, BlockState state, BlockStateInterface bsi) {

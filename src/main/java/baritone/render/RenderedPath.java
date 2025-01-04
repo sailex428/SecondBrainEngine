@@ -17,11 +17,8 @@
 
 package baritone.render;
 
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -58,26 +55,5 @@ public class RenderedPath {
 
     public Collection<BlockPos> toWalkInto() {
         return this.toWalkInto;
-    }
-
-    public static @Nullable RenderedPath fromPacket(PacketByteBuf buf) {
-        int position = buf.readInt();
-        if (position == -1) return null;
-        List<BlockPos> pathPositions = readPositions(buf);
-        List<BlockPos> toBreak = readPositions(buf);
-        List<BlockPos> toPlace = readPositions(buf);
-        List<BlockPos> toWalkInto = readPositions(buf);
-        return new RenderedPath(position, pathPositions, toBreak, toPlace, toWalkInto);
-    }
-
-    private static List<BlockPos> readPositions(PacketByteBuf buf) {
-        int length = buf.readVarInt();
-        List<BlockPos> ret = new ArrayList<>(length);
-
-        for (int i = 0; i < length; i++) {
-            ret.add(new BlockPos(buf.readBlockPos()));
-        }
-
-        return ret;
     }
 }

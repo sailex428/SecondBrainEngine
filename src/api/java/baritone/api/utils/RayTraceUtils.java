@@ -23,6 +23,8 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
+import static baritone.api.utils.RotationUtils.getCameraPosVec;
+
 /**
  * @author Brady
  * @since 8/25/2018
@@ -50,7 +52,7 @@ public final class RayTraceUtils {
         if (wouldSneak) {
             start = inferSneakingEyePosition(entity);
         } else {
-            start = entity.getCameraPosVec(1.0F); // do whatever is correct
+            start = getCameraPosVec(entity); // do whatever is correct
         }
         Vec3d direction = RotationUtils.calcVector3dFromRotation(rotation);
         Vec3d end = start.add(
@@ -62,6 +64,6 @@ public final class RayTraceUtils {
     }
 
     public static Vec3d inferSneakingEyePosition(Entity entity) {
-        return new Vec3d(entity.getX(), entity.getY() + ((IEntityAccessor) entity).automatone$invokeGetEyeHeight(EntityPose.CROUCHING, entity.getDimensions(EntityPose.CROUCHING)), entity.getZ());
+        return new Vec3d(entity.getX(), entity.getY() + entity.getEyeHeight(EntityPose.CROUCHING), entity.getZ());
     }
 }

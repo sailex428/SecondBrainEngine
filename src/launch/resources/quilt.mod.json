@@ -22,28 +22,23 @@
     "intermediate_mappings": "net.fabricmc:intermediary",
     "entrypoints": {
       "init": "baritone.Automatone",
-      "client_init": "baritone.AutomatoneClient",
       "cardinal-components": "baritone.AutomatoneComponents"
     },
     "depends": [
       {
         "id": "cardinal-components-base",
-        "version": "^5.0.0-"
+        "version": "6.1.2-"
       },
       {
         "id": "cardinal-components-entity",
-        "version": "^5.0.0-"
+        "version": "6.1.2-"
       },
       {
         "id": "cardinal-components-world",
-        "version": "^5.0.0-"
+        "version": "6.1.2-"
       },
       {
         "id": "fabric",
-        "version": "*"
-      },
-      {
-        "id": "reach-entity-attributes",
         "version": "*"
       }]
   },
@@ -56,5 +51,6 @@
     "automatone:controller",
     "automatone:selection_manager",
     "automatone:world_data_provider"
-  ]
+  ],
+  "schemaVersion": 1
 }

@@ -45,6 +45,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
@@ -265,7 +266,8 @@ public class SelCommand extends Command {
         float lineWidth = settings.selectionLineWidth.get();
         boolean ignoreDepth = settings.renderSelectionIgnoreDepth.get();
         IRenderer.startLines(color, opacity, lineWidth, ignoreDepth);
-        IRenderer.drawAABB(new Box(pos1, pos1.add(1, 1, 1)));
+        BlockPos pos2 = pos1.add(1, 1, 1);
+        IRenderer.drawAABB(new Box(pos1.x, pos1.y, pos1.x, pos2.getX(), pos2.getY(), pos2.getZ()));
         IRenderer.endLines(ignoreDepth);
     }
 

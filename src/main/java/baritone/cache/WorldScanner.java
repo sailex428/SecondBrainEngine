@@ -104,9 +104,7 @@ public enum WorldScanner implements IWorldScanner {
         if (filter.blocks().isEmpty()) {
             return Collections.emptyList();
         }
-
-        ServerChunkManager chunkProvider = ctx.world().getChunkManager();
-        Chunk chunk = chunkProvider.getChunk(pos.x, pos.z, ChunkStatus.FULL, false);
+        Chunk chunk = ctx.world().getChunk(pos.x, pos.z, ChunkStatus.FULL, false);
         int playerY = ctx.feetPos().getY();
 
         if (!(chunk instanceof WorldChunk) || ((WorldChunk) chunk).isEmpty()) {

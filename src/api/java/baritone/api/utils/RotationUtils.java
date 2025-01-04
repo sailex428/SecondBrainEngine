@@ -226,7 +226,7 @@ public final class RotationUtils {
      * @return The optional rotation
      */
     public static Optional<Rotation> reachableOffset(Entity entity, BlockPos pos, Vec3d offsetPos, double blockReachDistance, boolean wouldSneak) {
-        Vec3d eyes = wouldSneak ? RayTraceUtils.inferSneakingEyePosition(entity) : entity.getCameraPosVec(1.0F);
+        Vec3d eyes = wouldSneak ? RayTraceUtils.inferSneakingEyePosition(entity) : getCameraPosVec(entity);
         Rotation rotation = calcRotationFromVec3d(eyes, offsetPos, new Rotation(entity.getYaw(), entity.getPitch()));
         HitResult result = RayTraceUtils.rayTraceTowards(entity, rotation, blockReachDistance, wouldSneak);
         //Automatone.LOGGER.debug(result);
@@ -252,5 +252,13 @@ public final class RotationUtils {
      */
     public static Optional<Rotation> reachableCenter(Entity entity, BlockPos pos, double blockReachDistance, boolean wouldSneak) {
         return reachableOffset(entity, pos, VecUtils.calculateBlockCenter(entity.getWorld(), pos), blockReachDistance, wouldSneak);
+    }
+
+    public static Vec3d getCameraPosVec(Entity entity) {
+        float tickDelta = 1.0F;
+        double d = MathHelper.lerp(tickDelta, entity.prevX, entity.getX());
+        double e = MathHelper.lerp(tickDelta, entity.prevY, entity.getY()) + entity.getStandingEyeHeight();
+        double f = MathHelper.lerp(tickDelta, entity.prevZ, entity.getZ());
+        return new Vec3d(d, e, f);
     }
 }

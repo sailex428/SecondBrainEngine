@@ -75,9 +75,11 @@ sourceSets {
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs("./libs")
+    }
     chenille.repositories {
         ladysnake()
-        jamieswhiteshirt()
     }
     maven { url = 'https://maven.quiltmc.org/repository/release' }
     maven { url = 'https://maven.quiltmc.org/repository/snapshot' }
@@ -99,9 +101,6 @@ dependencies {
         transitive = false
     }
     modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-world:${cca_version}") {
-        transitive = false
-    }
-    modImplementation("com.jamieswhiteshirt:reach-entity-attributes:${reach_version}") {
         transitive = false
     }
     modLocalImplementation("io.github.ladysnake:elmendorf:${elmendorf_version}") {

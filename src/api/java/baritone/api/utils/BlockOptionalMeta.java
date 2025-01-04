@@ -109,8 +109,7 @@ public final class BlockOptionalMeta {
     }
 
     public boolean matches(@Nonnull BlockState blockstate) {
-        Block block = blockstate.getBlock();
-        return block == this.block && stateHashes.contains(blockstate.hashCode());
+        return blockstate.getBlock() == this.block && stateHashes.contains(blockstate.hashCode());
     }
 
     public boolean matches(ItemStack stack) {
@@ -138,12 +137,12 @@ public final class BlockOptionalMeta {
     // TODO check if erasing the metadata of both the block and the drops is a good idea
     private static synchronized List<Item> drops(ServerWorld world, Block b) {
         return drops.computeIfAbsent(b, block -> {
-            RegistryKey<LootTable> lootTableLocation = block.getLootTableKey();
+            RegistryKey<LootTable> lootTableLocation = block.getLootTableId();
             if (lootTableLocation == LootTables.EMPTY) {
                 return Collections.emptyList();
             } else {
                 List<Item> items = new ArrayList<>();
-                LootTable table = world.getServer().getReloadableRegistries().getLootTable(lootTableLocation);
+                LootTable table = world.getServer().method_58576().getLootTable(lootTableLocation);
                 table.generateLoot(
                     new LootContext.Builder(new LootContextParameterSet.Builder(world)
                             .add(LootContextParameters.ORIGIN, Vec3d.of(BlockPos.ZERO))
@@ -151,7 +150,7 @@ public final class BlockOptionalMeta {
                             .addOptional(LootContextParameters.BLOCK_ENTITY, null)
                             .add(LootContextParameters.BLOCK_STATE, block.getDefaultState())
                             .build(LootContextTypes.BLOCK))
-                            .random(world.getSeed())
+                            .withRandomSeed(world.getSeed())
                             .build(null),
                     stack -> items.add(stack.getItem())
                 );

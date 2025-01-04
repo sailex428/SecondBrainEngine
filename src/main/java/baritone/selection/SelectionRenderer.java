@@ -2,6 +2,7 @@ package baritone.selection;
 
 import baritone.api.selection.ISelection;
 import baritone.utils.IRenderer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
 public class SelectionRenderer implements IRenderer {
@@ -27,7 +28,9 @@ public class SelectionRenderer implements IRenderer {
             IRenderer.glColor(settings.colorSelectionPos1.get(), opacity);
 
             for (ISelection selection : selections) {
-                IRenderer.drawAABB(new Box(selection.pos1(), selection.pos1().add(1, 1, 1)));
+                BlockPos pos2 = selection.pos1().add(1, 1, 1);
+                IRenderer.drawAABB(new Box(selection.pos1().x, selection.pos1().y,
+                        selection.pos1().z, pos2.getX(), pos2.getY(), pos2.getZ()));
             }
         }
 

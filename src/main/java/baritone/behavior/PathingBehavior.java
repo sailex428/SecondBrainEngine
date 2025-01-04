@@ -544,9 +544,4 @@ public final class PathingBehavior extends Behavior implements IPathingBehavior 
     private void logDebug(String message) {
         this.baritone.logDebug(message);
     }
-
-    public void writeToPacket(PacketByteBuf buf) {
-        PathExecutor.writeToPacket(this.current, buf);
-        PathExecutor.writeToPacket(this.next, buf);
-    }
 }

@@ -26,10 +26,9 @@ import baritone.api.pathing.calc.IPathingControlManager;
 import baritone.api.process.*;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.IInputOverrideHandler;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.MutableText;
@@ -44,7 +43,7 @@ import java.util.stream.Stream;
  * @author Brady
  * @since 9/29/2018
  */
-public interface IBaritone extends AutoSyncedComponent, ServerTickingComponent {
+public interface IBaritone extends ServerTickingComponent {
     ComponentKey<IBaritone> KEY = ComponentRegistry.getOrCreate(Identifier.of("automatone", "core"), IBaritone.class);
 
     /**

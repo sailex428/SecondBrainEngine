@@ -22,21 +22,19 @@ import baritone.command.manager.BaritoneArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.command.argument.SingletonArgumentInfo;
 import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.command.api.ServerArgumentType;
 
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.command.api.ServerArgumentType;
 
 @KeepName
 public final class Automatone implements ModInitializer {
@@ -45,16 +43,16 @@ public final class Automatone implements ModInitializer {
 
     public static final TagKey<Item> EMPTY_BUCKETS = TagKey.of(RegistryKeys.ITEM, id("empty_buckets"));
     public static final TagKey<Item> WATER_BUCKETS = TagKey.of(RegistryKeys.ITEM, id("water_buckets"));
-
     private static final ThreadPoolExecutor threadPool;
 
     static {
         AtomicInteger threadCounter = new AtomicInteger(0);
-        threadPool = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), r -> new Thread(r, "Automatone Worker " + threadCounter.incrementAndGet()));
+        threadPool = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
+                r -> new Thread(r, "Automatone Worker " + threadCounter.incrementAndGet()));
     }
 
     public static Identifier id(String path) {
-        return new Identifier(MOD_ID, path);
+        return Identifier.of(MOD_ID, path);
     }
 
     public static ThreadPoolExecutor getExecutor() {
@@ -62,8 +60,12 @@ public final class Automatone implements ModInitializer {
     }
 
     @Override
-    public void onInitialize(ModContainer mod) {
+    public void onInitialize(ModContainer modContainer) {
         DefaultCommands.registerAll();
-        ServerArgumentType.register(id("command"), BaritoneArgumentType.class, SingletonArgumentInfo.contextFree(BaritoneArgumentType::baritone), t -> StringArgumentType.greedyString());
+        ServerArgumentType.register(id("command"),
+                BaritoneArgumentType.class,
+                SingletonArgumentInfo.contextFree(BaritoneArgumentType::baritone),
+                t -> StringArgumentType.greedyString()
+        );
     }
 }

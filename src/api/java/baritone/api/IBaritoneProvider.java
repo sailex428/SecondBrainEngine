@@ -21,7 +21,7 @@ import baritone.api.cache.IWorldScanner;
 import baritone.api.command.ICommand;
 import baritone.api.command.ICommandSystem;
 import baritone.api.schematic.ISchematicSystem;
-import dev.onyxstudios.cca.api.v3.component.ComponentFactory;
+import org.ladysnake.cca.api.v3.component.ComponentFactory;
 import net.minecraft.entity.LivingEntity;
 
 /**

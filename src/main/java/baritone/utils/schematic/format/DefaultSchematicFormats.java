@@ -23,6 +23,8 @@ import baritone.utils.schematic.format.defaults.MCEditSchematic;
 import baritone.utils.schematic.format.defaults.SpongeSchematic;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtTagSizeTracker;
+import net.minecraft.network.PacketByteBuf;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -43,7 +45,7 @@ public enum DefaultSchematicFormats implements ISchematicFormat {
     MCEDIT("schematic") {
         @Override
         public IStaticSchematic parse(InputStream input) throws IOException {
-            return new MCEditSchematic(NbtIo.readCompressed(input));
+            return new MCEditSchematic(NbtIo.method_10629(input, NbtTagSizeTracker.create(PacketByteBuf.MAX_READ_NBT_SIZE)));
         }
     },
 
@@ -55,7 +57,7 @@ public enum DefaultSchematicFormats implements ISchematicFormat {
     SPONGE("schem") {
         @Override
         public IStaticSchematic parse(InputStream input) throws IOException {
-            NbtCompound nbt = NbtIo.readCompressed(input);
+            NbtCompound nbt = NbtIo.method_10629(input, NbtTagSizeTracker.create(PacketByteBuf.MAX_READ_NBT_SIZE));
             int version = nbt.getInt("Version");
             return switch (version) {
                 case 1, 2 -> new SpongeSchematic(nbt);

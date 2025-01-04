@@ -33,6 +33,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -121,7 +122,7 @@ public class CalculationContext {
         this.allowDownward = baritone.settings().allowDownward.get();
         this.maxFallHeightNoWater = baritone.settings().maxFallHeightNoWater.get();
         this.maxFallHeightBucket = baritone.settings().maxFallHeightBucket.get();
-        int depth = EnchantmentHelper.getDepthStrider(entity);
+        int depth = (int) entity.getAttributeValue(EntityAttributes.GENERIC_WATER_MOVEMENT_EFFICIENCY);
         if (depth > 3) {
             depth = 3;
         }
@@ -137,10 +138,10 @@ public class CalculationContext {
         this.worldTop = world.getTopY();
         this.worldBottom = world.getBottomY();
         EntityDimensions dimensions = entity.getDimensions(EntityPose.STANDING);
-        this.width = MathHelper.ceil(dimensions.width);
+        this.width = MathHelper.ceil(dimensions.width());
         // Note: if width is less than 1 (but not negative), we get side space of 0
         this.requiredSideSpace = getRequiredSideSpace(dimensions);
-        this.height = MathHelper.ceil(dimensions.height);
+        this.height = MathHelper.ceil(dimensions.height());
         this.blockPos = new BlockPos.Mutable();
         this.allowSwimming = baritone.settings().allowSwimming.get();
         this.breathTime = baritone.settings().ignoreBreath.get() ? Integer.MAX_VALUE : entity.getMaxAir();
@@ -150,7 +151,7 @@ public class CalculationContext {
     }
 
     public static int getRequiredSideSpace(EntityDimensions dimensions) {
-        return MathHelper.ceil((dimensions.width - 1) * 0.5f);
+        return MathHelper.ceil((dimensions.width() - 1) * 0.5f);
     }
 
     public final IBaritone getBaritone() {

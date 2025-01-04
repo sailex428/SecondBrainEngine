@@ -1,6 +1,5 @@
 /*
- * Requiem
- * Copyright (C) 2017-2021 Ladysnake
+ * Copyright (C) 2025 sailex428
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,44 +31,21 @@
  * The GNU General Public License gives permission to release a modified version without this exception;
  * this exception also makes it possible to release a modified version which carries forward this exception.
  */
-package baritone.launch.mixins.player;
+package baritone.api.npc;
 
-import baritone.api.fakeplayer.AutomatoneFakePlayer;
-import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.encryption.PlayerPublicKey;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import baritone.api.IBaritone;
 
-@Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin extends PlayerEntity {
-    public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
-        super(world, pos, yaw, profile);
-    }
+/**
+ * Player entities that implement this class:
+ * <ul>
+ *     <li>will <em>not</em> keep chunks loaded</li>
+ *     <li>will <em>not</em> be counted in sleep checks</li>
+ *     <li>should be counted as fake players by other mods</li>
+ * </ul>
+ */
+public interface AutomatoneNPC {
 
-    /**
-     * This method is called in the constructor, but requires loaded chunks.
-     * So when a fake player is being loaded, it may result in a deadlock.
-     */
-    @Inject(method = "moveToSpawn", at = @At("HEAD"), cancellable = true)
-    private void cancelMoveToSpawn(ServerWorld world, CallbackInfo ci) {
-        if (this instanceof AutomatoneFakePlayer) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "moveToWorld", at = @At("HEAD"), cancellable = true)
-    private void callSuperMoveToWorld(ServerWorld destination, CallbackInfoReturnable<Entity> cir) {
-        if (this instanceof AutomatoneFakePlayer) {
-            cir.setReturnValue(super.moveToWorld(destination));
-        }
+    default IBaritone getBaritone() {
+        return IBaritone.KEY.get(this);
     }
 }

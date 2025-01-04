@@ -100,7 +100,7 @@ public class MovementTraverse extends Movement {
         int checkedZShift = diffZ * requiredSideSpace;
         int checkedX = destX + checkedXShift;
         int checkedZ = destZ + checkedZShift;
-        int height = MathHelper.ceil(dimensions.height);
+        int height = MathHelper.ceil(dimensions.height());
         int requiredForwardSpace = requiredSideSpace == 0 ? 1 : 2;
         int volume = requiredForwardSpace * (requiredSideSpace * 2 + 1) * height;
         int i = 0;
@@ -300,7 +300,7 @@ public class MovementTraverse extends Movement {
             }
 
             EntityDimensions dims = ctx.entity().getDimensions(ctx.entity().getPose());
-            if (dims.width > 1 || dims.height < 1 || dims.height > 2) { // player-sized entities get the optimized path, others stop and break blocks
+            if (dims.width() > 1 || dims.height() < 1 || dims.height() > 2) { // player-sized entities get the optimized path, others stop and break blocks
                 return state;
             }
 

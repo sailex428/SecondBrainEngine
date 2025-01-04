@@ -64,9 +64,4 @@ public class ClientPathingBehaviour {
     public RenderedPath getNext() {
         return this.next;
     }
-
-    public void readFromPacket(PacketByteBuf buf) {
-        this.current = RenderedPath.fromPacket(buf);
-        this.next = RenderedPath.fromPacket(buf);
-    }
 }

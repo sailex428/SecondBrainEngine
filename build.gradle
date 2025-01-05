@@ -36,7 +36,7 @@ chenille {
         //withDependencyConfiguration()
     //}
 
-    javaVersion = 17
+    javaVersion = 21
 }
 
 compileJava {

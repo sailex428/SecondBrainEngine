@@ -20,20 +20,19 @@ package baritone;
 import baritone.command.defaults.DefaultCommands;
 import baritone.command.manager.BaritoneArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.minecraft.command.argument.SingletonArgumentInfo;
+import net.fabricmc.api.ModInitializer;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quiltmc.loader.api.ModContainer;
 
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.quiltmc.qsl.command.api.ServerArgumentType;
 
 @KeepName
@@ -60,11 +59,11 @@ public final class Automatone implements ModInitializer {
     }
 
     @Override
-    public void onInitialize(ModContainer modContainer) {
+    public void onInitialize() {
         DefaultCommands.registerAll();
         ServerArgumentType.register(id("command"),
                 BaritoneArgumentType.class,
-                SingletonArgumentInfo.contextFree(BaritoneArgumentType::baritone),
+                ConstantArgumentSerializer.of(BaritoneArgumentType::baritone),
                 t -> StringArgumentType.greedyString()
         );
     }

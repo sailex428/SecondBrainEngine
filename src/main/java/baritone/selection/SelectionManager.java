@@ -5,7 +5,7 @@ import baritone.api.selection.ISelectionManager;
 import baritone.api.utils.BetterBlockPos;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.Direction;
 
 import java.util.LinkedList;
@@ -121,12 +121,12 @@ public class SelectionManager implements ISelectionManager {
     }
 
     @Override
-    public void readFromNbt(NbtCompound nbtCompound, HolderLookup.Provider provider) {
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
         // NO-OP
     }
 
     @Override
-    public void writeToNbt(NbtCompound nbtCompound, HolderLookup.Provider provider) {
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
         // NO-OP
     }
 

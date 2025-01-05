@@ -22,7 +22,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -31,14 +30,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
-import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -103,7 +101,7 @@ public class ToolSet {
     private static int getEnchantmentLevel(RegistryKey<Enchantment> enchantmentKey, ItemStack stack, Entity entity) {
         Enchantment enchantment = entity.getRegistryManager().get(RegistryKeys.ENCHANTMENT).get(enchantmentKey);
         ItemEnchantmentsComponent component = stack.getEnchantments();
-        Optional<Holder<Enchantment>> enchantmentHolder = component.getEnchantments().stream().filter(holder -> holder.value().equals(enchantment)).findFirst();
+        Optional<RegistryEntry<Enchantment>> enchantmentHolder = component.getEnchantments().stream().filter(holder -> holder.value().equals(enchantment)).findFirst();
         return enchantmentHolder.map(component::getLevel).orElse(0);
     }
 
@@ -176,7 +174,7 @@ public class ToolSet {
     }
 
     private double avoidanceMultiplier(Block b) {
-        return b.getBuiltInRegistryHolder().isIn(baritone.settings().blocksToAvoidBreaking.get()) ? 0.1 : 1;
+        return b.getRegistryEntry().isIn(baritone.settings().blocksToAvoidBreaking.get()) ? 0.1 : 1;
     }
 
     /**
@@ -202,7 +200,7 @@ public class ToolSet {
         }
 
         speed /= hardness;
-        if (!state.isToolRequired() || (!item.isEmpty() && item.isCorrectForDrops(state))) {
+        if (!state.isToolRequired() || (!item.isEmpty() && item.isSuitableFor(state))) {
             return speed / 30;
         } else {
             return speed / 100;

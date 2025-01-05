@@ -20,11 +20,8 @@ package baritone.utils;
 import baritone.api.BaritoneAPI;
 import baritone.api.Settings;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -49,7 +46,7 @@ public interface IRenderer {
 
     static void startLines(Color color, float alpha, float lineWidth, boolean ignoreDepth) {
         RenderSystem.enableBlend();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.blendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
         glColor(color, alpha);
         RenderSystem.lineWidth(lineWidth);
@@ -79,35 +76,35 @@ public interface IRenderer {
 
         VertexConsumer vertexConsumer3 = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers().getBuffer(RenderLayer.getLines());
         WorldRenderer.drawBox(vertexConsumer3, toDraw.minX, toDraw.minY, toDraw.minZ, toDraw.maxX, toDraw.maxY, toDraw.maxZ, State.red, State.green, State.blue, State.alpha);
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
         // bottom
-        buffer.xyz((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
         // top
-        buffer.xyz((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
         // corners
-        buffer.xyz((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.maxX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.minY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) toDraw.minX, (float) toDraw.maxY, (float) toDraw.maxZ).color(State.red, State.green, State.blue, State.alpha);
         BufferRenderer.draw(buffer.end());
     }
 

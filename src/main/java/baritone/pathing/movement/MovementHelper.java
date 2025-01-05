@@ -32,31 +32,8 @@ import baritone.api.utils.input.Input;
 import baritone.pathing.movement.MovementState.MovementTarget;
 import baritone.utils.BlockStateInterface;
 import baritone.utils.ToolSet;
-import net.minecraft.block.AbstractFireBlock;
-import net.minecraft.block.AbstractSkullBlock;
-import net.minecraft.block.AirBlock;
-import net.minecraft.block.BambooBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CarpetBlock;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.EndPortalBlock;
-import net.minecraft.block.FallingBlock;
-import net.minecraft.block.FenceGateBlock;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.block.InfestedBlock;
-import net.minecraft.block.LilyPadBlock;
-import net.minecraft.block.ScaffoldingBlock;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.SkullBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.SnowBlock;
-import net.minecraft.block.StainedGlassBlock;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.TrapdoorBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.block.piston.PistonExtensionBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -148,7 +125,7 @@ public interface MovementHelper extends ActionCosts {
         if (block instanceof DoorBlock || block instanceof FenceGateBlock) {
             // Because there's no nice method in vanilla to check if a door is openable or not, we just have to assume
             // that all wooden doors are openable and vice versa.
-            return block instanceof FenceGateBlock || DoorBlock.isWoodenDoor(state);
+            return block instanceof FenceGateBlock || DoorBlock.canOpenByHand(state);
         }
         if (block instanceof CarpetBlock) {
             return canWalkOn(bsi, x, y - 1, z, settings);
@@ -263,7 +240,7 @@ public interface MovementHelper extends ActionCosts {
         if (block == Blocks.LARGE_FERN || block == Blocks.TALL_GRASS) {
             return true;
         }
-        return state.materialReplaceable();
+        return state.isReplaceable();
     }
 
     @Deprecated

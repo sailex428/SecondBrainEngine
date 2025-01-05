@@ -48,7 +48,7 @@ import baritone.utils.PathingControlManager;
 import baritone.utils.player.EntityContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.HolderLookup;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -246,12 +246,12 @@ public class Baritone implements IBaritone {
     }
 
     @Override
-    public void readFromNbt(NbtCompound nbtCompound, HolderLookup.Provider provider) {
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
         // NO-OP
     }
 
     @Override
-    public void writeToNbt(NbtCompound nbtCompound, HolderLookup.Provider provider) {
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
         // NO-OP
     }
 

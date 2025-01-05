@@ -23,7 +23,6 @@ import baritone.api.utils.BlockOptionalMetaLookup;
 import baritone.api.utils.IEntityContext;
 import baritone.utils.accessor.ServerChunkManagerAccessor;
 import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -32,7 +31,7 @@ import net.minecraft.world.chunk.ChunkManager;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.chunk.palette.PalettedContainer;
+import net.minecraft.world.chunk.PalettedContainer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -171,7 +170,7 @@ public enum WorldScanner implements IWorldScanner {
                 continue;
             }
             int yReal = y0 << 4;
-            PalettedContainer<BlockState> bsc = section.getContainer();
+            PalettedContainer<BlockState> bsc = section.getBlockStateContainer();
             for (int yy = 0; yy < 16; yy++) {
                 for (int z = 0; z < 16; z++) {
                     for (int x = 0; x < 16; x++) {

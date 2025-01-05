@@ -29,10 +29,10 @@ import baritone.api.utils.interfaces.IGoalRenderPos;
 import baritone.render.ClientPathingBehaviour;
 import baritone.render.RenderedPath;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferRenderer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormats;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -63,7 +63,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public final class PathRenderer implements IRenderer {
 
-    private static final Identifier TEXTURE_BEACON_BEAM = Identifier.ofDefault("textures/entity/beacon_beam.png");
+    private static final Identifier TEXTURE_BEACON_BEAM = Identifier.of("textures/entity/beacon_beam.png");
 
     private PathRenderer() {}
 
@@ -190,15 +190,15 @@ public final class PathRenderer implements IRenderer {
         double vpZ = posZ();
         boolean renderPathAsFrickinThingy = !settings.renderPathAsLine.get();
 
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         BufferBuilder buffer = tessellator.begin(renderPathAsFrickinThingy ? VertexFormat.DrawMode.DEBUG_LINE_STRIP : VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
-        buffer.xyz((float) (x1 + 0.5D - vpX), (float) (y1 + 0.5D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) (x2 + 0.5D - vpX), (float) (y2 + 0.5D - vpY), (float) (z2 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) (x1 + 0.5D - vpX), (float) (y1 + 0.5D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) (x2 + 0.5D - vpX), (float) (y2 + 0.5D - vpY), (float) (z2 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
 
         if (renderPathAsFrickinThingy) {
-            buffer.xyz((float) (x2 + 0.5D - vpX), (float) (y2 + 0.53D - vpY), (float) (z2 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
-            buffer.xyz((float) (x1 + 0.5D - vpX), (float) (y1 + 0.53D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
-            buffer.xyz((float) (x1 + 0.5D - vpX), (float) (y1 + 0.5D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+            buffer.vertex((float) (x2 + 0.5D - vpX), (float) (y2 + 0.53D - vpY), (float) (z2 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+            buffer.vertex((float) (x1 + 0.5D - vpX), (float) (y1 + 0.53D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+            buffer.vertex((float) (x1 + 0.5D - vpX), (float) (y1 + 0.5D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
         }
         BufferRenderer.draw(buffer.end());
     }
@@ -257,7 +257,7 @@ public final class PathRenderer implements IRenderer {
                 stack.push(); // push
                 stack.translate(goalPos.getX() - renderPosX, -renderPosY, goalPos.getZ() - renderPosZ); // translate
 
-                BeaconBlockEntityRenderer.drawSegment(
+                BeaconBlockEntityRenderer.renderBeam(
                         stack,
                         MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers(),
                         TEXTURE_BEACON_BEAM,
@@ -317,16 +317,16 @@ public final class PathRenderer implements IRenderer {
         renderHorizontalQuad(minX, maxX, minZ, maxZ, y1);
         renderHorizontalQuad(minX, maxX, minZ, maxZ, y2);
 
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
-        buffer.xyz((float) minX, (float) minY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) minX, (float) maxY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) maxX, (float) minY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) maxX, (float) maxY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) maxX, (float) minY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) maxX, (float) maxY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) minX, (float) minY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.xyz((float) minX, (float) maxY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) minX, (float) minY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) minX, (float) maxY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) maxX, (float) minY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) maxX, (float) maxY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) maxX, (float) minY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) maxX, (float) maxY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) minX, (float) minY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+        buffer.vertex((float) minX, (float) maxY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
         BufferRenderer.draw(buffer.end());
 
         IRenderer.endLines(settings.renderGoalIgnoreDepth.get());
@@ -334,12 +334,12 @@ public final class PathRenderer implements IRenderer {
 
     private static void renderHorizontalQuad(double minX, double maxX, double minZ, double maxZ, double y) {
         if (y != 0) {
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
+            RenderSystem.setShader(GameRenderer::getPositionColorProgram);
             BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
-            buffer.xyz((float) minX, (float) y, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-            buffer.xyz((float) maxX, (float) y, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-            buffer.xyz((float) maxX, (float) y, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-            buffer.xyz((float) minX, (float) y, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+            buffer.vertex((float) minX, (float) y, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+            buffer.vertex((float) maxX, (float) y, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+            buffer.vertex((float) maxX, (float) y, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+            buffer.vertex((float) minX, (float) y, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
             BufferRenderer.draw(buffer.end());
         }
     }

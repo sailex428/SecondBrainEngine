@@ -212,7 +212,7 @@ public class TabCompleteHelper {
      * @return This {@link TabCompleteHelper}
      */
     public TabCompleteHelper filterPrefixNamespaced(String prefix) {
-        return filterPrefix(Identifier.ofDefault(prefix).toString());
+        return filterPrefix(Identifier.of(prefix).toString());
     }
 
     /**

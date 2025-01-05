@@ -56,8 +56,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.ConnectedClientData;
 import net.minecraft.network.NetworkSide;
+import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
@@ -69,9 +69,9 @@ public class NPCServerPlayerEntity extends ServerPlayerEntity implements Automat
     private boolean release;
 
     public NPCServerPlayerEntity(ServerWorld world, ConnectedClientData connectedClientData) {
-        super(world.getServer(), world, connectedClientData.getProfile(), connectedClientData.getClientInformation());
+        super(world.getServer(), world, connectedClientData.gameProfile(), connectedClientData.syncedOptions());
         // Side effects go brr
-        server.getPlayerManager().onPlayerConnect(new ClientConnection(NetworkSide.C2S), this, connectedClientData);
+        server.getPlayerManager().onPlayerConnect(new ClientConnection(NetworkSide.SERVERBOUND), this, connectedClientData);
         //new ServerPlayNetworkHandler(world.getServer(), new ClientConnection(NetworkSide.S2C), this, connectedClientData);
     }
 

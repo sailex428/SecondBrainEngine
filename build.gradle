@@ -19,8 +19,8 @@
 import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
+    id 'fabric-loom' version "1.9-SNAPSHOT"
     id 'io.github.ladysnake.chenille' version "0.11.3"
-    alias libs.plugins.quilt.loom
 }
 
 group project.maven_group
@@ -85,10 +85,11 @@ repositories {
 }
 
 dependencies {
-    minecraft libs.minecraft
-    mappings variantOf(libs.quilt.mappings) { classifier 'intermediary-v2' }
-    modImplementation libs.quilt.loader
-    modImplementation libs.bundles.quilted.fabric.api
+    minecraft "com.mojang:minecraft:${mc_version}"
+    mappings "net.fabricmc:yarn:${mc_version}+build.${yarn_build}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fapi_version}+${mc_version}"
+    modImplementation "org.quiltmc.qsl.management:command:${qsl_version}+${mc_version}-SNAPSHOT"
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}") {

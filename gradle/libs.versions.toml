@@ -2,7 +2,7 @@
 [versions]
 minecraft = "1.21"
 quilt_mappings = "1.21+build.18"
-quilt_standard_libraries = "3.0.0-beta.29+1.19.2"
+quilt_standard_libraries = "10.0.0-alpha.2+1.21-SNAPSHOT"
 
 quilt_loom = "1.8.5"
 quilt_loader = "0.28.0-beta.4"

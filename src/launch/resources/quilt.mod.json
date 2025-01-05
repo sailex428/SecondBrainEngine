@@ -27,19 +27,19 @@
     "depends": [
       {
         "id": "cardinal-components-base",
-        "version": "6.1.2-"
+        "versions": "6.1.2"
       },
       {
         "id": "cardinal-components-entity",
-        "version": "6.1.2-"
+        "versions": "6.1.2"
       },
       {
         "id": "cardinal-components-world",
-        "version": "6.1.2-"
+        "versions": "6.1.2"
       },
       {
         "id": "fabric",
-        "version": "*"
+        "versions": "*"
       }]
   },
   "mixin": "mixins.automatone.json",

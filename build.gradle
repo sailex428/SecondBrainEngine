@@ -31,10 +31,10 @@ chenille {
         withArtifactory()
         withGithubRelease()
     }
-    configureTestmod {
-        withBaseTestRuns()
-        withDependencyConfiguration()
-    }
+    //configureTestmod {
+        //withBaseTestRuns()
+        //withDependencyConfiguration()
+    //}
 
     javaVersion = 17
 }

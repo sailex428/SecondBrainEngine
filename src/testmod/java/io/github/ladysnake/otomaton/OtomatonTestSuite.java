@@ -18,31 +18,20 @@
 package io.github.ladysnake.otomaton;
 
 import baritone.api.npc.NPCServerPlayerEntity;
-import io.github.ladysnake.elmendorf.GameTestUtil;
-import io.github.ladysnake.elmendorf.impl.MockClientConnection;
-import io.github.ladysnake.otomaton.mixin.ServerWorldAccessor;
-import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.server.world.SleepManager;
+import com.mojang.authlib.GameProfile;
+import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.block.Blocks;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.NetworkSide;
-
-import java.util.List;
+import java.util.UUID;
 
 public class OtomatonTestSuite {
+
+    @GameTest
+    public void connectToServer(TestContext ctx) {
+        NPCServerPlayerEntity playerEntity = new NPCServerPlayerEntity(ctx.getWorld(), ConnectedClientData.createDefault(new GameProfile(UUID.randomUUID(), "NPC"), false));
+        playerEntity.connectToServer();
+        ctx.complete();
+    }
 
 //    @GameTest
 //    public void beforeSleepingTests(TestContext ctx) {
@@ -51,6 +40,7 @@ public class OtomatonTestSuite {
 //        world.calculateAmbientDarkness(); // refreshes light info for sleeping
 //        ctx.complete();
 //    }
+
 //
 //    @GameTest
 //    public void shellsDoNotPreventSleeping(TestContext ctx) {
@@ -87,7 +77,7 @@ public class OtomatonTestSuite {
 //        ctx.complete();
 //    }
 //
-//    @GameTest
+//    @GameTes
 //    public void realPlayersDoBroadcastAdvancements(TestContext ctx) {
 //        ServerPlayerEntity player = ctx.spawnServerPlayer(1, 0, 1);
 //        ctx.getWorld().getServer().getPlayerManager().getPlayerList().add(player);

@@ -17,27 +17,21 @@
 
 package io.github.ladysnake.otomaton;
 
+import baritone.api.npc.NPCServerPlayerEntity;
+import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.server.network.ConnectedClientData;
+
+import java.util.UUID;
 
 public class Otomaton implements ModInitializer {
-//    public static final String MOD_ID = "otomaton";
-//
-//    public static Identifier id(String path) {
-//        return Identifier.of(MOD_ID, path);
-//    }
-//
-//    public static final EntityType<PlayerEntity> FAKE_PLAYER = FabricEntityTypeBuilder.<PlayerEntity>createLiving()
-//            .spawnGroup(SpawnGroup.MISC)
-//            .entityFactory(NPCs.entityFactory(NPCServerPlayerEntity::new))
-//            .defaultAttributes(NPCServerPlayerEntity::createPlayerAttributes)
-//            .dimensions(EntityDimensions.changing(EntityType.PLAYER.getWidth(), EntityType.PLAYER.getHeight()))
-//            .trackRangeBlocks(64)
-//            .trackedUpdateRate(1)
-//            .forceTrackedVelocityUpdates(true)
-//            .build();
 
     @Override
     public void onInitialize() {
-        //Registry.register(Registries.ENTITY_TYPE, id("fake_player"), FAKE_PLAYER);
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            NPCServerPlayerEntity playerEntity = new NPCServerPlayerEntity(server.getOverworld(), ConnectedClientData.createDefault(new GameProfile(UUID.randomUUID(), "NPC123"), false));
+            playerEntity.connectToServer();
+        });
     }
 }

@@ -27,11 +27,11 @@ import baritone.api.command.exception.CommandException;
 import baritone.api.command.exception.CommandNotEnoughArgumentsException;
 import baritone.api.command.manager.ICommandManager;
 import baritone.command.argument.ArgConsumer;
-import baritone.command.manager.BaritoneArgumentType;
 import baritone.command.manager.BaritoneCommandManager;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.Message;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -179,8 +179,8 @@ public final class DefaultCommands {
     private static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("automatone")
                 .requires(s -> s.hasPermissionLevel(2))
-                .then(CommandManager.argument("command", BaritoneArgumentType.baritone()).executes(command ->
-                        runCommand(command.getSource(), command.getSource().getEntityOrThrow(), BaritoneArgumentType.getCommand(command, "command"))))
+                .then(CommandManager.argument("command", StringArgumentType.greedyString()).executes(command ->
+                        runCommand(command.getSource(), command.getSource().getEntityOrThrow(), StringArgumentType.getString(command,"command"))))
         );
     }
 

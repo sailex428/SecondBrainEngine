@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schemaVersion": 1,
   "id": "automatone",
   "version": "${version}",
   "name": "Automatone",
@@ -7,9 +7,9 @@
   "license": "LGPL-3.0",
   "icon": "assets/automatone/icon.png",
   "authors": [
+    "Pyrofab",
     "leijurv",
-    "Brady",
-    "Pyrofab"
+    "Brady"
   ],
   "contact": {
     "sources": "https://github.com/Ladysnake/automatone",
@@ -17,34 +17,30 @@
   },
   "environment": "*",
   "entrypoints": {
-    "main": "baritone.Automatone",
-    "cardinal-components": "baritone.AutomatoneComponents"
+    "main": [
+      "baritone.Automatone"
+    ],
+    "cardinal-components": [
+      "baritone.AutomatoneComponents"
+    ]
   },
-  "depends": [
+  "depends": {
+    "fabric": "*",
+    "cardinal-components-base": "6.1.2",
+    "cardinal-components-entity": "6.1.2",
+    "cardinal-components-world": "6.1.2"
+  },
+  "mixin": [
     {
-      "id": "cardinal-components-base",
-      "versions": "6.1.2"
-    },
-    {
-      "id": "cardinal-components-entity",
-      "versions": "6.1.2"
-    },
-    {
-      "id": "cardinal-components-world",
-      "versions": "6.1.2"
-    },
-    {
-      "id": "fabric",
-      "versions": "*"
+      "config": "mixins.automatone.json"
     }
   ],
-  "mixin": {
-    "config": "mixins.automatone.json"
-  },
-  "cardinal-components": [
-    "automatone:core",
-    "automatone:controller",
-    "automatone:selection_manager",
-    "automatone:world_data_provider"
-  ]
+  "custom": {
+    "cardinal-components": [
+      "automatone:core",
+      "automatone:controller",
+      "automatone:selection_manager",
+      "automatone:world_data_provider"
+    ]
+  }
 }

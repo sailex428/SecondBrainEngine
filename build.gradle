@@ -31,10 +31,6 @@ chenille {
         withArtifactory()
         withGithubRelease()
     }
-    //configureTestmod {
-        //withBaseTestRuns()
-        //withDependencyConfiguration()
-    //}
 
     javaVersion = 21
 }
@@ -81,6 +77,7 @@ repositories {
     }
     maven { url = 'https://maven.quiltmc.org/repository/release' }
     maven { url = 'https://maven.quiltmc.org/repository/snapshot' }
+    maven { url = "https://jitpack.io" }
     mavenLocal()
 }
 
@@ -89,7 +86,6 @@ dependencies {
     mappings "net.fabricmc:yarn:${mc_version}+build.${yarn_build}:v2"
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fapi_version}+${mc_version}"
-    modImplementation "org.quiltmc.qsl.management:command:${qsl_version}+${mc_version}-SNAPSHOT"
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}") {
@@ -101,7 +97,7 @@ dependencies {
     modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-world:${cca_version}") {
         transitive = false
     }
-    modLocalImplementation("io.github.ladysnake:elmendorf:${elmendorf_version}") {
+    modImplementation("com.github.gnembon:fabric-carpet:${carpet_version}") {
         transitive = false
     }
     compileOnly "com.demonwav.mcdev:annotations:1.0"

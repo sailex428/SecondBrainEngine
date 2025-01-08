@@ -25,13 +25,11 @@ import net.minecraft.world.chunk.WorldChunk;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(ServerChunkManager.class)
 public abstract class MixinServerChunkManager implements ServerChunkManagerAccessor {
 
-    @Shadow @Nullable @Invoker("getChunkHolder")
-    protected abstract ChunkHolder getChunkHolder(long pos);
+    @Shadow @Nullable protected abstract ChunkHolder getChunkHolder(long pos);
 
     @Override
     public @Nullable WorldChunk automatone$getChunkNow(int chunkX, int chunkZ) {

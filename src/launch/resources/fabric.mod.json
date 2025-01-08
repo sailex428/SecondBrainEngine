@@ -15,7 +15,7 @@
     "sources": "https://github.com/Ladysnake/automatone",
     "issues": "https://github.com/Ladysnake/automatone/issues"
   },
-  "environment": "*",
+  "environment": "server",
   "entrypoints": {
     "main": [
       "baritone.Automatone"
@@ -30,10 +30,8 @@
     "cardinal-components-entity": "6.1.2",
     "cardinal-components-world": "6.1.2"
   },
-  "mixin": [
-    {
-      "config": "mixins.automatone.json"
-    }
+  "mixins": [
+    "mixins.automatone.json"
   ],
   "custom": {
     "cardinal-components": [

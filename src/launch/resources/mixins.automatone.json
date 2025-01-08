@@ -6,8 +6,6 @@
   "injectors": {
     "maxShiftBy": 2
   },
-  "client": [
-  ],
   "mixins": [
     "MixinEntity",
     "MixinItemStack",

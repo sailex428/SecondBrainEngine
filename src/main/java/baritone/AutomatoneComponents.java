@@ -39,7 +39,6 @@ public final class AutomatoneComponents implements EntityComponentInitializer, W
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
         registry.registerFor(LivingEntity.class, IPlayerController.KEY, entity -> DummyEntityController.INSTANCE);
-        registry.registerFor(LivingEntity.class, ISelectionManager.KEY, SelectionManager::new);
         registry.registerFor(PlayerEntity.class, IBaritone.KEY, BaritoneAPI.getProvider().componentFactory());
         registry.registerFor(ServerPlayerEntity.class, IPlayerController.KEY, ServerPlayerController::new);
     }

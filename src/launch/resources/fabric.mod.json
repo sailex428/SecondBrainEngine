@@ -37,7 +37,6 @@
     "cardinal-components": [
       "automatone:core",
       "automatone:controller",
-      "automatone:selection_manager",
       "automatone:world_data_provider"
     ]
   }

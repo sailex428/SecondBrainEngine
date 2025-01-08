@@ -20,18 +20,24 @@ package io.github.ladysnake.otomaton;
 import baritone.api.npc.NPCServerPlayerEntity;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.server.network.ConnectedClientData;
 
 import java.util.UUID;
 
 public class Otomaton implements ModInitializer {
 
+    private boolean isInitialized = false;
+
     @Override
     public void onInitialize() {
-        ServerTickEvents.END_SERVER_TICK.register(server -> {
-            NPCServerPlayerEntity playerEntity = new NPCServerPlayerEntity(server.getOverworld(), ConnectedClientData.createDefault(new GameProfile(UUID.randomUUID(), "NPC123"), false));
-            playerEntity.connectToServer();
+        ServerWorldEvents.LOAD.register((server, world)-> {
+            if (!isInitialized) {
+                NPCServerPlayerEntity playerEntity = new NPCServerPlayerEntity(server.getOverworld(),
+                        ConnectedClientData.createDefault(new GameProfile(UUID.randomUUID(), "lolli"), false));
+                isInitialized = true;
+                playerEntity.connectToServer();
+            }
         });
     }
 }

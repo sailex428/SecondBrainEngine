@@ -119,13 +119,12 @@ task remapTestmodJar(type: RemapJarTask, dependsOn: project.testmodJar) {
     addNestedDependencies.set(false)
 }
 
-processLaunchResources {
+processResources {
     inputs.property "version", project.version
-    filesMatching('quilt.mod.json') {
+    filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
 }
-
 java {
     withSourcesJar()
 }

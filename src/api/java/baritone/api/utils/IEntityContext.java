@@ -48,7 +48,7 @@ import java.util.stream.StreamSupport;
  */
 public interface IEntityContext {
 
-    ServerPlayerEntity entity();
+    LivingEntity entity();
 
     default IBaritone baritone() {
         return IBaritone.KEY.get(entity());

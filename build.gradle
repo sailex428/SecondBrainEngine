@@ -70,9 +70,6 @@ sourceSets {
 }
 
 repositories {
-    flatDir {
-        dirs("./libs")
-    }
     mavenCentral()
     maven {
         name = "Ladysnake Mods"

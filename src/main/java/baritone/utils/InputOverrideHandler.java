@@ -22,6 +22,9 @@ import baritone.api.utils.IInputOverrideHandler;
 import baritone.api.utils.input.Input;
 import baritone.behavior.Behavior;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -40,6 +43,8 @@ public final class InputOverrideHandler extends Behavior implements IInputOverri
      * Maps inputs to whether or not we are forcing their state down.
      */
     private final Set<Input> inputForceStateMap = EnumSet.noneOf(Input.class);
+
+    private static final Logger LOGGER = LogManager.getLogger(InputOverrideHandler.class);
 
     private final BlockBreakHelper blockBreakHelper;
     private final BlockPlaceHelper blockPlaceHelper;
@@ -91,14 +96,14 @@ public final class InputOverrideHandler extends Behavior implements IInputOverri
     }
 
     @Override
-    public final void onTickServer() {
+    public void onTickServer() {
         if (!this.needsUpdate) return;
 
         if (isInputForcedDown(Input.CLICK_LEFT)) {
             setInputForceState(Input.CLICK_RIGHT, false);
         }
 
-        LivingEntity entity = this.ctx.entity();
+        ServerPlayerEntity entity = this.ctx.entity();
         entity.sidewaysSpeed = 0.0F;
         entity.forwardSpeed = 0.0F;
         entity.setSneaking(false);
@@ -106,18 +111,22 @@ public final class InputOverrideHandler extends Behavior implements IInputOverri
         entity.setJumping(this.isInputForcedDown(Input.JUMP)); // oppa gangnam style
 
         if (this.isInputForcedDown(Input.MOVE_FORWARD)) {
+            LOGGER.info("move forward");
             entity.forwardSpeed++;
         }
 
         if (this.isInputForcedDown(Input.MOVE_BACK)) {
+            LOGGER.info("move back");
             entity.forwardSpeed--;
         }
 
         if (this.isInputForcedDown(Input.MOVE_LEFT)) {
+            LOGGER.info("move left");
             entity.sidewaysSpeed++;
         }
 
         if (this.isInputForcedDown(Input.MOVE_RIGHT)) {
+            LOGGER.info("move right");
             entity.sidewaysSpeed--;
         }
 

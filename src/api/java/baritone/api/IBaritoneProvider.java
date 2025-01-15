@@ -21,6 +21,7 @@ import baritone.api.cache.IWorldScanner;
 import baritone.api.command.ICommand;
 import baritone.api.command.ICommandSystem;
 import baritone.api.schematic.ISchematicSystem;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.ladysnake.cca.api.v3.component.ComponentFactory;
 import net.minecraft.entity.LivingEntity;
 
@@ -61,6 +62,4 @@ public interface IBaritoneProvider {
     ISchematicSystem getSchematicSystem();
 
     Settings getGlobalSettings();
-
-    <E extends LivingEntity> ComponentFactory<E, IBaritone> componentFactory();
 }

@@ -17,7 +17,6 @@
 
 package io.github.ladysnake.otomaton;
 
-import baritone.api.npc.NPCServerPlayerEntity;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.test.GameTest;
@@ -28,9 +27,9 @@ public class OtomatonTestSuite {
 
     @GameTest
     public void connectToServer(TestContext ctx) {
-        NPCServerPlayerEntity playerEntity = new NPCServerPlayerEntity(ctx.getWorld(), ConnectedClientData.createDefault(new GameProfile(UUID.randomUUID(), "NPC"), false));
-        playerEntity.connectToServer();
-        ctx.complete();
+//        NPCServerPlayerEntity playerEntity = new NPCServerPlayerEntity(ctx.getWorld(), ConnectedClientData.createDefault(new GameProfile(UUID.randomUUID(), "NPC"), false));
+//        playerEntity.connectToServer();
+//        ctx.complete();
     }
 
 //    @GameTest

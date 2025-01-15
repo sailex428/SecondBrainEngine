@@ -17,7 +17,6 @@
 
 package io.github.ladysnake.otomaton;
 
-import baritone.api.npc.NPCServerPlayerEntity;
 import com.mojang.authlib.GameProfile;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
@@ -31,13 +30,5 @@ public class Otomaton implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        ServerWorldEvents.LOAD.register((server, world)-> {
-            if (!isInitialized) {
-                NPCServerPlayerEntity playerEntity = new NPCServerPlayerEntity(server.getOverworld(),
-                        ConnectedClientData.createDefault(new GameProfile(UUID.randomUUID(), "lolli"), false));
-                isInitialized = true;
-                playerEntity.connectToServer();
-            }
-        });
     }
 }

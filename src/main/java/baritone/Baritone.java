@@ -46,7 +46,6 @@ import baritone.utils.BlockStateInterface;
 import baritone.utils.InputOverrideHandler;
 import baritone.utils.PathingControlManager;
 import baritone.utils.player.EntityContext;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
@@ -87,7 +86,7 @@ public class Baritone implements IBaritone {
 
     public BlockStateInterface bsi;
 
-    public Baritone(LivingEntity player) {
+    public Baritone(ServerPlayerEntity player) {
         this.settings = new Settings();
         this.gameEventHandler = new GameEventHandler(this);
 

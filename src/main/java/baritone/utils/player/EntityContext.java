@@ -34,6 +34,7 @@ import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
@@ -48,15 +49,15 @@ import java.util.stream.Stream;
 
 public class EntityContext implements IEntityContext {
 
-    private final LivingEntity entity;
+    private final ServerPlayerEntity entity;
     private @Nullable Supplier<List<Avoidance>> avoidanceFinder;
 
-    public EntityContext(LivingEntity entity) {
+    public EntityContext(ServerPlayerEntity entity) {
         this.entity = entity;
     }
 
     @Override
-    public LivingEntity entity() {
+    public ServerPlayerEntity entity() {
         return this.entity;
     }
 

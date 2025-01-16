@@ -23,6 +23,7 @@ import net.minecraft.block.AbstractFireBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -141,7 +142,7 @@ public final class RotationUtils {
      * @param ctx Context for the viewing entity
      * @param pos The target block position
      * @return The optional rotation
-     * @see #reachable(LivingEntity, BlockPos, double)
+     * @see #reachable(ServerPlayerEntity, BlockPos, double)
      */
     public static Optional<Rotation> reachable(IEntityContext ctx, BlockPos pos) {
         return reachable(ctx.entity(), pos, ctx.playerController().getBlockReachDistance());
@@ -163,11 +164,11 @@ public final class RotationUtils {
      * @param blockReachDistance The block reach distance of the entity
      * @return The optional rotation
      */
-    public static Optional<Rotation> reachable(LivingEntity entity, BlockPos pos, double blockReachDistance) {
+    public static Optional<Rotation> reachable(ServerPlayerEntity entity, BlockPos pos, double blockReachDistance) {
         return reachable(entity, pos, blockReachDistance, false);
     }
 
-    public static Optional<Rotation> reachable(LivingEntity entity, BlockPos pos, double blockReachDistance, boolean wouldSneak) {
+    public static Optional<Rotation> reachable(ServerPlayerEntity entity, BlockPos pos, double blockReachDistance, boolean wouldSneak) {
         IBaritone baritone = BaritoneAPI.getProvider().getBaritone(entity);
         if (baritone.getPlayerContext().isLookingAt(pos)) {
             /*

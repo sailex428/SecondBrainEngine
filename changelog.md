@@ -184,7 +184,7 @@ First alpha release of Automatone, forked from Baritone 1.6.3.
 - Automatone should detect which modded doors cannot be opened
 - Parkour movements should overshoot a bit less
 - Chunk scanning for mining operations should be slightly faster
-- Simple movements can now occur while the entity is looking in some other direction
+- Simple movements can now occur while the entity is looking in some other moveDirection
 - Differently sized entities are *kind of, somewhat, vaguely handled* by Automatone's pathfinding
   - entities that are smaller than a player should work as expected
   - entities that are taller than a player should more or less work

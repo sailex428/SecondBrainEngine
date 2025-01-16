@@ -15,16 +15,22 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ladysnake.otomaton;
+package baritone.api.utils;
 
-import net.fabricmc.api.ModInitializer;
+import net.minecraft.util.math.Direction;
 
-public class Otomaton implements ModInitializer {
+public interface ICommandHelper {
 
-    private boolean isInitialized = false;
+    void executeMove(MoveDirection moveDirection);
+    void executeMoveStop();
+    void executeSpawn(String username);
+    void executeLook(Direction lookDirection);
+    void executeJump();
+    void executeAttack();
+    void executeDrop();
+    void executeDropStack();
+    void executeUse();
+    void executeSneak();
+    void executeUnSneak();
 
-    @Override
-    public void onInitialize() {
-
-    }
 }

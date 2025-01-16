@@ -35,7 +35,6 @@
 package baritone.launch.mixins.player;
 
 import baritone.api.npc.AutomatoneNPC;
-import baritone.api.npc.NPCServerPlayerEntity;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -95,7 +94,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         at = @At(value = "LOAD")
     )
     private Vec3d cancelKnockbackCancellation(Vec3d previousVelocity, Entity target) {
-        if (target instanceof NPCServerPlayerEntity) {
+        if (target instanceof AutomatoneNPC) {
             return target.getVelocity();
         }
         return previousVelocity;

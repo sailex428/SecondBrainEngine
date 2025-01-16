@@ -23,6 +23,7 @@ import baritone.api.Settings;
 import baritone.api.cache.IWorldProvider;
 import baritone.api.event.listener.IEventBus;
 import baritone.api.process.IBaritoneProcess;
+import baritone.api.utils.ICommandHelper;
 import baritone.api.utils.IEntityContext;
 import baritone.behavior.Behavior;
 import baritone.behavior.InventoryBehavior;
@@ -43,6 +44,7 @@ import baritone.process.GetToBlockProcess;
 import baritone.process.MineProcess;
 import baritone.render.ClientPathingBehaviour;
 import baritone.utils.BlockStateInterface;
+import baritone.utils.CarpetPlayerCommandHelper;
 import baritone.utils.InputOverrideHandler;
 import baritone.utils.PathingControlManager;
 import baritone.utils.player.EntityContext;
@@ -87,7 +89,10 @@ public class Baritone implements IBaritone {
 
     public BlockStateInterface bsi;
 
-    public Baritone(LivingEntity player) {
+    private final CarpetPlayerCommandHelper commandHelper;
+
+    public Baritone(ServerPlayerEntity player) {
+        this.commandHelper = new CarpetPlayerCommandHelper(this, player);
         this.settings = new Settings();
         this.gameEventHandler = new GameEventHandler(this);
 
@@ -258,5 +263,10 @@ public class Baritone implements IBaritone {
     @Override
     public void serverTick() {
         this.getGameEventHandler().onTickServer();
+    }
+
+    @Override
+    public ICommandHelper getCommandHelper() {
+        return this.commandHelper;
     }
 }

@@ -40,6 +40,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
@@ -95,7 +96,6 @@ public final class DefaultCommands {
                 new SurfaceCommand(),
                 new ThisWayCommand(),
                 new WaypointsCommand(),
-                new SpawnCommand(),
                 new CommandAlias("sethome", "Sets your home waypoint", "waypoints save home"),
                 new CommandAlias("home", "Path to your home waypoint", "waypoints goto home"),
                 selCommand
@@ -188,7 +188,7 @@ public final class DefaultCommands {
     private static int runCommand(ServerCommandSource source, Entity target, String command) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity)) throw EntityArgumentType.ENTITY_NOT_FOUND_EXCEPTION.create();
         try {
-            return runCommand(source, command, BaritoneAPI.getProvider().getBaritone((LivingEntity) target)) ? Command.SINGLE_SUCCESS : 0;
+            return runCommand(source, command, BaritoneAPI.getProvider().getBaritone((ServerPlayerEntity) target)) ? Command.SINGLE_SUCCESS : 0;
         } catch (baritone.api.command.exception.CommandException e) {
             throw BARITONE_COMMAND_FAILED_EXCEPTION.create(e.handle());
         }

@@ -19,6 +19,7 @@ package baritone.behavior;
 
 import baritone.Baritone;
 import baritone.api.behavior.ILookBehavior;
+import baritone.api.utils.ICommandHelper;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
 import baritone.utils.InputOverrideHandler;
@@ -40,9 +41,11 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
      * Whether or not rotations are currently being forced
      */
     private boolean force;
+    private final ICommandHelper commandHelper;
 
     public LookBehavior(Baritone baritone) {
         super(baritone);
+        this.commandHelper = baritone.getCommandHelper();
     }
 
     @Override

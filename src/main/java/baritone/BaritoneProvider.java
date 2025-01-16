@@ -27,6 +27,7 @@ import baritone.cache.WorldScanner;
 import baritone.command.CommandSystem;
 import baritone.utils.SettingsLoader;
 import baritone.utils.schematic.SchematicSystem;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.ladysnake.cca.api.v3.component.ComponentFactory;
 import net.minecraft.entity.LivingEntity;
 
@@ -46,7 +47,7 @@ public final class BaritoneProvider implements IBaritoneProvider {
     }
 
     @Override
-    public IBaritone getBaritone(LivingEntity entity) {
+    public IBaritone getBaritone(ServerPlayerEntity entity) {
         if (entity.getWorld().isClient()) throw new IllegalStateException("Lol we only support servers now");
         return IBaritone.KEY.get(entity);
     }
@@ -77,7 +78,7 @@ public final class BaritoneProvider implements IBaritoneProvider {
     }
 
     @Override
-    public <E extends LivingEntity> ComponentFactory<E, IBaritone> componentFactory() {
+    public <E extends ServerPlayerEntity> ComponentFactory<E, IBaritone> componentFactory() {
         return Baritone::new;
     }
 }

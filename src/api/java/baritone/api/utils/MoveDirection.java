@@ -15,16 +15,14 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ladysnake.otomaton;
+package baritone.api.utils;
 
-import net.fabricmc.api.ModInitializer;
+public enum MoveDirection {
+    FORWARD("forward"),
+    BACKWARD("backward"),
+    LEFT("left"),
+    RIGHT("right");
 
-public class Otomaton implements ModInitializer {
-
-    private boolean isInitialized = false;
-
-    @Override
-    public void onInitialize() {
-
+    MoveDirection(String forward) {
     }
 }

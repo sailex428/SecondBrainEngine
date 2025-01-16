@@ -23,6 +23,7 @@ import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import java.util.UUID;
 
+//dont wanna write tests lol
 public class OtomatonTestSuite {
 
     @GameTest

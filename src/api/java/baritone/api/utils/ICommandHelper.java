@@ -27,7 +27,7 @@ public interface ICommandHelper {
     void executeLook(Direction lookDirection);
     void executeJump();
     void executeAttack();
-    void executeDrop();
+    void executeDrop(int slot);
     void executeDropStack();
     void executeUse();
     void executeSneak();

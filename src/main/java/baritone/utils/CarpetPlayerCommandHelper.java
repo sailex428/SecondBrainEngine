@@ -98,9 +98,9 @@ public class CarpetPlayerCommandHelper implements ICommandHelper {
     }
 
     @Override
-    public void executeDrop() {
+    public void executeDrop(int slot) {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " drop");
+        commandManager.executeWithPrefix(commandSource, playerCommand + " drop slot " + slot);
     }
 
     @Override

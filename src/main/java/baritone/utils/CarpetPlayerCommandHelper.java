@@ -104,14 +104,20 @@ public class CarpetPlayerCommandHelper implements ICommandHelper {
     }
 
     @Override
-    public void executeDropStack() {
+    public void executeDropAll(int slot) {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " dropStack");
+        commandManager.executeWithPrefix(commandSource, playerCommand + " dropStack slot" + slot);
     }
 
     @Override
     public void executeUse() {
         buildPlayerCommand();
         commandManager.executeWithPrefix(commandSource, playerCommand + " use");
+    }
+
+    @Override
+    public void executeStopAll() {
+        buildPlayerCommand();
+        commandManager.executeWithPrefix(commandSource, playerCommand + " stop");
     }
 }

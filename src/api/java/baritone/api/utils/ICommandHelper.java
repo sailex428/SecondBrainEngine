@@ -28,9 +28,10 @@ public interface ICommandHelper {
     void executeJump();
     void executeAttack();
     void executeDrop(int slot);
-    void executeDropStack();
+    void executeDropAll(int slot);
     void executeUse();
     void executeSneak();
     void executeUnSneak();
+    void executeStopAll();
 
 }

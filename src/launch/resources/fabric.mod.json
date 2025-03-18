@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "automatone",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "name": "Automatone",
   "description": "A serverside Minecraft pathfinder bot.",
   "license": "LGPL-3.0",
@@ -9,7 +9,8 @@
   "authors": [
     "Pyrofab",
     "leijurv",
-    "Brady"
+    "Brady",
+    "sailex"
   ],
   "contact": {
     "sources": "https://github.com/Ladysnake/automatone",
@@ -37,7 +38,8 @@
     "cardinal-components": [
       "automatone:core",
       "automatone:controller",
-      "automatone:world_data_provider"
+      "automatone:world_data_provider",
+      "automatone:selection_manager"
     ]
   }
 }

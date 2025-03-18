@@ -13,17 +13,13 @@ import java.util.ListIterator;
 
 public class SelectionManager implements ISelectionManager {
 
-    private final Entity holder;
     private final LinkedList<ISelection> selections = new LinkedList<>();
     private ISelection[] selectionsArr = new ISelection[0];
 
-    public SelectionManager(Entity holder) {
-        this.holder = holder;
-    }
+    public SelectionManager(Entity holder) {}
 
     private void resetSelectionsArr() {
         selectionsArr = selections.toArray(new ISelection[0]);
-        KEY.sync(this.holder);
     }
 
     @Override

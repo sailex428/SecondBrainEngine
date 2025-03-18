@@ -20,8 +20,10 @@ package baritone;
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import baritone.api.cache.IWorldProvider;
+import baritone.api.selection.ISelectionManager;
 import baritone.api.utils.IPlayerController;
 import baritone.cache.WorldProvider;
+import baritone.selection.SelectionManager;
 import baritone.utils.player.ServerPlayerController;
 import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
@@ -34,6 +36,7 @@ public final class AutomatoneComponents implements EntityComponentInitializer, W
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
         registry.registerFor(ServerPlayerEntity.class, IBaritone.KEY, BaritoneAPI.getProvider().componentFactory());
+        registry.registerFor(ServerPlayerEntity.class, ISelectionManager.KEY, SelectionManager::new);
         registry.registerFor(ServerPlayerEntity.class, IPlayerController.KEY, ServerPlayerController::new);
     }
 

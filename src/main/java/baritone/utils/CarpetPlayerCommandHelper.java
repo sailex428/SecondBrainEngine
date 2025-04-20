@@ -21,6 +21,7 @@ import baritone.Baritone;
 import baritone.api.IBaritone;
 import baritone.api.utils.ICommandHelper;
 import baritone.api.utils.MoveDirection;
+import carpet.fakes.ServerPlayerInterface;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -98,15 +99,9 @@ public class CarpetPlayerCommandHelper implements ICommandHelper {
     }
 
     @Override
-    public void executeDrop(int slot) {
-        buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " drop slot " + slot);
-    }
-
-    @Override
-    public void executeDropAll(int slot) {
-        buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " dropStack slot " + slot);
+    public void executeDrop(int slot, boolean dropAll) {
+        ServerPlayerInterface player = ((ServerPlayerInterface) baritone.getPlayerContext().entity());
+        player.getActionPack().drop(slot, dropAll);
     }
 
     @Override

@@ -27,23 +27,24 @@ import baritone.api.command.exception.CommandException;
 import baritone.api.command.exception.CommandNotEnoughArgumentsException;
 import baritone.api.command.manager.ICommandManager;
 import baritone.command.argument.ArgConsumer;
-import baritone.command.manager.BaritoneArgumentType;
 import baritone.command.manager.BaritoneCommandManager;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.Message;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.BaseText;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Pair;
 
@@ -92,7 +93,6 @@ public final class DefaultCommands {
                 new BlacklistCommand(),
                 new FindCommand(),
                 new MineCommand(),
-                new ClickCommand(),
                 new SurfaceCommand(),
                 new ThisWayCommand(),
                 new WaypointsCommand(),
@@ -103,31 +103,33 @@ public final class DefaultCommands {
         for (ICommand command : commands) {
             ICommandManager.registry.register(command);
         }
-        CommandRegistrationCallback.EVENT.register(((dispatcher, dedicated) -> register(dispatcher)));
+        CommandRegistrationCallback.EVENT.register(((dispatcher, ctx, dedicated) -> register(dispatcher)));
     }
 
     private static void logRanCommand(ServerCommandSource source, String command, String rest) {
         if (BaritoneAPI.getGlobalSettings().echoCommands.get()) {
             String msg = command + rest;
             String toDisplay = BaritoneAPI.getGlobalSettings().censorRanCommands.get() ? command + " ..." : msg;
-            BaseText component = new LiteralText(String.format("> %s", toDisplay));
-            component.setStyle(component.getStyle()
-                    .withFormatting(Formatting.WHITE)
-                    .withHoverEvent(new HoverEvent(
-                            HoverEvent.Action.SHOW_TEXT,
-                            new LiteralText("Click to rerun command")
-                    ))
-                    .withClickEvent(new ClickEvent(
-                            ClickEvent.Action.RUN_COMMAND,
-                            FORCE_COMMAND_PREFIX + msg
-                    )));
-            source.sendFeedback(component, false);
+            source.sendFeedback(() -> {
+                MutableText component = Text.literal(String.format("> %s", toDisplay));
+                component.setStyle(component.getStyle()
+                        .withFormatting(Formatting.WHITE)
+                        .withHoverEvent(new HoverEvent(
+                                HoverEvent.Action.SHOW_TEXT,
+                                Text.literal("Click to rerun command")
+                        ))
+                        .withClickEvent(new ClickEvent(
+                                ClickEvent.Action.RUN_COMMAND,
+                                FORCE_COMMAND_PREFIX + msg
+                        )));
+                return component;
+            }, false);
         }
     }
 
     public static boolean runCommand(ServerCommandSource source, String msg, IBaritone baritone) throws CommandException {
         if (msg.trim().equalsIgnoreCase("damn")) {
-            source.sendFeedback(new LiteralText("daniel"), false);
+            source.sendFeedback(() -> Text.literal("daniel"), false);
             return false;
         } else if (msg.trim().equalsIgnoreCase("orderpizza")) {
             Automatone.LOGGER.fatal("No pizza :(");
@@ -178,15 +180,15 @@ public final class DefaultCommands {
     private static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("automatone")
                 .requires(s -> s.hasPermissionLevel(2))
-                .then(CommandManager.argument("command", BaritoneArgumentType.baritone()).executes(command ->
-                        runCommand(command.getSource(), command.getSource().getEntityOrThrow(), BaritoneArgumentType.getCommand(command, "command"))))
+                .then(CommandManager.argument("command", StringArgumentType.greedyString()).executes(command ->
+                        runCommand(command.getSource(), command.getSource().getEntityOrThrow(), StringArgumentType.getString(command,"command"))))
         );
     }
 
     private static int runCommand(ServerCommandSource source, Entity target, String command) throws CommandSyntaxException {
         if (!(target instanceof LivingEntity)) throw EntityArgumentType.ENTITY_NOT_FOUND_EXCEPTION.create();
         try {
-            return runCommand(source, command, BaritoneAPI.getProvider().getBaritone((LivingEntity) target)) ? Command.SINGLE_SUCCESS : 0;
+            return runCommand(source, command, BaritoneAPI.getProvider().getBaritone((ServerPlayerEntity) target)) ? Command.SINGLE_SUCCESS : 0;
         } catch (baritone.api.command.exception.CommandException e) {
             throw BARITONE_COMMAND_FAILED_EXCEPTION.create(e.handle());
         }

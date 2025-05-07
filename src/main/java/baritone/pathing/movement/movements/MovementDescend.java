@@ -31,9 +31,13 @@ import baritone.pathing.movement.MovementState;
 import baritone.utils.BlockStateInterface;
 import baritone.utils.pathing.MutableMoveResult;
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FallingBlock;
+import net.minecraft.block.ScaffoldingBlock;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.ArrayUtils;
@@ -115,8 +119,8 @@ public class MovementDescend extends Movement {
             return;
         }
 
-        Block fromDown = context.get(x, y - 1, z).getBlock();
-        if (BlockTags.CLIMBABLE.contains(fromDown)) {
+        BlockState fromDown = context.get(x, y - 1, z);
+        if (fromDown.isIn(BlockTags.CLIMBABLE)) {
             return;
         }
 
@@ -146,7 +150,7 @@ public class MovementDescend extends Movement {
         // we walk half the block plus 0.3 to get to the edge, then we walk the other 0.2 while simultaneously falling (math.max because of how it's in parallel)
         boolean water = MovementHelper.isWater(destUp);    // TODO improve water detection
         double waterModifier = water ? context.waterWalkSpeed / WALK_ONE_BLOCK_COST : 1;
-        double walk = waterModifier * (WALK_OFF_BLOCK_COST / fromDown.getVelocityMultiplier());
+        double walk = waterModifier * (WALK_OFF_BLOCK_COST / fromDown.getBlock().getVelocityMultiplier());
         double fall = waterModifier * Math.max(FALL_N_BLOCKS_COST[1], CENTER_AFTER_FALL_COST);
         totalCost += walk + fall;
         res.x = destX;
@@ -175,8 +179,7 @@ public class MovementDescend extends Movement {
         int effectiveStartHeight = y;
         for (int fallHeight = 3; true; fallHeight++) {
             int newY = y - fallHeight;
-            if (newY < 0) {
-                // TODO handle larger worlds
+            if (newY < context.worldBottom) {
                 // when pathing in the end, where you could plausibly fall into the void
                 // this check prevents it from getting the block at y=-1 and crashing
                 return false;
@@ -279,7 +282,7 @@ public class MovementDescend extends Movement {
             state.setTarget(new MovementState.MovementTarget(
                     new Rotation(RotationUtils.calcRotationFromVec3d(ctx.headPos(),
                             new Vec3d(destX, dest.getY(), destZ),
-                            new Rotation(player.yaw, player.pitch)).getYaw(), player.pitch),
+                            new Rotation(player.getYaw(), player.getPitch())).getYaw(), player.getPitch()),
                     false
             )).setInput(Input.MOVE_FORWARD, true);
             return state;

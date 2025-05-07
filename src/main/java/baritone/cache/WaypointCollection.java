@@ -22,11 +22,18 @@ import baritone.api.cache.IWaypointCollection;
 import baritone.api.cache.Waypoint;
 import baritone.api.utils.BetterBlockPos;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.NbtList;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,43 +51,43 @@ public class WaypointCollection implements IWaypointCollection {
                 .collect(Collectors.toMap(Function.identity(), t -> new HashSet<>())));
     }
 
-    public void readFromNbt(CompoundTag nbt) {
-        for (Waypoint.Tag tag : Waypoint.Tag.values()) {
-            this.waypoints.put(tag, readFromNbt(tag, nbt.getList(tag.name(), NbtType.COMPOUND)));
-        }
-    }
+//    public void readFromNbt(NbtCompound nbt) {
+//        for (Waypoint.Tag tag : Waypoint.Tag.values()) {
+//            this.waypoints.put(tag, readFromNbt(tag, nbt.getList(tag.name(), NbtType.COMPOUND)));
+//        }
+//    }
+//
+//    private synchronized Set<IWaypoint> readFromNbt(Waypoint.Tag tag, NbtList nbt) {
+//        Set<IWaypoint> ret = new HashSet<>();
+//        for (int i = 0; i < nbt.size(); i++) {
+//            NbtCompound in = nbt.getCompound(i);
+//            String name = in.getString("name");
+//            long creationTimestamp = in.getLong("created");
+//            BetterBlockPos pos = new BetterBlockPos(NbtHelper.toBlockPos(in.getCompound("pos")));
+//            ret.add(new Waypoint(name, tag, pos, creationTimestamp));
+//        }
+//        return ret;
+//    }
 
-    private synchronized Set<IWaypoint> readFromNbt(Waypoint.Tag tag, ListTag nbt) {
-        Set<IWaypoint> ret = new HashSet<>();
-        for (int i = 0; i < nbt.size(); i++) {
-            CompoundTag in = nbt.getCompound(i);
-            String name = in.getString("name");
-            long creationTimestamp = in.getLong("created");
-            BetterBlockPos pos = new BetterBlockPos(NbtHelper.toBlockPos(in.getCompound("pos")));
-            ret.add(new Waypoint(name, tag, pos, creationTimestamp));
-        }
-        return ret;
-    }
-
-    public CompoundTag toNbt() {
-        CompoundTag nbt = new CompoundTag();
-        for (IWaypoint.Tag waypointTag : IWaypoint.Tag.values()) {
-            nbt.put(waypointTag.name(), save(waypointTag));
-        }
-        return nbt;
-    }
-
-    private synchronized ListTag save(Waypoint.Tag waypointTag) {
-        ListTag list = new ListTag();
-        for (IWaypoint waypoint : this.waypoints.get(waypointTag)) {
-            CompoundTag serializedWaypoint = new CompoundTag();
-            serializedWaypoint.putString("name", waypoint.getName());
-            serializedWaypoint.putLong("created", waypoint.getCreationTimestamp());
-            serializedWaypoint.put("pos", NbtHelper.fromBlockPos(waypoint.getLocation()));
-            list.add(serializedWaypoint);
-        }
-        return list;
-    }
+//    public NbtCompound toNbt() {
+//        NbtCompound nbt = new NbtCompound();
+//        for (IWaypoint.Tag waypointTag : IWaypoint.Tag.values()) {
+//            nbt.put(waypointTag.name(), save(waypointTag));
+//        }
+//        return nbt;
+//    }
+//
+//    private synchronized NbtList save(Waypoint.Tag waypointTag) {
+//        NbtList list = new NbtList();
+//        for (IWaypoint waypoint : this.waypoints.get(waypointTag)) {
+//            NbtCompound serializedWaypoint = new NbtCompound();
+//            serializedWaypoint.putString("name", waypoint.getName());
+//            serializedWaypoint.putLong("created", waypoint.getCreationTimestamp());
+//            serializedWaypoint.put("pos", NbtHelper.fromBlockPos(waypoint.getLocation()));
+//            list.add(serializedWaypoint);
+//        }
+//        return list;
+//    }
 
     @Override
     public void addWaypoint(IWaypoint waypoint) {

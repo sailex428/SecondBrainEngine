@@ -19,7 +19,6 @@ package baritone.utils.player;
 
 import baritone.api.utils.IPlayerController;
 import baritone.utils.accessor.IServerPlayerInteractionManager;
-import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
@@ -40,7 +39,9 @@ import net.minecraft.world.World;
  * @since 12/14/2018
  */
 public class ServerPlayerController implements IPlayerController {
+
     private final ServerPlayerEntity player;
+    private int sequence;
 
     public ServerPlayerController(ServerPlayerEntity player) {
         this.player = player;
@@ -57,7 +58,7 @@ public class ServerPlayerController implements IPlayerController {
         if (interactionManager.isMining()) {
             int progress = interactionManager.getBlockBreakingProgress();
             if (progress >= 10) {
-                this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, side, this.player.server.getWorldHeight());
+                this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, side, this.player.getWorld().getTopY(), sequence++);
             }
             return true;
         }
@@ -68,7 +69,7 @@ public class ServerPlayerController implements IPlayerController {
     public void resetBlockRemoving() {
         IServerPlayerInteractionManager interactionManager = (IServerPlayerInteractionManager) this.player.interactionManager;
         if (interactionManager.isMining()) {
-            this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, Direction.UP, this.player.server.getWorldHeight());
+            this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, Direction.UP, this.player.getWorld().getTopY(), sequence++);
         }
     }
 
@@ -79,22 +80,22 @@ public class ServerPlayerController implements IPlayerController {
 
     @Override
     public ActionResult processRightClickBlock(PlayerEntity player, World world, Hand hand, BlockHitResult result) {
-        return this.player.interactionManager.interactBlock(this.player, this.player.world, this.player.getStackInHand(hand), hand, result);
+        return this.player.interactionManager.interactBlock(this.player, this.player.getWorld(), this.player.getStackInHand(hand), hand, result);
     }
 
     @Override
     public ActionResult processRightClick(PlayerEntity player, World world, Hand hand) {
-        return this.player.interactionManager.interactItem(this.player, this.player.world, this.player.getStackInHand(hand), hand);
+        return this.player.interactionManager.interactItem(this.player, this.player.getWorld(), this.player.getStackInHand(hand), hand);
     }
 
     @Override
     public boolean clickBlock(BlockPos loc, Direction face) {
-        BlockState state = this.player.world.getBlockState(loc);
+        BlockState state = this.player.getWorld().getBlockState(loc);
         if (state.isAir()) return false;
 
-        this.player.interactionManager.processBlockBreakingAction(loc, PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, face, this.player.server.getWorldHeight());
+        this.player.interactionManager.processBlockBreakingAction(loc, PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, face, this.player.getWorld().getTopY(), sequence++);
         // Success = starting the mining process or insta-mining
-        return ((IServerPlayerInteractionManager) this.player.interactionManager).isMining() || this.player.world.isAir(loc);
+        return ((IServerPlayerInteractionManager) this.player.interactionManager).isMining() || this.player.getWorld().isAir(loc);
     }
 
     @Override
@@ -104,6 +105,6 @@ public class ServerPlayerController implements IPlayerController {
 
     @Override
     public double getBlockReachDistance() {
-        return ReachEntityAttributes.getReachDistance(this.player, this.getGameType().isCreative() ? 5.0 : 4.5);
+        return 4.5;
     }
 }

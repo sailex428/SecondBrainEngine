@@ -27,13 +27,13 @@ import baritone.api.utils.RayTraceUtils;
 import baritone.utils.accessor.ServerChunkManagerAccessor;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SpiderEntity;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
@@ -48,21 +48,21 @@ import java.util.stream.Stream;
 
 public class EntityContext implements IEntityContext {
 
-    private final LivingEntity entity;
+    private final ServerPlayerEntity entity;
     private @Nullable Supplier<List<Avoidance>> avoidanceFinder;
 
-    public EntityContext(LivingEntity entity) {
+    public EntityContext(ServerPlayerEntity entity) {
         this.entity = entity;
     }
 
     @Override
-    public LivingEntity entity() {
+    public ServerPlayerEntity entity() {
         return this.entity;
     }
 
     @Override
     public @Nullable PlayerInventory inventory() {
-        return entity instanceof PlayerEntity ? ((PlayerEntity) entity).inventory : null;
+        return entity.getInventory();
     }
 
     @Override
@@ -72,7 +72,7 @@ public class EntityContext implements IEntityContext {
 
     @Override
     public ServerWorld world() {
-        World world = this.entity.world;
+        World world = this.entity.getWorld();
         if (world.isClient) throw new IllegalStateException();
         return (ServerWorld) world;
     }

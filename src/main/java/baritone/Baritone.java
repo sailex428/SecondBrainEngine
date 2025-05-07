@@ -23,21 +23,34 @@ import baritone.api.Settings;
 import baritone.api.cache.IWorldProvider;
 import baritone.api.event.listener.IEventBus;
 import baritone.api.process.IBaritoneProcess;
+import baritone.api.utils.ICommandHelper;
 import baritone.api.utils.IEntityContext;
-import baritone.behavior.*;
+import baritone.behavior.Behavior;
+import baritone.behavior.InventoryBehavior;
+import baritone.behavior.LookBehavior;
+import baritone.behavior.MemoryBehavior;
+import baritone.behavior.PathingBehavior;
 import baritone.cache.WorldProvider;
 import baritone.command.defaults.DefaultCommands;
 import baritone.command.manager.BaritoneCommandManager;
 import baritone.event.GameEventHandler;
-import baritone.process.*;
+import baritone.process.BackfillProcess;
+import baritone.process.BuilderProcess;
+import baritone.process.CustomGoalProcess;
+import baritone.process.ExploreProcess;
+import baritone.process.FarmProcess;
+import baritone.process.FollowProcess;
+import baritone.process.GetToBlockProcess;
+import baritone.process.MineProcess;
 import baritone.render.ClientPathingBehaviour;
 import baritone.utils.BlockStateInterface;
+import baritone.utils.CarpetPlayerCommandHelper;
 import baritone.utils.InputOverrideHandler;
 import baritone.utils.PathingControlManager;
 import baritone.utils.player.EntityContext;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
@@ -71,13 +84,15 @@ public class Baritone implements IBaritone {
     private final BaritoneCommandManager commandManager;
 
     private final IEntityContext playerContext;
-    private final WorldProvider worldProvider;
 
     private final @Nullable ClientPathingBehaviour clientPathingBehaviour;
 
     public BlockStateInterface bsi;
 
-    public Baritone(LivingEntity player) {
+    private final CarpetPlayerCommandHelper commandHelper;
+
+    public Baritone(ServerPlayerEntity player) {
+        this.commandHelper = new CarpetPlayerCommandHelper(this, player);
         this.settings = new Settings();
         this.gameEventHandler = new GameEventHandler(this);
 
@@ -105,10 +120,9 @@ public class Baritone implements IBaritone {
             this.pathingControlManager.registerProcess(farmProcess = new FarmProcess(this));
         }
 
-        this.worldProvider = (WorldProvider) IWorldProvider.KEY.get(player.world);
         this.commandManager = new BaritoneCommandManager(this);
         this.execControlProcess = DefaultCommands.controlCommands.registerProcess(this);
-        this.clientPathingBehaviour = player.world.isClient ? new ClientPathingBehaviour(player) : null;
+        this.clientPathingBehaviour = player.getWorld().isClient ? new ClientPathingBehaviour(player) : null;
     }
 
     @Override
@@ -183,7 +197,7 @@ public class Baritone implements IBaritone {
 
     @Override
     public WorldProvider getWorldProvider() {
-        return this.worldProvider;
+        return (WorldProvider) IWorldProvider.KEY.get(this.getPlayerContext().world());
     }
 
     @Override
@@ -237,41 +251,22 @@ public class Baritone implements IBaritone {
     }
 
     @Override
-    public void readFromNbt(CompoundTag tag) {
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
         // NO-OP
     }
 
     @Override
-    public void writeToNbt(CompoundTag tag) {
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
         // NO-OP
-    }
-
-    @Override
-    public boolean shouldSyncWith(ServerPlayerEntity player) {
-        return player == this.playerContext.entity()
-                || (settings.syncWithOps.get() && player.server.getPermissionLevel(player.getGameProfile()) >= 2);
-    }
-
-    @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
-        buf.writeBoolean(this.isActive());
-        this.pathingBehavior.writeToPacket(buf);
-    }
-
-    @Override
-    public void applySyncPacket(PacketByteBuf buf) {
-        assert this.clientPathingBehaviour != null : "applySyncPacket called on a server world";
-        boolean active = buf.readBoolean();
-        if (active) {
-            AutomatoneClient.renderList.add(this);
-        } else {
-            AutomatoneClient.renderList.remove(this);
-        }
-        this.clientPathingBehaviour.readFromPacket(buf);
     }
 
     @Override
     public void serverTick() {
         this.getGameEventHandler().onTickServer();
+    }
+
+    @Override
+    public ICommandHelper getCommandHelper() {
+        return this.commandHelper;
     }
 }

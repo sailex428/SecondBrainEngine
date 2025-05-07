@@ -1,6 +1,5 @@
 /*
- * Requiem
- * Copyright (C) 2017-2021 Ladysnake
+ * Copyright (C) 2025 sailex428
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +31,9 @@
  * The GNU General Public License gives permission to release a modified version without this exception;
  * this exception also makes it possible to release a modified version which carries forward this exception.
  */
-package baritone.api.fakeplayer;
+package baritone.api.npc;
 
 import baritone.api.IBaritone;
-import com.mojang.authlib.GameProfile;
-import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.CheckForNull;
-import java.util.UUID;
 
 /**
  * Player entities that implement this class:
@@ -49,15 +43,7 @@ import java.util.UUID;
  *     <li>should be counted as fake players by other mods</li>
  * </ul>
  */
-public interface AutomatoneFakePlayer {
-    @Nullable GameProfile getDisplayProfile();
-
-    void setDisplayProfile(@CheckForNull GameProfile profile);
-
-    @Nullable
-    default UUID getOwnerUuid() {
-        return this.getDisplayProfile() != null ? this.getDisplayProfile().getId() : null;
-    }
+public interface AutomatoneNPC {
 
     default IBaritone getBaritone() {
         return IBaritone.KEY.get(this);

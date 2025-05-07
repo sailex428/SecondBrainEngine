@@ -15,18 +15,15 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ladysnake.otomaton;
+package io.github.ladysnake.otomaton.mixin;
 
-import baritone.api.fakeplayer.FakeClientPlayerEntity;
-import baritone.api.fakeplayer.FakePlayers;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.world.SleepManager;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-public class OtomatonClient implements ClientModInitializer {
-    @Override
-    public void onInitializeClient() {
-        FakePlayers.registerClientFactory(Otomaton.FAKE_PLAYER, FakeClientPlayerEntity::new);
-        EntityRendererRegistry.INSTANCE.register(Otomaton.FAKE_PLAYER, (r, it) -> new PlayerEntityRenderer(r));
-    }
+@Mixin(ServerWorld.class)
+public interface ServerWorldAccessor {
+    @Accessor("sleepManager")
+    SleepManager requiem$getSleepManager();
 }

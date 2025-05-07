@@ -20,17 +20,23 @@ package baritone.utils;
 import baritone.api.IBaritone;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -89,7 +95,14 @@ public class ToolSet {
     }
 
     public boolean hasSilkTouch(ItemStack stack) {
-        return EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, stack) > 0;
+        return getEnchantmentLevel(Enchantments.SILK_TOUCH, stack, player) > 0;
+    }
+
+    private static int getEnchantmentLevel(RegistryKey<Enchantment> enchantmentKey, ItemStack stack, Entity entity) {
+        Enchantment enchantment = entity.getRegistryManager().get(RegistryKeys.ENCHANTMENT).get(enchantmentKey);
+        ItemEnchantmentsComponent component = stack.getEnchantments();
+        Optional<RegistryEntry<Enchantment>> enchantmentHolder = component.getEnchantments().stream().filter(holder -> holder.value().equals(enchantment)).findFirst();
+        return enchantmentHolder.map(component::getLevel).orElse(0);
     }
 
     /**
@@ -111,7 +124,7 @@ public class ToolSet {
         possible, this lets us make pathing depend on the actual tool to be used (if auto tool is disabled)
         */
         if (baritone.settings().disableAutoTool.get() && pathingCalculation) {
-            return player.inventory.selectedSlot;
+            return player.getInventory().selectedSlot;
         }
 
         int best = 0;
@@ -120,7 +133,7 @@ public class ToolSet {
         boolean bestSilkTouch = false;
         BlockState blockState = b.getDefaultState();
         for (int i = 0; i < 9; i++) {
-            ItemStack itemStack = player.inventory.getStack(i);
+            ItemStack itemStack = player.getInventory().getStack(i);
             if (!baritone.settings().useSwordToMine.get() && itemStack.getItem() instanceof SwordItem) {
                 continue;
             }
@@ -128,7 +141,7 @@ public class ToolSet {
             if (baritone.settings().itemSaver.get() && itemStack.getDamage() >= itemStack.getMaxDamage() && itemStack.getMaxDamage() > 1) {
                 continue;
             }
-            double speed = calculateSpeedVsBlock(itemStack, blockState);
+            double speed = calculateSpeedVsBlock(itemStack, blockState, player);
             boolean silkTouch = hasSilkTouch(itemStack);
             if (speed > highestSpeed) {
                 highestSpeed = speed;
@@ -156,12 +169,12 @@ public class ToolSet {
      * @return A double containing the destruction ticks with the best tool
      */
     private double getBestDestructionTime(Block b) {
-        ItemStack stack = player.inventory.getStack(getBestSlot(b, false, true));
-        return calculateSpeedVsBlock(stack, b.getDefaultState()) * avoidanceMultiplier(b);
+        ItemStack stack = player.getInventory().getStack(getBestSlot(b, false, true));
+        return calculateSpeedVsBlock(stack, b.getDefaultState(), player) * avoidanceMultiplier(b);
     }
 
     private double avoidanceMultiplier(Block b) {
-        return baritone.settings().blocksToAvoidBreaking.get().contains(b) ? 0.1 : 1;
+        return b.getRegistryEntry().isIn(baritone.settings().blocksToAvoidBreaking.get()) ? 0.1 : 1;
     }
 
     /**
@@ -172,7 +185,7 @@ public class ToolSet {
      * @param state the blockstate to be mined
      * @return how long it would take in ticks
      */
-    public static double calculateSpeedVsBlock(ItemStack item, BlockState state) {
+    public static double calculateSpeedVsBlock(ItemStack item, BlockState state, Entity entity) {
         float hardness = state.getHardness(null, null);
         if (hardness < 0) {
             return -1;
@@ -180,14 +193,14 @@ public class ToolSet {
 
         float speed = item.getMiningSpeedMultiplier(state);
         if (speed > 1) {
-            int effLevel = EnchantmentHelper.getLevel(Enchantments.EFFICIENCY, item);
+            int effLevel = getEnchantmentLevel(Enchantments.EFFICIENCY, item, entity);
             if (effLevel > 0 && !item.isEmpty()) {
                 speed += effLevel * effLevel + 1;
             }
         }
 
         speed /= hardness;
-        if (!state.isToolRequired() || (!item.isEmpty() && item.isEffectiveOn(state))) {
+        if (!state.isToolRequired() || (!item.isEmpty() && item.isSuitableFor(state))) {
             return speed / 30;
         } else {
             return speed / 100;
@@ -210,18 +223,10 @@ public class ToolSet {
         StatusEffectInstance fatigueEffect = player.getStatusEffect(StatusEffects.MINING_FATIGUE);
         if (fatigueEffect != null) {
             switch (fatigueEffect.getAmplifier()) {
-                case 0:
-                    speed *= 0.3;
-                    break;
-                case 1:
-                    speed *= 0.09;
-                    break;
-                case 2:
-                    speed *= 0.0027; // you might think that 0.09*0.3 = 0.027 so that should be next, that would make too much sense. it's 0.0027.
-                    break;
-                default:
-                    speed *= 0.00081;
-                    break;
+                case 0 -> speed *= 0.3;
+                case 1 -> speed *= 0.09;
+                case 2 -> speed *= 0.0027; // you might think that 0.09*0.3 = 0.027 so that should be next, that would make too much sense. it's 0.0027.
+                default -> speed *= 0.00081;
             }
         }
         return speed;

@@ -29,8 +29,12 @@ import baritone.api.command.exception.CommandException;
 import baritone.api.command.exception.CommandInvalidStateException;
 import baritone.api.command.exception.CommandInvalidTypeException;
 import baritone.api.command.helpers.TabCompleteHelper;
-import baritone.api.event.events.RenderEvent;
-import baritone.api.schematic.*;
+import baritone.api.schematic.CompositeSchematic;
+import baritone.api.schematic.FillSchematic;
+import baritone.api.schematic.ISchematic;
+import baritone.api.schematic.ReplaceSchematic;
+import baritone.api.schematic.ShellSchematic;
+import baritone.api.schematic.WallsSchematic;
 import baritone.api.selection.ISelection;
 import baritone.api.selection.ISelectionManager;
 import baritone.api.utils.BetterBlockPos;
@@ -41,13 +45,17 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -247,8 +255,9 @@ public class SelCommand extends Command {
         );
     }
 
-    public void renderSelectionBox(RenderEvent event) {
+    public void renderSelectionBox() {
         Settings settings = BaritoneAPI.getGlobalSettings();
+        BetterBlockPos pos1 = this.pos1;
         if (!settings.renderSelectionCorners.get() || pos1 == null) {
             return;
         }
@@ -257,7 +266,8 @@ public class SelCommand extends Command {
         float lineWidth = settings.selectionLineWidth.get();
         boolean ignoreDepth = settings.renderSelectionIgnoreDepth.get();
         IRenderer.startLines(color, opacity, lineWidth, ignoreDepth);
-        IRenderer.drawAABB(event.getModelViewStack(), new Box(pos1, pos1.add(1, 1, 1)));
+        BlockPos pos2 = pos1.add(1, 1, 1);
+        IRenderer.drawAABB(new Box(pos1.x, pos1.y, pos1.x, pos2.getX(), pos2.getY(), pos2.getZ()));
         IRenderer.endLines(ignoreDepth);
     }
 

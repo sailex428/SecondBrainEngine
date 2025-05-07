@@ -18,7 +18,8 @@
 package baritone.cache;
 
 import baritone.api.cache.IWorldProvider;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 
 /**
@@ -38,12 +39,12 @@ public class WorldProvider implements IWorldProvider {
     }
 
     @Override
-    public void readFromNbt(CompoundTag tag) {
-        this.currentWorld.readFromNbt(tag);
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
+        //this.currentWorld.readFromNbt(tag);
     }
 
     @Override
-    public void writeToNbt(CompoundTag tag) {
-        this.currentWorld.writeToNbt(tag);
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
+        //this.currentWorld.writeToNbt(tag);
     }
 }

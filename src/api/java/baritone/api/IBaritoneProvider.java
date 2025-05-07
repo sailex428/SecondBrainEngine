@@ -21,8 +21,8 @@ import baritone.api.cache.IWorldScanner;
 import baritone.api.command.ICommand;
 import baritone.api.command.ICommandSystem;
 import baritone.api.schematic.ISchematicSystem;
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactory;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
+import org.ladysnake.cca.api.v3.component.ComponentFactory;
 
 /**
  * Provides the present {@link IBaritone} instances, as well as non-baritone instance related APIs.
@@ -32,12 +32,12 @@ import net.minecraft.entity.LivingEntity;
 public interface IBaritoneProvider {
 
     /**
-     * Provides the {@link IBaritone} instance for a given {@link LivingEntity}.
+     * Provides the {@link IBaritone} instance for a given {@link ServerPlayerEntity}.
      *
      * @param player The player
      * @return The {@link IBaritone} instance.
      */
-    IBaritone getBaritone(LivingEntity player);
+    IBaritone getBaritone(ServerPlayerEntity player);
 
     /**
      * Returns the {@link IWorldScanner} instance. This is not a type returned by
@@ -62,5 +62,5 @@ public interface IBaritoneProvider {
 
     Settings getGlobalSettings();
 
-    <E extends LivingEntity> EntityComponentFactory<IBaritone, E> componentFactory();
+    <E extends ServerPlayerEntity> ComponentFactory<E, IBaritone> componentFactory();
 }

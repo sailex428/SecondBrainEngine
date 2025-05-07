@@ -646,24 +646,4 @@ public class PathExecutor implements IPathExecutor {
     public boolean isSprinting() {
         return sprintNextTick;
     }
-
-    public static void writeToPacket(PathExecutor p, PacketByteBuf buf) {
-        if (p == null) {
-            buf.writeInt(-1);
-            return;
-        }
-        buf.writeInt(p.pathPosition);
-        writePositions(p.getPath().positions(), buf);
-        writePositions(p.toBreak(), buf);
-        writePositions(p.toPlace(), buf);
-        writePositions(p.toWalkInto(), buf);
-    }
-
-    private static void writePositions(Collection<? extends BlockPos> positions, PacketByteBuf buf) {
-        buf.writeVarInt(positions.size());
-
-        for (BlockPos position : positions) {
-            buf.writeBlockPos(position);
-        }
-    }
 }

@@ -15,21 +15,24 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.launch.mixins;
+package baritone.launch.mixins.player;
 
-import baritone.api.IBaritone;
-import baritone.behavior.PathingBehavior;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.world.ServerWorld;
+import baritone.api.npc.AutomatoneNPC;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.SleepManager;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(ServerWorld.class)
-public abstract class MixinServerWorld {
-    @Inject(method = "unloadEntity", at = @At("RETURN"))
-    private void unloadEntity(Entity entity, CallbackInfo ci) {
-        IBaritone.KEY.maybeGet(entity).ifPresent(b -> ((PathingBehavior) b.getPathingBehavior()).shutdown());
+@Mixin(SleepManager.class)
+public abstract class SleepManagerMixin {
+    @Shadow private int total;
+
+    @ModifyVariable(method = "update", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/server/world/SleepManager;total:I", ordinal = 1, shift = At.Shift.AFTER))
+    private ServerPlayerEntity captureSleepingPlayer(ServerPlayerEntity player) {
+        if (player instanceof AutomatoneNPC) this.total--;
+        return player;
     }
 }

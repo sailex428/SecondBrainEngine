@@ -23,13 +23,21 @@ import baritone.api.utils.BlockOptionalMetaLookup;
 import baritone.api.utils.IEntityContext;
 import baritone.utils.accessor.ServerChunkManagerAccessor;
 import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.*;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkManager;
+import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.PalettedContainer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public enum WorldScanner implements IWorldScanner {
@@ -95,9 +103,7 @@ public enum WorldScanner implements IWorldScanner {
         if (filter.blocks().isEmpty()) {
             return Collections.emptyList();
         }
-
-        ServerChunkManager chunkProvider = ctx.world().getChunkManager();
-        Chunk chunk = chunkProvider.getChunk(pos.x, pos.z, ChunkStatus.FULL, false);
+        Chunk chunk = ctx.world().getChunk(pos.x, pos.z, ChunkStatus.FULL, false);
         int playerY = ctx.feetPos().getY();
 
         if (!(chunk instanceof WorldChunk) || ((WorldChunk) chunk).isEmpty()) {
@@ -155,7 +161,7 @@ public enum WorldScanner implements IWorldScanner {
         for (int yIndex = 0; yIndex < chunkInternalStorageArray.length; yIndex++) {
             int y0 = coordinateIterationOrder[yIndex];
             ChunkSection section = chunkInternalStorageArray[y0];
-            if (section == null || ChunkSection.isEmpty(section)) {
+            if (section == null || section.isEmpty()) {
                 continue;
             }
             // No need to waste CPU cycles if the section does not contain any block of the right kind
@@ -164,7 +170,7 @@ public enum WorldScanner implements IWorldScanner {
                 continue;
             }
             int yReal = y0 << 4;
-            PalettedContainer<BlockState> bsc = section.getContainer();
+            PalettedContainer<BlockState> bsc = section.getBlockStateContainer();
             for (int yy = 0; yy < 16; yy++) {
                 for (int z = 0; z < 16; z++) {
                     for (int x = 0; x < 16; x++) {

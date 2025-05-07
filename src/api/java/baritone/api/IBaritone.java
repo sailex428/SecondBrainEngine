@@ -24,16 +24,15 @@ import baritone.api.command.manager.ICommandManager;
 import baritone.api.event.listener.IEventBus;
 import baritone.api.pathing.calc.IPathingControlManager;
 import baritone.api.process.*;
+import baritone.api.utils.ICommandHelper;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.IInputOverrideHandler;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -45,8 +44,8 @@ import java.util.stream.Stream;
  * @author Brady
  * @since 9/29/2018
  */
-public interface IBaritone extends AutoSyncedComponent, ServerTickingComponent {
-    ComponentKey<IBaritone> KEY = ComponentRegistry.getOrCreate(new Identifier("automatone", "core"), IBaritone.class);
+public interface IBaritone extends ServerTickingComponent {
+    ComponentKey<IBaritone> KEY = ComponentRegistry.getOrCreate(Identifier.of("automatone", "core"), IBaritone.class);
 
     /**
      * @return The {@link IPathingBehavior} instance
@@ -157,11 +156,11 @@ public interface IBaritone extends AutoSyncedComponent, ServerTickingComponent {
         IEntityContext playerContext = this.getPlayerContext();
         LivingEntity entity = playerContext.entity();
         if (entity instanceof PlayerEntity) {
-            BaseText component = new LiteralText("");
+            MutableText component = Text.literal("");
             // If we are not logging as a Toast
             // Append the prefix to the base component line
             component.append(BaritoneAPI.getPrefix());
-            component.append(new LiteralText(" "));
+            component.append(Text.literal(" "));
             Arrays.asList(components).forEach(component::append);
             ((PlayerEntity) entity).sendMessage(component, false);
         }
@@ -176,7 +175,7 @@ public interface IBaritone extends AutoSyncedComponent, ServerTickingComponent {
      */
     default void logDirect(String message, Formatting color) {
         Stream.of(message.split("\n")).forEach(line -> {
-            BaseText component = new LiteralText(line.replace("\t", "    "));
+            MutableText component = Text.literal(line.replace("\t", "    "));
             component.setStyle(component.getStyle().withFormatting(color));
             logDirect(component);
         });
@@ -195,4 +194,6 @@ public interface IBaritone extends AutoSyncedComponent, ServerTickingComponent {
     boolean isActive();
 
     Settings settings();
+
+    ICommandHelper getCommandHelper();
 }

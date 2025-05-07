@@ -60,7 +60,7 @@ public final class FollowProcess extends BaritoneProcessHelper implements IFollo
             pos = following.getBlockPos();
         } else {
             GoalXZ g = GoalXZ.fromDirection(following.getPos(), baritone.settings().followOffsetDirection.get(), baritone.settings().followOffsetDistance.get());
-            pos = new BlockPos(g.getX(), following.getY(), g.getZ());
+            pos = BlockPos.ofFloored(g.getX(), following.getY(), g.getZ());
         }
         return new GoalNear(pos, baritone.settings().followRadius.get());
     }
@@ -76,7 +76,7 @@ public final class FollowProcess extends BaritoneProcessHelper implements IFollo
         if (entity.equals(ctx.entity())) {
             return false;
         }
-        return entity.equals(ctx.world().getEntityById(entity.getEntityId()));
+        return entity.equals(ctx.world().getEntityById(entity.getId()));
     }
 
     private void scanWorld() {

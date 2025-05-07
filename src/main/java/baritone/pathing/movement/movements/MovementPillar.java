@@ -21,7 +21,11 @@ import baritone.Baritone;
 import baritone.api.IBaritone;
 import baritone.api.Settings;
 import baritone.api.pathing.movement.MovementStatus;
-import baritone.api.utils.*;
+import baritone.api.utils.BetterBlockPos;
+import baritone.api.utils.IEntityContext;
+import baritone.api.utils.Rotation;
+import baritone.api.utils.RotationUtils;
+import baritone.api.utils.VecUtils;
 import baritone.api.utils.input.Input;
 import baritone.pathing.movement.CalculationContext;
 import baritone.pathing.movement.Movement;
@@ -30,12 +34,19 @@ import baritone.pathing.movement.MovementState;
 import baritone.utils.BlockStateInterface;
 import baritone.utils.pathing.MutableMoveResult;
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FallingBlock;
+import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.LadderBlock;
+import net.minecraft.block.ScaffoldingBlock;
+import net.minecraft.block.SlabBlock;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -67,7 +78,7 @@ public class MovementPillar extends Movement {
         int y = start.y;
         int z = start.z;
         EntityDimensions dims = entity.getDimensions(EntityPose.STANDING);
-        int requiredVerticalSpace = MathHelper.ceil(dims.height);
+        int requiredVerticalSpace = MathHelper.ceil(dims.height());
         int requiredSideSpace = CalculationContext.getRequiredSideSpace(dims);
         int sideLength = requiredSideSpace * 2 + 1;
         BetterBlockPos[] ret = new BetterBlockPos[sideLength * sideLength];
@@ -100,7 +111,7 @@ public class MovementPillar extends Movement {
         boolean climbable = isClimbable(context.bsi, x, y, z);
         BlockState fromDown = context.get(x, y - 1, z);
         if (!climbable) {
-            if (BlockTags.CLIMBABLE.contains(fromDown.getBlock())) {
+            if (fromDown.isIn(BlockTags.CLIMBABLE)) {
                 return; // can't pillar from a ladder or vine onto something that isn't also climbable
             }
             if (fromDown.getBlock() instanceof SlabBlock && fromDown.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
@@ -181,8 +192,8 @@ public class MovementPillar extends Movement {
     }
 
     private static boolean isClimbable(BlockStateInterface context, int x, int y, int z) {
-        if (BlockTags.CLIMBABLE.contains(context.get0(x, y, z).getBlock())) return true;
-        if (BlockTags.CLIMBABLE.contains(context.get0(x, y + 1, z).getBlock())) {
+        if (context.get0(x, y, z).isIn(BlockTags.CLIMBABLE)) return true;
+        if (context.get0(x, y + 1, z).isIn(BlockTags.CLIMBABLE)) {
             // you can only use a ladder at head level if you are standing on firm ground
             return MovementHelper.isBlockNormalCube(context.get0(x, y - 1, z));
         }
@@ -229,9 +240,9 @@ public class MovementPillar extends Movement {
         boolean ladder = isClimbable(((Baritone) baritone).bsi, src.x, src.y, src.z);
         Rotation rotation = RotationUtils.calcRotationFromVec3d(ctx.headPos(),
                 VecUtils.getBlockPosCenter(positionToPlace),
-                new Rotation(ctx.entity().yaw, ctx.entity().pitch));
+                new Rotation(ctx.entity().getYaw(), ctx.entity().getPitch()));
         if (!ladder) {
-            state.setTarget(new MovementState.MovementTarget(new Rotation(ctx.entity().yaw, rotation.getPitch()), true));
+            state.setTarget(new MovementState.MovementTarget(new Rotation(ctx.entity().getYaw(), rotation.getPitch()), true));
         }
 
         boolean blockIsThere = MovementHelper.canWalkOn(ctx, src) || ladder;
@@ -285,7 +296,7 @@ public class MovementPillar extends Movement {
             if (!blockIsThere) {
                 BlockState frState = BlockStateInterface.get(ctx, src);
                 // TODO: Evaluate usage of getMaterial().isReplaceable()
-                if (!(frState.isAir() || frState.getMaterial().isReplaceable())) {
+                if (!(frState.isAir() || frState.isReplaceable())) {
                     RotationUtils.reachable(ctx.entity(), src, ctx.playerController().getBlockReachDistance())
                             .map(rot -> new MovementState.MovementTarget(rot, true))
                             .ifPresent(state::setTarget);

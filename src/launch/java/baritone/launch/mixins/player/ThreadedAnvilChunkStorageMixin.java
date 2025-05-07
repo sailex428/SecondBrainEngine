@@ -34,75 +34,34 @@
  */
 package baritone.launch.mixins.player;
 
-import baritone.api.fakeplayer.AutomatoneFakePlayer;
-import net.minecraft.entity.Entity;
+import baritone.api.npc.AutomatoneNPC;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ChunkHolder;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.server.world.ThreadedAnvilChunkStorage;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.WorldChunk;
-import org.spongepowered.asm.mixin.Dynamic;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.server.world.ServerChunkLoadingManager;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-
-@Mixin(ThreadedAnvilChunkStorage.class)
+@Mixin(ServerChunkLoadingManager.class)
 public abstract class ThreadedAnvilChunkStorageMixin {
-    private static final ThreadLocal<List<WeakReference<Entity>>> automatone$rejectedEntities = ThreadLocal.withInitial(ArrayList::new);
-
-    @Shadow
-    @Final
-    private ServerWorld world;
-
-    @Dynamic("Lambda method")
-    @ModifyVariable(method = "method_17227", at = @At("STORE"))
-    private Entity loadFakePlayers(Entity entity, ChunkHolder tmp, Chunk chunk) {
-        if (entity instanceof AutomatoneFakePlayer && !this.world.loadEntity(entity)) {
-            automatone$rejectedEntities.get().add(new WeakReference<>(entity));
-        }
-        return entity;
-    }
-
-    @Dynamic("Lambda method")
-    @Inject(method = "method_17227", at = @At("RETURN"))
-    private void removeRejectedPlayers(ChunkHolder tmp, Chunk chunk, CallbackInfoReturnable<Chunk> cir) {
-        List<WeakReference<Entity>> rejectedEntities = automatone$rejectedEntities.get();
-        WorldChunk ret = (WorldChunk) cir.getReturnValue();
-        for (WeakReference<Entity> ref : rejectedEntities) {
-            Entity entity = ref.get();
-            if (entity != null) {
-                ret.remove(entity);
-            }
-        }
-    }
-
     @Inject(method = "handlePlayerAddedOrRemoved", at = @At("HEAD"), cancellable = true)
     private void handleFakePlayerAddedOrRemoved(ServerPlayerEntity player, boolean added, CallbackInfo ci) {
-        if (added && player instanceof AutomatoneFakePlayer) {
+        if (added && player instanceof AutomatoneNPC) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "updateCameraPosition", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "updatePosition", at = @At("HEAD"), cancellable = true)
     private void updateFakeCameraPosition(ServerPlayerEntity player, CallbackInfo ci) {
-        if (player instanceof AutomatoneFakePlayer) {
+        if (player instanceof AutomatoneNPC) {
             ci.cancel();
         }
     }
 
     @Inject(method = "doesNotGenerateChunks", at = @At("RETURN"), cancellable = true)
     private void doesNotGenerateChunks(ServerPlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
-        if (!cir.getReturnValueZ() && player instanceof AutomatoneFakePlayer) {
+        if (!cir.getReturnValueZ() && player instanceof AutomatoneNPC) {
             cir.setReturnValue(true);
         }
     }

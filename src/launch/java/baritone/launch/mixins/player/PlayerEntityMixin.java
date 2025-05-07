@@ -34,22 +34,51 @@
  */
 package baritone.launch.mixins.player;
 
-import baritone.api.fakeplayer.FakeServerPlayerEntity;
+import baritone.api.npc.AutomatoneNPC;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
+
+    @Shadow @Final @Mutable
+    private GameProfile gameProfile;
+
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    @Inject(method = "shouldSave", at = @At("HEAD"), cancellable = true)
+    private void allowFakePlayerSave(CallbackInfoReturnable<Boolean> cir) {
+        if (this instanceof AutomatoneNPC) {
+            cir.setReturnValue(super.shouldSave());
+        }
+    }
+
+    /**
+     * @reason minecraft overwrites the uuid when reading data, which breaks anything that tries to find this entity after a reload
+     */
+    @Inject(method = "readCustomDataFromNbt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V"))
+    private void bringBackUuid(NbtCompound nbt, CallbackInfo ci) {
+        if (this instanceof AutomatoneNPC) {
+            this.gameProfile = new GameProfile(this.getUuid(), this.gameProfile.getName());
+        }
     }
 
     /**
@@ -65,7 +94,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         at = @At(value = "LOAD")
     )
     private Vec3d cancelKnockbackCancellation(Vec3d previousVelocity, Entity target) {
-        if (target instanceof FakeServerPlayerEntity) {
+        if (target instanceof AutomatoneNPC) {
             return target.getVelocity();
         }
         return previousVelocity;

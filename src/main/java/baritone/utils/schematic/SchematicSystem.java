@@ -21,8 +21,8 @@ import baritone.api.schematic.ISchematicSystem;
 import baritone.api.schematic.format.ISchematicFormat;
 import baritone.utils.schematic.format.DefaultSchematicFormats;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 import java.util.Locale;
@@ -35,11 +35,11 @@ import java.util.Optional;
 public enum SchematicSystem implements ISchematicSystem {
     INSTANCE;
 
-    private final Registry<ISchematicFormat> registry = FabricRegistryBuilder.createSimple(ISchematicFormat.class, new Identifier("automatone", "schematics")).buildAndRegister();
+    private final Registry<ISchematicFormat> registry = FabricRegistryBuilder.createSimple(ISchematicFormat.class, Identifier.of("automatone", "schematics")).buildAndRegister();
 
     SchematicSystem() {
         for (DefaultSchematicFormats s : DefaultSchematicFormats.values()) {
-            Registry.register(this.registry, new Identifier("automatone", s.name().toLowerCase(Locale.ROOT)), s);
+            Registry.register(this.registry, Identifier.of("automatone", s.name().toLowerCase(Locale.ROOT)), s);
         }
     }
 

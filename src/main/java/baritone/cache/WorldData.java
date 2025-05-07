@@ -21,8 +21,8 @@ import baritone.api.cache.ICachedWorld;
 import baritone.api.cache.IContainerMemory;
 import baritone.api.cache.IWaypointCollection;
 import baritone.api.cache.IWorldData;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.World;
 
 /**
@@ -43,15 +43,15 @@ public class WorldData implements IWorldData {
         this.dimension = dimension;
     }
 
-    public void readFromNbt(CompoundTag tag) {
-        this.containerMemory.read(tag.getCompound("containers"));
-        this.waypoints.readFromNbt(tag.getCompound("waypoints"));
-    }
-
-    public void writeToNbt(CompoundTag tag) {
-        tag.put("containers", containerMemory.toNbt());
-        tag.put("waypoints", waypoints.toNbt());
-    }
+//    public void readFromNbt(NbtCompound tag) {
+//        this.containerMemory.read(tag.getCompound("containers"));
+//        this.waypoints.readFromNbt(tag.getCompound("waypoints"));
+//    }
+//
+//    public void writeToNbt(NbtCompound tag) {
+//        tag.put("containers", containerMemory.toNbt());
+//        tag.put("waypoints", waypoints.toNbt());
+//    }
 
     @Override
     public ICachedWorld getCachedWorld() {

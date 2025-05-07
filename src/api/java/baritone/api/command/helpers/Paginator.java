@@ -17,12 +17,14 @@
 
 package baritone.api.command.helpers;
 
-import baritone.api.utils.Helper;
+import baritone.api.command.argument.IArgConsumer;
 import baritone.api.command.exception.CommandException;
 import baritone.api.command.exception.CommandInvalidTypeException;
-import baritone.api.command.argument.IArgConsumer;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.*;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.util.Arrays;
@@ -63,14 +65,15 @@ public class Paginator<E> {
         int offset = (page - 1) * pageSize;
         for (int i = offset; i < offset + pageSize; i++) {
             if (i < entries.size()) {
-                source.sendFeedback(transform.apply(entries.get(i)), false);
+                E entry = entries.get(i);
+                source.sendFeedback(() -> transform.apply(entry), false);
             } else {
-                source.sendFeedback(new LiteralText("--").formatted(Formatting.DARK_GRAY), false);
+                source.sendFeedback(() -> Text.literal("--").formatted(Formatting.DARK_GRAY), false);
             }
         }
         boolean hasPrevPage = commandPrefix != null && validPage(page - 1);
         boolean hasNextPage = commandPrefix != null && validPage(page + 1);
-        BaseText prevPageComponent = new LiteralText("<<");
+        MutableText prevPageComponent = Text.literal("<<");
         if (hasPrevPage) {
             prevPageComponent.setStyle(prevPageComponent.getStyle()
                     .withClickEvent(new ClickEvent(
@@ -79,12 +82,12 @@ public class Paginator<E> {
                     ))
                     .withHoverEvent(new HoverEvent(
                             HoverEvent.Action.SHOW_TEXT,
-                            new LiteralText("Click to view previous page")
+                            Text.literal("Click to view previous page")
                     )));
         } else {
             prevPageComponent.setStyle(prevPageComponent.getStyle().withFormatting(Formatting.DARK_GRAY));
         }
-        BaseText nextPageComponent = new LiteralText(">>");
+        MutableText nextPageComponent = Text.literal(">>");
         if (hasNextPage) {
             nextPageComponent.setStyle(nextPageComponent.getStyle()
                     .withClickEvent(new ClickEvent(
@@ -93,18 +96,20 @@ public class Paginator<E> {
                     ))
                     .withHoverEvent(new HoverEvent(
                             HoverEvent.Action.SHOW_TEXT,
-                            new LiteralText("Click to view next page")
+                            Text.literal("Click to view next page")
                     )));
         } else {
             nextPageComponent.setStyle(nextPageComponent.getStyle().withFormatting(Formatting.DARK_GRAY));
         }
-        BaseText pagerComponent = new LiteralText("");
-        pagerComponent.setStyle(pagerComponent.getStyle().withFormatting(Formatting.GRAY));
-        pagerComponent.append(prevPageComponent);
-        pagerComponent.append(" | ");
-        pagerComponent.append(nextPageComponent);
-        pagerComponent.append(String.format(" %d/%d", page, getMaxPage()));
-        source.sendFeedback(pagerComponent, false);
+        source.sendFeedback(() -> {
+            MutableText pagerComponent = Text.literal("");
+            pagerComponent.setStyle(pagerComponent.getStyle().withFormatting(Formatting.GRAY));
+            pagerComponent.append(prevPageComponent);
+            pagerComponent.append(" | ");
+            pagerComponent.append(nextPageComponent);
+            pagerComponent.append(String.format(" %d/%d", page, getMaxPage()));
+            return pagerComponent;
+        }, false);
     }
 
     public static <T> void paginate(IArgConsumer consumer, Paginator<T> pagi, Runnable pre, Function<T, Text> transform, String commandPrefix) throws CommandException {

@@ -10,7 +10,7 @@ Backwards compatibility is also not being considered at the current time, so avo
 
 There's a [showcase video](https://youtu.be/CZkLXWo4Fg4) made by @Adovin#0730 on Baritone. [Here's](https://www.youtube.com/watch?v=StquF69-_wI) a (very old!) video leijurv made showing off what it can do. [Tutorial playlist](https://www.youtube.com/playlist?list=PLnwnJ1qsS7CoQl9Si-RTluuzCo_4Oulpa)
 
-To install Automatone as a user, install the Fabric loader and drop the latest `optimized` jar from [releases](https://github.com/Ladysnake/Automatone/releases).
+To install Automatone as a user, install the Fabric loader and drop the latest jar from [releases](https://github.com/Ladysnake/Automatone/releases).
 For more information, see [Installation & setup](SETUP.md). Once Automatone is installed, look [here](USAGE.md) for instructions on how to use it.
 
 This project is based on Baritone, which is itself an updated version of MineBot,
@@ -48,35 +48,12 @@ baritone.settings().primaryTimeoutMS.set(2000L);
 baritone.getCustomGoalProcess().setGoalAndPath(new GoalXZ(10000, 20000));
 ```
 
-### Making your own non-player entity use Automatone
-You need to register the relevant component for your entity, using the component factory provided
-by Automatone:
-
-```java
-public final class MyComponents implements EntityComponentInitializer {
-    @Override
-    public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-        registry.registerFor(MyEntity.class, IBaritone.KEY, BaritoneAPI.getProvider().componentFactory());
-    }
-}
-```
-> Do not forget to add that class as an entrypoint with the `cardinal-components-entity` key !
-```json
-{
-  "entrypoints": {
-    "cardinal-components-entity": [
-      "my.package.MyComponents"
-    ]
-  }
-}
-```
-For more information on how components work, refer to [Cardinal Components API's documentation](https://github.com/OnyxStudios/Cardinal-Components-API/wiki).
+### Control a NPC Player
+This mod includes fabric-carpet. To spawn a NPC use the `/player <your-npc-name> spawn`.
+Then you can execute every automatone command as the NPC player. 
+Example: `/execute as <your-npc-name> run automatone goto 100 100`
 
 ## FAQ
-
-### Can I use Automatone as a library in my mob mod?
-
-That's what it's for, sure! (As long as usage complies with the LGPL 3.0 License)
 
 ### Can I use Automatone to cheat?
 Good luck, as of now it is completely unable to control real players.

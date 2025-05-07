@@ -2,6 +2,7 @@ package baritone.selection;
 
 import baritone.api.selection.ISelection;
 import baritone.api.utils.BetterBlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
@@ -36,8 +37,8 @@ public class Selection implements ISelection {
                 max.y - min.y + 1,
                 max.z - min.z + 1
         );
-
-        this.aabb = new Box(this.min, this.max.add(1, 1, 1));
+        BlockPos max2 = this.max.add(1, 1, 1);
+        this.aabb = new Box(this.min.x, this.min.y, this.min.z, max2.getX(), max2.getY(), max2.getZ());
     }
 
     @Override

@@ -1,4 +1,73 @@
 ------------------------------------------------------
+Version 0.11.0
+------------------------------------------------------
+Updated to 1.20.1
+
+- Merged fix from 0.9.1
+
+------------------------------------------------------
+Version 0.10.0
+------------------------------------------------------
+Updated to 1.19.3
+
+------------------------------------------------------
+Version 0.9.1
+------------------------------------------------------
+**Fixes**
+- Fixed fake players' UUID resetting with each world reload
+
+------------------------------------------------------
+Version 0.9.0
+------------------------------------------------------
+Updated to 1.19.1
+
+------------------------------------------------------
+Version 0.8.2
+------------------------------------------------------
+**Fixes**
+- Fixed a random crash caused by fake players existing or something
+
+------------------------------------------------------
+Version 0.8.1
+------------------------------------------------------
+**Fixes**
+- Fixed mixin crash at launch
+
+------------------------------------------------------
+Version 0.8.0
+------------------------------------------------------
+Updated to 1.19
+
+------------------------------------------------------
+Version 0.7.0
+------------------------------------------------------
+Updated to 1.18.2
+
+------------------------------------------------------
+Version 0.6.0
+------------------------------------------------------
+**Fixes**
+- Fixed fake players preventing real players from skipping the night
+- Fixed fake players broadcasting advancements
+
+------------------------------------------------------
+Version 0.5.0
+------------------------------------------------------
+- Updated to MC 1.18
+
+------------------------------------------------------
+Version 0.4.1
+------------------------------------------------------
+**Fixes**
+- Fixed instant crash when a player went below zero in a world with customized height limits
+- Somewhat fixed pathfinding outside of default height limits
+
+------------------------------------------------------
+Version 0.4.0
+------------------------------------------------------
+Updated to Minecraft 1.17
+
+------------------------------------------------------
 Version 0.3.7
 ------------------------------------------------------
 **Additions**
@@ -115,7 +184,7 @@ First alpha release of Automatone, forked from Baritone 1.6.3.
 - Automatone should detect which modded doors cannot be opened
 - Parkour movements should overshoot a bit less
 - Chunk scanning for mining operations should be slightly faster
-- Simple movements can now occur while the entity is looking in some other direction
+- Simple movements can now occur while the entity is looking in some other moveDirection
 - Differently sized entities are *kind of, somewhat, vaguely handled* by Automatone's pathfinding
   - entities that are smaller than a player should work as expected
   - entities that are taller than a player should more or less work

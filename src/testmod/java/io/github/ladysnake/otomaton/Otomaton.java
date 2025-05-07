@@ -17,39 +17,14 @@
 
 package io.github.ladysnake.otomaton;
 
-import baritone.api.fakeplayer.FakePlayers;
-import baritone.api.fakeplayer.FakeServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class Otomaton implements ModInitializer {
-    public static final Logger LOGGER = LogManager.getLogger("Otomaton");
-    public static final String MOD_ID = "otomaton";
 
-    public static Identifier id(String path) {
-        return new Identifier(MOD_ID, path);
-    }
-
-    public static final EntityType<PlayerEntity> FAKE_PLAYER = FabricEntityTypeBuilder.<PlayerEntity>createLiving()
-            .spawnGroup(SpawnGroup.MISC)
-            .entityFactory(FakePlayers.entityFactory(FakeServerPlayerEntity::new))
-            .defaultAttributes(PlayerEntity::createPlayerAttributes)
-            .dimensions(EntityDimensions.changing(EntityType.PLAYER.getWidth(), EntityType.PLAYER.getHeight()))
-            .trackRangeBlocks(64)
-            .trackedUpdateRate(1)
-            .forceTrackedVelocityUpdates(true)
-            .build();
+    private boolean isInitialized = false;
 
     @Override
     public void onInitialize() {
-        Registry.register(Registry.ENTITY_TYPE, id("fake_player"), FAKE_PLAYER);
+
     }
 }

@@ -23,6 +23,7 @@ import net.minecraft.block.AbstractFireBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -141,7 +142,7 @@ public final class RotationUtils {
      * @param ctx Context for the viewing entity
      * @param pos The target block position
      * @return The optional rotation
-     * @see #reachable(LivingEntity, BlockPos, double)
+     * @see #reachable(ServerPlayerEntity, BlockPos, double)
      */
     public static Optional<Rotation> reachable(IEntityContext ctx, BlockPos pos) {
         return reachable(ctx.entity(), pos, ctx.playerController().getBlockReachDistance());
@@ -163,11 +164,11 @@ public final class RotationUtils {
      * @param blockReachDistance The block reach distance of the entity
      * @return The optional rotation
      */
-    public static Optional<Rotation> reachable(LivingEntity entity, BlockPos pos, double blockReachDistance) {
+    public static Optional<Rotation> reachable(ServerPlayerEntity entity, BlockPos pos, double blockReachDistance) {
         return reachable(entity, pos, blockReachDistance, false);
     }
 
-    public static Optional<Rotation> reachable(LivingEntity entity, BlockPos pos, double blockReachDistance, boolean wouldSneak) {
+    public static Optional<Rotation> reachable(ServerPlayerEntity entity, BlockPos pos, double blockReachDistance, boolean wouldSneak) {
         IBaritone baritone = BaritoneAPI.getProvider().getBaritone(entity);
         if (baritone.getPlayerContext().isLookingAt(pos)) {
             /*
@@ -180,7 +181,7 @@ public final class RotationUtils {
              *
              * or if you're a normal person literally all this does it ensure that we don't nudge the pitch to a normal level
              */
-            Rotation hypothetical = new Rotation(entity.yaw, entity.pitch + 0.0001F);
+            Rotation hypothetical = new Rotation(entity.getYaw(), entity.getPitch() + 0.0001F);
             if (wouldSneak) {
                 // the concern here is: what if we're looking at it now, but as soon as we start sneaking we no longer are
                 HitResult result = RayTraceUtils.rayTraceTowards(entity, hypothetical, blockReachDistance, true);
@@ -197,8 +198,8 @@ public final class RotationUtils {
             return possibleRotation;
         }
 
-        BlockState state = entity.world.getBlockState(pos);
-        VoxelShape shape = state.getOutlineShape(entity.world, pos);
+        BlockState state = entity.getWorld().getBlockState(pos);
+        VoxelShape shape = state.getOutlineShape(entity.getWorld(), pos);
         if (shape.isEmpty()) {
             shape = VoxelShapes.fullCube();
         }
@@ -226,15 +227,15 @@ public final class RotationUtils {
      * @return The optional rotation
      */
     public static Optional<Rotation> reachableOffset(Entity entity, BlockPos pos, Vec3d offsetPos, double blockReachDistance, boolean wouldSneak) {
-        Vec3d eyes = wouldSneak ? RayTraceUtils.inferSneakingEyePosition(entity) : entity.getCameraPosVec(1.0F);
-        Rotation rotation = calcRotationFromVec3d(eyes, offsetPos, new Rotation(entity.yaw, entity.pitch));
+        Vec3d eyes = wouldSneak ? RayTraceUtils.inferSneakingEyePosition(entity) : getCameraPosVec(entity);
+        Rotation rotation = calcRotationFromVec3d(eyes, offsetPos, new Rotation(entity.getYaw(), entity.getPitch()));
         HitResult result = RayTraceUtils.rayTraceTowards(entity, rotation, blockReachDistance, wouldSneak);
         //Automatone.LOGGER.debug(result);
         if (result != null && result.getType() == HitResult.Type.BLOCK) {
             if (((BlockHitResult) result).getBlockPos().equals(pos)) {
                 return Optional.of(rotation);
             }
-            if (entity.world.getBlockState(pos).getBlock() instanceof AbstractFireBlock && ((BlockHitResult) result).getBlockPos().equals(pos.down())) {
+            if (entity.getWorld().getBlockState(pos).getBlock() instanceof AbstractFireBlock && ((BlockHitResult) result).getBlockPos().equals(pos.down())) {
                 return Optional.of(rotation);
             }
         }
@@ -251,6 +252,14 @@ public final class RotationUtils {
      * @return The optional rotation
      */
     public static Optional<Rotation> reachableCenter(Entity entity, BlockPos pos, double blockReachDistance, boolean wouldSneak) {
-        return reachableOffset(entity, pos, VecUtils.calculateBlockCenter(entity.world, pos), blockReachDistance, wouldSneak);
+        return reachableOffset(entity, pos, VecUtils.calculateBlockCenter(entity.getWorld(), pos), blockReachDistance, wouldSneak);
+    }
+
+    public static Vec3d getCameraPosVec(Entity entity) {
+        float tickDelta = 1.0F;
+        double d = MathHelper.lerp(tickDelta, entity.prevX, entity.getX());
+        double e = MathHelper.lerp(tickDelta, entity.prevY, entity.getY()) + entity.getStandingEyeHeight();
+        double f = MathHelper.lerp(tickDelta, entity.prevZ, entity.getZ());
+        return new Vec3d(d, e, f);
     }
 }

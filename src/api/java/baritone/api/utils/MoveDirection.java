@@ -17,25 +17,12 @@
 
 package baritone.api.utils;
 
-import baritone.api.BaritoneAPI;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+public enum MoveDirection {
+    FORWARD("forward"),
+    BACKWARD("backward"),
+    LEFT("left"),
+    RIGHT("right");
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.stream.Stream;
-
-/**
- * An ease-of-access interface to provide chat and console logging mechanisms, and the Baritone chat prefix.
- *
- * @author Brady
- * @since 8/1/2018
- */
-public interface Helper {
-
+    MoveDirection(String forward) {
+    }
 }

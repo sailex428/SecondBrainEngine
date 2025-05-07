@@ -37,7 +37,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.fluid.WaterFluid;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -100,7 +100,7 @@ public class MovementTraverse extends Movement {
         int checkedZShift = diffZ * requiredSideSpace;
         int checkedX = destX + checkedXShift;
         int checkedZ = destZ + checkedZShift;
-        int height = MathHelper.ceil(dimensions.height);
+        int height = MathHelper.ceil(dimensions.height());
         int requiredForwardSpace = requiredSideSpace == 0 ? 1 : 2;
         int volume = requiredForwardSpace * (requiredSideSpace * 2 + 1) * height;
         int i = 0;
@@ -248,7 +248,7 @@ public class MovementTraverse extends Movement {
                 // now that we've checked all possible directions to side place, we actually need to backplace
                 // none of the vanilla impls do a blocking or thread unsafe call, so passing the world directly should be fine
                 // also none of the full cubes actually use the pos, so we should be fine not creating a real BlockPos for this
-                if (!srcOn.getMaterial().isReplaceable() && !srcOn.isFullCube(context.world, BlockPos.ORIGIN)) {
+                if (!srcOn.isReplaceable() && !srcOn.isFullCube(context.world, BlockPos.ORIGIN)) {
                     // If srcOn is currently replaceable, we will have a proper block when we stand on it
                     return; // can't sneak and backplace against eg. soul sand or half slabs (regardless of whether it's top half or bottom half) =/
                 }
@@ -294,13 +294,13 @@ public class MovementTraverse extends Movement {
                 return state;
             }
 
-            if (!state.getTarget().getRotation().isPresent()) {
+            if (state.getTarget().getRotation().isEmpty()) {
                 // this can happen rarely when the server lags and doesn't send the falling sand entity until you've already walked through the block and are now mining the next one
                 return state;
             }
 
             EntityDimensions dims = ctx.entity().getDimensions(ctx.entity().getPose());
-            if (dims.width > 1 || dims.height < 1 || dims.height > 2) { // player-sized entities get the optimized path, others stop and break blocks
+            if (dims.width() > 1 || dims.height() < 1 || dims.height() > 2) { // player-sized entities get the optimized path, others stop and break blocks
                 return state;
             }
 
@@ -324,8 +324,8 @@ public class MovementTraverse extends Movement {
         //sneak may have been set to true in the PREPPING state while mining an adjacent block
         state.setInput(Input.SNEAK, false);
 
-        Block fd = BlockStateInterface.get(ctx, src.down()).getBlock();
-        boolean ladder = BlockTags.CLIMBABLE.contains(fd);
+        BlockState fd = BlockStateInterface.get(ctx, src.down());
+        boolean ladder = fd.isIn(BlockTags.CLIMBABLE);
 
         for (BlockState bs : bss) {
             if (tryOpenDoors(state, bs, dest, src)) {
@@ -413,13 +413,13 @@ public class MovementTraverse extends Movement {
                 state.setInput(Input.SNEAK, true);
             }
             switch (p) {
-                case READY_TO_PLACE: {
+                case READY_TO_PLACE -> {
                     if (ctx.entity().isSneaking() || baritone.settings().assumeSafeWalk.get()) {
                         state.setInput(Input.CLICK_RIGHT, true);
                     }
                     return state;
                 }
-                case ATTEMPTING: {
+                case ATTEMPTING -> {
                     if (dist1 > 0.83) {
                         // might need to go forward a bit
                         float yaw = RotationUtils.calcRotationFromVec3d(ctx.headPos(), VecUtils.getBlockPosCenter(dest), ctx.entityRotations()).getYaw();
@@ -433,8 +433,8 @@ public class MovementTraverse extends Movement {
                     }
                     return state;
                 }
-                default:
-                    break;
+                default -> {
+                }
             }
             if (feet.equals(dest)) {
                 // If we are in the block that we are trying to get to, we are sneaking over air and we need to place a block beneath us against the one we just walked off of
@@ -474,7 +474,7 @@ public class MovementTraverse extends Movement {
         if (bs.getBlock() instanceof DoorBlock) {
             boolean notPassable = bs.getBlock() instanceof DoorBlock && !MovementHelper.isDoorPassable(ctx, dest, src);
             // assume wooden doors can be opened and other doors cannot
-            boolean canOpen = DoorBlock.isWoodenDoor(bs);
+            boolean canOpen = DoorBlock.canOpenByHand(bs);
 
             if (notPassable && canOpen) {
                 state.setTarget(new MovementState.MovementTarget(RotationUtils.calcRotationFromVec3d(ctx.headPos(), VecUtils.calculateBlockCenter(ctx.world(), dest.up()), ctx.entityRotations()), true))

@@ -22,7 +22,12 @@ import baritone.api.IBaritone;
 import baritone.api.Settings;
 import baritone.api.pathing.movement.ActionCosts;
 import baritone.api.pathing.movement.MovementStatus;
-import baritone.api.utils.*;
+import baritone.api.utils.BetterBlockPos;
+import baritone.api.utils.IEntityContext;
+import baritone.api.utils.RayTraceUtils;
+import baritone.api.utils.Rotation;
+import baritone.api.utils.RotationUtils;
+import baritone.api.utils.VecUtils;
 import baritone.api.utils.input.Input;
 import baritone.pathing.movement.MovementState.MovementTarget;
 import baritone.utils.BlockStateInterface;
@@ -33,10 +38,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.fluid.*;
+import net.minecraft.fluid.FlowableFluid;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.WaterFluid;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.FluidTags;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -110,13 +119,13 @@ public interface MovementHelper extends ActionCosts {
                 || block == Blocks.END_ROD) {
             return false;
         }
-        if (settings.blocksToAvoid.get().contains(block)) {
+        if (state.isIn(settings.blocksToAvoid.get())) {
             return false;
         }
         if (block instanceof DoorBlock || block instanceof FenceGateBlock) {
             // Because there's no nice method in vanilla to check if a door is openable or not, we just have to assume
             // that all wooden doors are openable and vice versa.
-            return block instanceof FenceGateBlock || DoorBlock.isWoodenDoor(state);
+            return block instanceof FenceGateBlock || DoorBlock.canOpenByHand(state);
         }
         if (block instanceof CarpetBlock) {
             return canWalkOn(bsi, x, y - 1, z, settings);
@@ -154,7 +163,7 @@ public interface MovementHelper extends ActionCosts {
         // every block that overrides isPassable with anything more complicated than a "return true;" or "return false;"
         // has already been accounted for above
         // therefore it's safe to not construct a blockpos from our x, y, z ints and instead just pass null
-        return state.canPathfindThrough(bsi.access, BlockPos.ORIGIN, NavigationType.LAND); // workaround for future compatibility =P
+        return state.canPathfindThrough(NavigationType.LAND); // workaround for future compatibility =P
     }
 
     /**
@@ -202,7 +211,7 @@ public interface MovementHelper extends ActionCosts {
             return false;
         }
         // door, fence gate, liquid, trapdoor have been accounted for, nothing else uses the world or pos parameters
-        return state.canPathfindThrough(access, pos, NavigationType.LAND);
+        return state.canPathfindThrough(NavigationType.LAND);
     }
 
     static boolean isReplaceable(int x, int y, int z, BlockState state, BlockStateInterface bsi) {
@@ -231,7 +240,7 @@ public interface MovementHelper extends ActionCosts {
         if (block == Blocks.LARGE_FERN || block == Blocks.TALL_GRASS) {
             return true;
         }
-        return state.getMaterial().isReplaceable();
+        return state.isReplaceable();
     }
 
     @Deprecated
@@ -322,7 +331,7 @@ public interface MovementHelper extends ActionCosts {
         if (state.isIn(BlockTags.CLIMBABLE)) { // TODO reconsider this
             return true;
         }
-        if (block == Blocks.FARMLAND || block == Blocks.GRASS_PATH) {
+        if (block == Blocks.FARMLAND || block == Blocks.DIRT_PATH) {
             return true;
         }
         if (block == Blocks.ENDER_CHEST || block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST) {
@@ -469,7 +478,7 @@ public interface MovementHelper extends ActionCosts {
         state.setTarget(new MovementTarget(
                 new Rotation(RotationUtils.calcRotationFromVec3d(ctx.headPos(),
                         VecUtils.getBlockPosCenter(pos),
-                        ctx.entityRotations()).getYaw(), ctx.entity().pitch),
+                        ctx.entityRotations()).getYaw(), ctx.entity().getPitch()),
                 false
         )).setInput(Input.MOVE_FORWARD, true);
     }
@@ -482,8 +491,7 @@ public interface MovementHelper extends ActionCosts {
      * @return Whether or not the block is water
      */
     static boolean isWater(BlockState state) {
-        Fluid f = state.getFluidState().getFluid();
-        return FluidTags.WATER.contains(f);
+        return state.getFluidState().isIn(FluidTags.WATER);
     }
 
     /**

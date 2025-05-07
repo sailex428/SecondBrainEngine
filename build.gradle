@@ -16,30 +16,26 @@
  */
 
 
-import baritone.gradle.task.CreateDistTask
-import baritone.gradle.task.DeterminizingTask
-import baritone.gradle.task.ProguardTask
-import net.fabricmc.loom.LoomGradlePlugin
-
-import java.util.stream.Collectors
+import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
-    id 'fabric-loom' version '0.6-SNAPSHOT'
-    id 'com.jfrog.artifactory' version '4.20.0'
-    id 'org.ajoberstar.grgit' version '3.1.1'
-    id 'com.github.breadmoirai.github-release' version '2.2.9'
-    id 'maven-publish'
+    id 'fabric-loom' version "1.9-SNAPSHOT"
+    id 'io.github.ladysnake.chenille' version "0.11.3"
 }
 
 group project.maven_group
 version project.mod_version
 
-apply plugin: 'java'
-apply plugin: LoomGradlePlugin
+chenille {
+    configurePublishing {
+        withArtifactory()
+        withGithubRelease()
+    }
 
-sourceCompatibility = targetCompatibility = '1.8'
+    javaVersion = 21
+}
+
 compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
     options.encoding = "UTF-8" // allow emoji in comments :^)
 }
 
@@ -73,75 +69,62 @@ sourceSets {
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier 'sources'
-    from sourceSets.api.allSource
-}
-
-minecraft {
-    refmapName = 'mixins.automatone.refmap.json'
-}
-
 repositories {
     mavenCentral()
-
     maven {
         name = "Ladysnake Mods"
-        url = 'https://ladysnake.jfrog.io/artifactory/mods'
-        content {
-            includeGroup 'io.github.ladysnake'
-            includeGroupByRegex 'io\\.github\\.onyxstudios.*'
-        }
+        url = 'https://maven.ladysnake.org/releases'
     }
-    maven {
-        url = 'https://maven.jamieswhiteshirt.com/libs-release/'
-        content {
-            includeGroup 'com.jamieswhiteshirt'
-        }
-    }
-    maven {
-        name = 'SpongePowered'
-        url = 'https://repo.spongepowered.org/repository/maven-public/'
-    }
-    maven {
-        name = 'impactdevelopment-repo'
-        url = 'https://impactdevelopment.github.io/maven/'
-    }
-    maven {
-        url = 'https://www.dogforce-games.com/maven/'
-    }
+    maven { url = 'https://maven.quiltmc.org/repository/release' }
+    maven { url = 'https://maven.quiltmc.org/repository/snapshot' }
+    maven { url = "https://jitpack.io" }
+    mavenLocal()
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:1.16.5"
-    mappings "net.fabricmc:yarn:1.16.5+build.5:v2"
-    modImplementation "net.fabricmc:fabric-loader:0.11.1"
+    minecraft "com.mojang:minecraft:${mc_version}"
+    mappings "net.fabricmc:yarn:${mc_version}+build.${yarn_build}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fapi_version}+${mc_version}"
+
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${cca_version}"
-    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${cca_version}"
-    modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-world:${cca_version}"
-    modImplementation "com.jamieswhiteshirt:reach-entity-attributes:${reach_version}"
+    modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}") {
+        transitive = false
+    }
+    modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}") {
+        transitive = false
+    }
+    modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-world:${cca_version}") {
+        transitive = false
+    }
+    modImplementation("com.github.gnembon:fabric-carpet:${carpet_version}")
     compileOnly "com.demonwav.mcdev:annotations:1.0"
 
     testImplementation 'junit:junit:4.12'
-
-    // this makes it compile with the forge tweak stuff
-    compile ('net.minecraft:launchwrapper:1.12') {
-        transitive = false
-    }
-    compile 'net.sf.jopt-simple:jopt-simple:5.0.3'
 }
 
-processLaunchResources {
-    inputs.property "version", project.version
-    from(sourceSets.launch.resources.srcDirs) {
-        include "fabric.mod.json"
-        expand "version": project.version
+task testmodJar(type: Jar, dependsOn: testmodClasses) {
+    archiveBaseName.set('Otomaton')
+    archiveClassifier.set('dev')
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
     }
-    from(sourceSets.launch.resources.srcDirs) {
-        exclude "fabric.mod.json"
+}
+
+task remapTestmodJar(type: RemapJarTask, dependsOn: project.testmodJar) {
+    archiveBaseName.set('Otomaton')
+    inputFile.set(testmodJar.archiveFile)
+    addNestedDependencies.set(false)
+}
+
+processResources {
+    inputs.property "version", project.mod_version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.mod_version
     }
+}
+java {
+    withSourcesJar()
 }
 
 javadoc {
@@ -150,23 +133,6 @@ javadoc {
     options.encoding "UTF-8" // allow emoji in comments :^)
     source = sourceSets.api.allJava
     classpath += sourceSets.api.compileClasspath
-}
-
-// skidded from fabric-example-mod (comments and all)
-tasks.withType(JavaCompile).configureEach {
-    // ensure that the encoding is set to UTF-8, no matter what the system default is
-    // this fixes some edge cases with special characters not displaying correctly
-    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-    // If Javadoc is generated, this must be specified in that task too.
-    it.options.encoding = "UTF-8"
-
-    // The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
-    // JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
-    // We'll use that if it's available, but otherwise we'll use the older option.
-    def targetVersion = 8
-    if (JavaVersion.current().isJava9Compatible()) {
-        it.options.release = targetVersion
-    }
 }
 
 jar {
@@ -185,43 +151,18 @@ jar {
     }
 }
 
-remapJar.configure {
-    it.classifier = 'remapped'
-}
-
-// skidded from ProguardTask
-task determinizeBuiltJar(type: DeterminizingTask) {
-    input = remapJar.archiveFile
-    archiveClassifier = 'unoptimized'
-}
-
-task proguard(type: ProguardTask, dependsOn: determinizeBuiltJar) {
-    input = determinizeBuiltJar.archiveFile
-    archiveClassifier = 'optimized'
-    url 'https://github.com/Guardsquare/proguard/releases/download/v7.1.0-beta1/proguard-7.1.0-beta1.zip'
-    extract 'proguard-7.1.0-beta1/lib/proguard.jar'
-    afterEvaluate {
-        def mappedMods = project.configurations.modCompileClasspathMapped.resolvedConfiguration.files
-        classpath project.files(loom.minecraftMappedProvider.intermediaryJar)
-        classpath project.files(project.configurations.modCompileClasspath.resolvedConfiguration.resolvedArtifacts
-                .stream()
-                .map{it.file}
-                .collect(Collectors.toList())
-        )
-        classpath project.files(sourceSets.launch.runtimeClasspath.files.stream()
-                .filter { it.isFile() }
-                // remove remapped jars, the intermediary versions are included above
-                .filter{!loom.minecraftMappedProvider.mappedJar.equals(it) && !mappedMods.contains(it) }
-                .collect(Collectors.toList())
-        )
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = project.mod_name
+                licenses {
+                    license {
+                        name = 'GNU Lesser General Public License 3.0'
+                        url = 'https://www.gnu.org/licenses/lgpl-3.0.html'
+                    }
+                }
+            }
+        }
     }
-
 }
-
-task createDist(type: CreateDistTask, dependsOn: proguard) {
-    input proguard.archiveFile
-}
-
-build.finalizedBy(createDist)
-
-apply from: 'release.gradle'

@@ -19,6 +19,7 @@ package baritone.behavior;
 
 import baritone.Baritone;
 import baritone.api.behavior.ILookBehavior;
+import baritone.api.utils.ICommandHelper;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
 import baritone.utils.InputOverrideHandler;
@@ -40,9 +41,11 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
      * Whether or not rotations are currently being forced
      */
     private boolean force;
+    private final ICommandHelper commandHelper;
 
     public LookBehavior(Baritone baritone) {
         super(baritone);
+        this.commandHelper = baritone.getCommandHelper();
     }
 
     @Override
@@ -97,12 +100,12 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
     }
 
     private static void updateLook(LivingEntity entity, Rotation target, double lookScrambleFactor, boolean nudgePitch) {
-        entity.yaw = target.getYaw();
-        float oldPitch = entity.pitch;
+        entity.setYaw(target.getYaw());
+        float oldPitch = entity.getPitch();
         float desiredPitch = target.getPitch();
-        entity.pitch = desiredPitch;
-        entity.yaw += (Math.random() - 0.5) * lookScrambleFactor;
-        entity.pitch += (Math.random() - 0.5) * lookScrambleFactor;
+        entity.setPitch(desiredPitch);
+        entity.setYaw((float) (entity.getYaw() + (Math.random() - 0.5) * lookScrambleFactor));
+        entity.setPitch((float) (entity.getPitch() + (Math.random() - 0.5) * lookScrambleFactor));
         if (desiredPitch == oldPitch && nudgePitch) {
             nudgeToLevel(entity);
         }
@@ -112,7 +115,7 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
     private Rotation getActualTarget(@Nullable Rotation primaryTarget, @Nullable Rotation secondaryTarget) {
         if (baritone.settings().freeLook.get()) {
             // free look is enabled, do not touch the rotations but make sure we move correctly
-            updateControlsToMatch(this.baritone.getInputOverrideHandler(), primaryTarget, this.ctx.entity().yaw);
+            updateControlsToMatch(this.baritone.getInputOverrideHandler(), primaryTarget, this.ctx.entity().getYaw());
             return null;
         } else if (secondaryTarget != null) {
             // we have a secondary target, use it to set the rotations but still make sure we move correctly
@@ -125,7 +128,7 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
 
     public void pig() {
         if (this.target != null) {
-            this.ctx.entity().yaw = this.target.getYaw();
+            this.ctx.entity().setYaw(this.target.getYaw());
         }
     }
 
@@ -167,10 +170,10 @@ public final class LookBehavior extends Behavior implements ILookBehavior {
      * Nudges the player's pitch to a regular level. (Between {@code -20} and {@code 10}, increments are by {@code 1})
      */
     private static void nudgeToLevel(LivingEntity entity) {
-        if (entity.pitch < -20) {
-            entity.pitch++;
-        } else if (entity.pitch > 10) {
-            entity.pitch--;
+        if (entity.getPitch() < -20) {
+            entity.setPitch(entity.getPitch() + 1);
+        } else if (entity.getPitch() > 10) {
+            entity.setPitch(entity.getPitch() - 1);
         }
     }
 }

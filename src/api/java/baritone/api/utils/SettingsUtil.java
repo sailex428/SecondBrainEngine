@@ -19,16 +19,16 @@ package baritone.api.utils;
 
 import baritone.api.BaritoneAPI;
 import baritone.api.Settings;
-import net.fabricmc.fabric.api.tag.TagRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
-import net.minecraft.tag.Tag;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.registry.Registry;
 
 import java.awt.*;
 import java.lang.reflect.ParameterizedType;
@@ -167,22 +167,22 @@ public class SettingsUtil {
         ),
         ITEM(
                 Item.class,
-                str -> Registry.ITEM.get(new Identifier(str.trim())), // TODO this now returns AIR on failure instead of null, is that an issue?
-                item -> Registry.ITEM.getKey(item).toString()
+                str -> Registries.ITEM.get(Identifier.of(str.trim())), // TODO this now returns AIR on failure instead of null, is that an issue?
+                item -> Registries.ITEM.getKey(item).toString()
         ),
         TAG() {
             @Override
             public Object parse(ParserContext context, String raw) {
                 Type type = ((ParameterizedType) context.getSetting().getType()).getActualTypeArguments()[0];
-                Identifier id = new Identifier(raw);
+                Identifier id = Identifier.of(raw);
                 if (type == Block.class) {
-                    return TagRegistry.block(id);
+                    return TagKey.of(RegistryKeys.BLOCK, id);
                 } else if (type == Item.class) {
-                    return TagRegistry.item(id);
+                    return TagKey.of(RegistryKeys.ITEM, id);
                 } else if (type == EntityType.class) {
-                    return TagRegistry.entityType(id);
+                    return TagKey.of(RegistryKeys.ENTITY_TYPE, id);
                 } else if (type == Fluid.class) {
-                    return TagRegistry.fluid(id);
+                    return TagKey.of(RegistryKeys.FLUID, id);
                 } else {
                     throw new IllegalArgumentException();
                 }
@@ -190,12 +190,12 @@ public class SettingsUtil {
 
             @Override
             public String toString(ParserContext context, Object value) {
-                return ((Tag.Identified<?>) value).getId().toString();
+                return ((TagKey<?>) value).id().toString();
             }
 
             @Override
             public boolean accepts(Type type) {
-                return Tag.Identified.class.isAssignableFrom(TypeUtils.resolveBaseClass(type));
+                return TagKey.class.isAssignableFrom(TypeUtils.resolveBaseClass(type));
             }
         },
         LIST() {

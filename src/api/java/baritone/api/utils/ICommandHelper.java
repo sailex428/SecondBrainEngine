@@ -15,12 +15,22 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-repositories {
-    mavenCentral()
-}
+package baritone.api.utils;
 
-dependencies {
-    implementation gradleApi()
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+import net.minecraft.util.math.Direction;
+
+public interface ICommandHelper {
+
+    void executeMove(MoveDirection moveDirection);
+    void executeMoveStop();
+    void executeSpawn(String username);
+    void executeLook(Direction lookDirection);
+    void executeJump();
+    void executeAttack();
+    void executeDrop(int slot, boolean dropAll);
+    void executeUse();
+    void executeSneak();
+    void executeUnSneak();
+    void executeStopAll();
+
 }

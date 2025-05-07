@@ -18,13 +18,10 @@
 package baritone;
 
 import baritone.command.defaults.DefaultCommands;
-import baritone.command.manager.BaritoneArgumentType;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.tag.TagRegistry;
-import net.minecraft.command.argument.ArgumentTypes;
-import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.item.Item;
-import net.minecraft.tag.Tag;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,18 +36,18 @@ public final class Automatone implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("Automatone");
     public static final String MOD_ID = "automatone";
 
-    public static final Tag<Item> EMPTY_BUCKETS = TagRegistry.item(id("empty_buckets"));
-    public static final Tag<Item> WATER_BUCKETS = TagRegistry.item(id("water_buckets"));
-
+    public static final TagKey<Item> EMPTY_BUCKETS = TagKey.of(RegistryKeys.ITEM, id("empty_buckets"));
+    public static final TagKey<Item> WATER_BUCKETS = TagKey.of(RegistryKeys.ITEM, id("water_buckets"));
     private static final ThreadPoolExecutor threadPool;
 
     static {
         AtomicInteger threadCounter = new AtomicInteger(0);
-        threadPool = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), r -> new Thread(r, "Automatone Worker " + threadCounter.incrementAndGet()));
+        threadPool = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
+                r -> new Thread(r, "Automatone Worker " + threadCounter.incrementAndGet()));
     }
 
     public static Identifier id(String path) {
-        return new Identifier(MOD_ID, path);
+        return Identifier.of(MOD_ID, path);
     }
 
     public static ThreadPoolExecutor getExecutor() {
@@ -60,6 +57,5 @@ public final class Automatone implements ModInitializer {
     @Override
     public void onInitialize() {
         DefaultCommands.registerAll();
-        ArgumentTypes.register("automatone:command", BaritoneArgumentType.class, new ConstantArgumentSerializer<>(BaritoneArgumentType::baritone));
     }
 }

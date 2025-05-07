@@ -1,16 +1,11 @@
 package baritone.selection;
 
-import baritone.AutomatoneClient;
-import baritone.api.BaritoneAPI;
-import baritone.api.IBaritone;
 import baritone.api.selection.ISelection;
 import baritone.api.selection.ISelectionManager;
 import baritone.api.utils.BetterBlockPos;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.Direction;
 
 import java.util.LinkedList;
@@ -18,17 +13,13 @@ import java.util.ListIterator;
 
 public class SelectionManager implements ISelectionManager {
 
-    private final Entity holder;
     private final LinkedList<ISelection> selections = new LinkedList<>();
     private ISelection[] selectionsArr = new ISelection[0];
 
-    public SelectionManager(Entity holder) {
-        this.holder = holder;
-    }
+    public SelectionManager(Entity holder) {}
 
     private void resetSelectionsArr() {
         selectionsArr = selections.toArray(new ISelection[0]);
-        KEY.sync(this.holder);
     }
 
     @Override
@@ -126,52 +117,52 @@ public class SelectionManager implements ISelectionManager {
     }
 
     @Override
-    public void readFromNbt(CompoundTag tag) {
+    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
         // NO-OP
     }
 
     @Override
-    public void writeToNbt(CompoundTag tag) {
+    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
         // NO-OP
     }
 
-    @Override
-    public boolean shouldSyncWith(ServerPlayerEntity player) {
-        return player == this.holder || (
-                IBaritone.KEY.maybeGet(this.holder)
-                        .map(IBaritone::settings)
-                        .orElseGet(BaritoneAPI::getGlobalSettings)
-                        .syncWithOps.get()
-                        && player.server.getPermissionLevel(player.getGameProfile()) >= 2
-        );
-    }
+//    @Override
+//    public boolean shouldSyncWith(ServerPlayerEntity player) {
+//        return player == this.holder || (
+//                IBaritone.KEY.maybeGet(this.holder)
+//                        .map(IBaritone::settings)
+//                        .orElseGet(BaritoneAPI::getGlobalSettings)
+//                        .syncWithOps.get()
+//                        && player.server.getPermissionLevel(player.getGameProfile()) >= 2
+//        );
+//    }
 
-    @Override
-    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
-        buf.writeVarInt(this.selectionsArr.length);
-
-        for (ISelection sel : this.selectionsArr) {
-            buf.writeBlockPos(sel.pos1());
-            buf.writeBlockPos(sel.pos2());
-        }
-    }
-
-    @Override
-    public void applySyncPacket(PacketByteBuf buf) {
-        this.removeAllSelections();
-
-        int length = buf.readVarInt();
-
-        for (int i = 0; i < length; i++) {
-            BlockPos pos1 = buf.readBlockPos();
-            BlockPos pos2 = buf.readBlockPos();
-            this.addSelection(new BetterBlockPos(pos1), new BetterBlockPos(pos2));
-        }
-
-        if (this.selections.isEmpty()) {
-            AutomatoneClient.selectionRenderList.remove(this);
-        } else {
-            AutomatoneClient.selectionRenderList.add(this);
-        }
-    }
+//    @Override
+//    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+//        buf.writeVarInt(this.selectionsArr.length);
+//
+//        for (ISelection sel : this.selectionsArr) {
+//            buf.writeBlockPos(sel.pos1());
+//            buf.writeBlockPos(sel.pos2());
+//        }
+//    }
+//
+//    @Override
+//    public void applySyncPacket(PacketByteBuf buf) {
+//        this.removeAllSelections();
+//
+//        int length = buf.readVarInt();
+//
+//        for (int i = 0; i < length; i++) {
+//            BlockPos pos1 = buf.readBlockPos();
+//            BlockPos pos2 = buf.readBlockPos();
+//            this.addSelection(new BetterBlockPos(pos1), new BetterBlockPos(pos2));
+//        }
+//
+//        if (this.selections.isEmpty()) {
+//            AutomatoneClient.selectionRenderList.remove(this);
+//        } else {
+//            AutomatoneClient.selectionRenderList.add(this);
+//        }
+//    }
 }

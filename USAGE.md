@@ -33,7 +33,7 @@ Watch this [showcase video](https://youtu.be/CZkLXWo4Fg4)!
 To toggle a boolean setting, just say its name in chat (for example saying `allowBreak` toggles whether Baritone will consider breaking blocks). For a numeric setting, say its name then the new value (like `primaryTimeoutMS 250`). It's case insensitive. To reset a setting to its default value, say `acceptableThrowawayItems reset`. To reset all settings, say `reset`. To see all settings that have been modified from their default values, say `modified`.
 
 Some common examples:
-- `thisway 1000` then `path` to go in the direction you're facing for a thousand blocks
+- `thisway 1000` then `path` to go in the moveDirection you're facing for a thousand blocks
 - `goal x y z` or `goal x z` or `goal y`, then `path` to set a goal to a certain coordinate then path to it
 - `goto x y z` or `goto x z` or `goto y` to go to a certain coordinate (in a single step, starts going immediately)
 - `goal` to set the goal to your player's feet

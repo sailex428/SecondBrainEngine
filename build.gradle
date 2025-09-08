@@ -20,20 +20,10 @@ import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     id 'fabric-loom' version "1.9-SNAPSHOT"
-    id 'io.github.ladysnake.chenille' version "0.11.3"
 }
 
 group project.maven_group
 version project.mod_version
-
-chenille {
-    configurePublishing {
-        withArtifactory()
-        withGithubRelease()
-    }
-
-    javaVersion = 21
-}
 
 compileJava {
     options.encoding = "UTF-8" // allow emoji in comments :^)
@@ -42,8 +32,8 @@ compileJava {
 
 sourceSets {
     testmod {
-        compileClasspath += main.compileClasspath + main.runtimeClasspath + main.output
-        runtimeClasspath += main.compileClasspath + main.runtimeClasspath + main.output
+        compileClasspath += main.compileClasspath + main.output
+        runtimeClasspath += main.runtimeClasspath + main.output
     }
 }
 
@@ -102,33 +92,16 @@ java {
 }
 
 jar {
-    from sourceSets.main.output
-
     preserveFileTimestamps = false
     reproducibleFileOrder = true
 
     manifest {
         attributes(
-                'MixinConfigs': 'mixins.automatone.json',
+            'MixinConfigs': 'mixins.automatone.json',
 
-                'Implementation-Title': 'Automatone',
-                'Implementation-Version': project.version
+            'Implementation-Title': 'SecondBrainEngine',
+            'Implementation-Version': project.version
         )
     }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            pom {
-                name = project.mod_name
-                licenses {
-                    license {
-                        name = 'GNU Lesser General Public License 3.0'
-                        url = 'https://www.gnu.org/licenses/lgpl-3.0.html'
-                    }
-                }
-            }
-        }
-    }
-}

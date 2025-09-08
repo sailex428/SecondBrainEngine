@@ -59,14 +59,6 @@ sourceSets {
         compileClasspath += launch.compileClasspath + launch.runtimeClasspath + launch.output
         runtimeClasspath += launch.compileClasspath + launch.runtimeClasspath + launch.output
     }
-
-    schematica_api {
-        compileClasspath += main.compileClasspath
-    }
-
-    main {
-        compileClasspath += schematica_api.output
-    }
 }
 
 repositories {

@@ -15,24 +15,28 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.launch.mixins.player;
+package baritone.mixins.player;
 
 import baritone.api.npc.AutomatoneNPC;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.SleepManager;
-import org.objectweb.asm.Opcodes;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(SleepManager.class)
-public abstract class SleepManagerMixin {
-    @Shadow private int total;
+@Mixin(Entity.class)
+public abstract class EntityMixin {
+    @SuppressWarnings("unused") // makes the field mutable for use by IEntityAccessor
+    @Shadow @Mutable @Final private EntityType<?> type;
 
-    @ModifyVariable(method = "update", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/server/world/SleepManager;total:I", ordinal = 1, shift = At.Shift.AFTER))
-    private ServerPlayerEntity captureSleepingPlayer(ServerPlayerEntity player) {
-        if (player instanceof AutomatoneNPC) this.total--;
-        return player;
+    @Inject(method = "hasPlayerRider", at = @At(value = "HEAD"), cancellable = true, require = 1, allow = 1)
+    private void removeFakePlayers(CallbackInfoReturnable<Boolean> cir) {
+        if (this instanceof AutomatoneNPC) {
+            cir.setReturnValue(false);
+        }
     }
 }

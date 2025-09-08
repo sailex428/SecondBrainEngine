@@ -1,4 +1,4 @@
 @ParametersAreNonnullByDefault
-package baritone.launch.mixins.player;
+package baritone.mixins.player;
 
 import javax.annotation.ParametersAreNonnullByDefault;

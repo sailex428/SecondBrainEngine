@@ -15,25 +15,24 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.launch.mixins;
+package baritone.mixins.player;
 
-import baritone.utils.accessor.ServerChunkManagerAccessor;
-import net.minecraft.server.world.ChunkHolder;
-import net.minecraft.server.world.ServerChunkManager;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.WorldChunk;
-import org.jetbrains.annotations.Nullable;
+import baritone.api.npc.AutomatoneNPC;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.SleepManager;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-@Mixin(ServerChunkManager.class)
-public abstract class MixinServerChunkManager implements ServerChunkManagerAccessor {
+@Mixin(SleepManager.class)
+public abstract class SleepManagerMixin {
+    @Shadow private int total;
 
-    @Shadow @Nullable protected abstract ChunkHolder getChunkHolder(long pos);
-
-    @Override
-    public @Nullable WorldChunk automatone$getChunkNow(int chunkX, int chunkZ) {
-        ChunkHolder chunkHolder = this.getChunkHolder(ChunkPos.toLong(chunkX, chunkZ));
-        return chunkHolder == null ? null : chunkHolder.getWorldChunk();
+    @ModifyVariable(method = "update", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/server/world/SleepManager;total:I", ordinal = 1, shift = At.Shift.AFTER))
+    private ServerPlayerEntity captureSleepingPlayer(ServerPlayerEntity player) {
+        if (player instanceof AutomatoneNPC) this.total--;
+        return player;
     }
 }

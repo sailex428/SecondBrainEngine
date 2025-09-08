@@ -15,28 +15,27 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.launch.mixins.player;
+package baritone.mixins;
 
-import baritone.api.npc.AutomatoneNPC;
+import baritone.api.IBaritone;
+import baritone.api.utils.IEntityAccessor;
+import baritone.behavior.PathingBehavior;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin {
-    @SuppressWarnings("unused") // makes the field mutable for use by IEntityAccessor
-    @Shadow @Mutable @Final private EntityType<?> type;
+public abstract class MixinEntity implements IEntityAccessor {
+    @Shadow public abstract World getWorld();
 
-    @Inject(method = "hasPlayerRider", at = @At(value = "HEAD"), cancellable = true, require = 1, allow = 1)
-    private void removeFakePlayers(CallbackInfoReturnable<Boolean> cir) {
-        if (this instanceof AutomatoneNPC) {
-            cir.setReturnValue(false);
+    @Inject(method = "setRemoved", at = @At("RETURN"))
+    private void shutdownPathingOnUnloading(Entity.RemovalReason reason, CallbackInfo ci) {
+        if (!getWorld().isClient()) {
+            IBaritone.KEY.maybeGet(this).ifPresent(b -> ((PathingBehavior) b.getPathingBehavior()).shutdown());
         }
     }
 }

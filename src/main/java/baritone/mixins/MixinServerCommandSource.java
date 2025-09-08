@@ -15,15 +15,17 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.ladysnake.otomaton.mixin;
+package baritone.mixins;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.server.world.SleepManager;
+import baritone.utils.accessor.ServerCommandSourceAccessor;
+import net.minecraft.server.command.CommandOutput;
+import net.minecraft.server.command.ServerCommandSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ServerWorld.class)
-public interface ServerWorldAccessor {
-    @Accessor("sleepManager")
-    SleepManager requiem$getSleepManager();
+@Mixin(ServerCommandSource.class)
+public abstract class MixinServerCommandSource implements ServerCommandSourceAccessor {
+    @Override
+    @Accessor("output")
+    public abstract CommandOutput automatone$getOutput();
 }

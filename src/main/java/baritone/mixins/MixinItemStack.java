@@ -15,7 +15,7 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.launch.mixins;
+package baritone.mixins;
 
 import baritone.api.utils.accessor.IItemStack;
 import net.minecraft.item.Item;

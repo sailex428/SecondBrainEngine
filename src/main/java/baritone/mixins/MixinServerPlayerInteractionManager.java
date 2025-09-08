@@ -15,7 +15,7 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.launch.mixins;
+package baritone.mixins;
 
 import baritone.utils.accessor.IServerPlayerInteractionManager;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;

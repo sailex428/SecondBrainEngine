@@ -15,25 +15,20 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package baritone.launch.mixins;
+package baritone.mixins;
 
-import baritone.Automatone;
-import net.minecraft.util.Util;
+import baritone.utils.accessor.ILivingEntityAccessor;
+import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
-import java.util.concurrent.ExecutorService;
+@Mixin(LivingEntity.class)
+public abstract class MixinLivingEntity implements ILivingEntityAccessor {
+    @Invoker("getNextAirUnderwater")
+    @Override
+    public abstract int automatone$getNextAirUnderwater(int air);
 
-@Mixin(Util.class)
-public abstract class MixinUtil {
-    @Shadow
-    private static void attemptShutdown(ExecutorService service) {}
-
-    @Inject(method = "shutdownExecutors", at = @At("RETURN"))
-    private static void shutdownBaritoneExecutor(CallbackInfo ci) {
-        attemptShutdown(Automatone.getExecutor());
-    }
+    @Invoker("getNextAirOnLand")
+    @Override
+    public abstract int automatone$getNextAirOnLand(int air);
 }

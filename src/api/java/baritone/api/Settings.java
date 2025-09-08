@@ -67,7 +67,7 @@ public final class Settings {
     /**
      * Allow Baritone to move items in your inventory to your hotbar
      */
-    public final Setting<Boolean> allowInventory = new Setting<>(false);
+    public final Setting<Boolean> allowInventory = new Setting<>(true);
 
     /**
      * Disable baritone's auto-tool at runtime, but still assume that another mod will provide auto tool functionality
@@ -725,7 +725,7 @@ public final class Settings {
     /**
      * Sets the minimum y level whilst mining - set to 0 to turn off.
      */
-    public final Setting<Integer> minYLevelWhileMining = new Setting<>(0);
+    public final Setting<Integer> minYLevelWhileMining = new Setting<>(-64);
 
     /**
      * This will only allow baritone to mine exposed ores, can be used to stop ore obfuscators on servers that use them.

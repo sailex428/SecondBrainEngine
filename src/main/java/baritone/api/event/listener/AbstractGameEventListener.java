@@ -17,7 +17,8 @@
 
 package baritone.api.event.listener;
 
-import baritone.api.event.events.*;
+import baritone.api.event.events.BlockInteractEvent;
+import baritone.api.event.events.PathEvent;
 
 /**
  * An implementation of {@link IGameEventListener} that has all methods

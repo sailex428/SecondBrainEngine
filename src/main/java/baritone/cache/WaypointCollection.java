@@ -19,12 +19,6 @@ package baritone.cache;
 
 import baritone.api.cache.IWaypoint;
 import baritone.api.cache.IWaypointCollection;
-import baritone.api.cache.Waypoint;
-import baritone.api.utils.BetterBlockPos;
-import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.NbtList;
 
 import java.util.Arrays;
 import java.util.Collection;

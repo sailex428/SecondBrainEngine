@@ -189,7 +189,7 @@ public final class DefaultCommands {
         if (!(target instanceof LivingEntity)) throw EntityArgumentType.ENTITY_NOT_FOUND_EXCEPTION.create();
         try {
             return runCommand(source, command, BaritoneAPI.getProvider().getBaritone((ServerPlayerEntity) target)) ? Command.SINGLE_SUCCESS : 0;
-        } catch (baritone.api.command.exception.CommandException e) {
+        } catch (CommandException e) {
             throw BARITONE_COMMAND_FAILED_EXCEPTION.create(e.handle());
         }
     }

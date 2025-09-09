@@ -64,7 +64,7 @@ public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
       mod.getInputControls().hold(Input.JUMP);
       mod.getInputControls().hold(Input.SPRINT);
       Optional<Item> food = this.calculateFood(mod);
-      if (food.isPresent() && mod.getBaritone().getEntityContext().hungerManager().getFoodLevel() < 20) {
+      if (food.isPresent() && mod.getBaritone().getPlayerContext().entity().getHungerManager().getFoodLevel() < 20) {
          if (mod.getPlayer().isBlocking()) {
             mod.log("want to eat, trying to stop shielding...");
             mod.getInputControls().release(Input.CLICK_RIGHT);
@@ -127,8 +127,11 @@ public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
       Item bestFood = null;
       double bestFoodScore = Double.NEGATIVE_INFINITY;
       LivingEntity player = mod.getPlayer();
-      float hunger = player != null ? mod.getBaritone().getEntityContext().hungerManager().getFoodLevel() : 20.0F;
-      float saturation = player != null ? mod.getBaritone().getEntityContext().hungerManager().getSaturationLevel() : 20.0F;
+      float hunger = player != null ? mod.getBaritone().getPlayerContext().entity().getHungerManager().getFoodLevel() :
+              20.0F;
+      float saturation = player != null ?
+              mod.getBaritone().getPlayerContext().entity().getHungerManager().getSaturationLevel()
+   : 20.0F;
 
       for (ItemStack stack : mod.getItemStorage().getItemStacksPlayerInventory(true)) {
          if (ItemVer.isFood(stack) && stack.getItem() != Items.SPIDER_EYE) {
@@ -166,7 +169,8 @@ public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
       Vec3d cameraPos = mod.getPlayer().getCameraPosVec(0.0F);
       Vec3d rotationVector = this.getRotationVector(pitch, yaw);
       Vec3d vec3d3 = cameraPos.add(rotationVector.x * maxDistance, rotationVector.y * maxDistance, rotationVector.z * maxDistance);
-      return mod.getPlayer().method_48926().raycast(new RaycastContext(cameraPos, vec3d3, ShapeType.OUTLINE, FluidHandling.NONE, mod.getPlayer()));
+      return mod.getPlayer().getWorld().raycast(new RaycastContext(cameraPos, vec3d3, ShapeType.OUTLINE,
+              FluidHandling.NONE, mod.getPlayer()));
    }
 
    protected final Vec3d getRotationVector(float pitch, float yaw) {

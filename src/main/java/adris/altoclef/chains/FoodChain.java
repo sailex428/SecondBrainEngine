@@ -88,7 +88,7 @@ public class FoodChain extends SingleTaskChain {
                int foodScore = (Integer)calculation.getLeft();
                this.cachedPerfectFood = (Optional<Item>)calculation.getRight();
                hasFood = foodScore > 0;
-               if (this.requestFillup && this.controller.getBaritone().getEntityContext().hungerManager().getFoodLevel() >= 20) {
+               if (this.requestFillup && this.controller.getBaritone().getPlayerContext().entity().getHungerManager().getFoodLevel() >= 20) {
                   this.requestFillup = false;
                }
 
@@ -140,7 +140,7 @@ public class FoodChain extends SingleTaskChain {
    public boolean needsToEat() {
       if (hasFood && !this.shouldStop) {
          LivingEntity player = this.controller.getEntity();
-         int foodLevel = this.controller.getBaritone().getEntityContext().hungerManager().getFoodLevel();
+         int foodLevel = this.controller.getBaritone().getPlayerContext().entity().getHungerManager().getFoodLevel();
          float health = player.getHealth();
          if (foodLevel >= 20) {
             return false;
@@ -171,8 +171,8 @@ public class FoodChain extends SingleTaskChain {
       int foodTotal = 0;
       LivingEntity player = controller.getEntity();
       float health = player.getHealth();
-      float hunger = controller.getBaritone().getEntityContext().hungerManager().getFoodLevel();
-      float saturation = controller.getBaritone().getEntityContext().hungerManager().getSaturationLevel();
+      float hunger = controller.getBaritone().getPlayerContext().entity().getHungerManager().getFoodLevel();
+      float saturation = controller.getBaritone().getPlayerContext().entity().getHungerManager().getSaturationLevel();
 
       for (ItemStack stack : controller.getItemStorage().getItemStacksPlayerInventory(true)) {
          if (ItemVer.isFood(stack) && !stack.isOf(Items.SPIDER_EYE)) {

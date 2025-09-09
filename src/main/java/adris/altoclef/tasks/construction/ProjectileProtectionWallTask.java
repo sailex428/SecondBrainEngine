@@ -165,8 +165,8 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
       this.mod.getPlayer().setSneaking(false);
       ActionResult result = this.mod
          .getBaritone()
-         .getEntityContext()
-         .playerController()
+         .getPlayerContext()
+         .interactionController()
          .processRightClickBlock(this.mod.getPlayer(), this.mod.getWorld(), hand, blockHitResult);
       if (result.shouldSwingHand()) {
          this.mod.getPlayer().swingHand(hand);
@@ -192,10 +192,10 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
    }
 
    public boolean swap(int slot) {
-      if (slot == this.mod.getBaritone().getEntityContext().inventory().selectedSlot) {
+      if (slot == this.mod.getBaritone().getPlayerContext().inventory().selectedSlot) {
          return true;
       } else if (slot >= 0 && slot <= 8) {
-         this.mod.getBaritone().getEntityContext().inventory().selectedSlot = slot;
+         this.mod.getBaritone().getPlayerContext().inventory().selectedSlot = slot;
          return true;
       } else {
          return false;

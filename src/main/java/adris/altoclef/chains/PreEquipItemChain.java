@@ -33,11 +33,11 @@ public class PreEquipItemChain extends SingleTaskChain {
             Optional<IPath> pathOptional = mod.getBaritone().getPathingBehavior().getPath();
             if (!pathOptional.isEmpty()) {
                IPath path = pathOptional.get();
-               BlockStateInterface bsi = new BlockStateInterface(this.controller.getBaritone().getEntityContext());
+               BlockStateInterface bsi = new BlockStateInterface(this.controller.getBaritone().getPlayerContext());
 
                for (IMovement iMovement : path.movements()) {
                   Movement movement = (Movement)iMovement;
-                  if (movement.toBreak(bsi).stream().anyMatch(pos -> mod.getWorld().getBlockState(pos).getBlock().defaultDestroyTime() > 0.0F)
+                  if (movement.toBreak(bsi).stream().anyMatch(pos -> mod.getWorld().getBlockState(pos).getBlock().getHardness() > 0.0F)
                      || !movement.toPlace(bsi).isEmpty()) {
                      return;
                   }

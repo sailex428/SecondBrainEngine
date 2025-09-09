@@ -260,7 +260,7 @@ public class KillEnderDragonTask extends Task {
                            AbstractKillEntityTask.equipWeapon(mod);
                            Vec3d targetLookPos = head.getPos().add(0.0, 3.0, 0.0);
                            Rotation targetRotation = RotationUtils.calcRotationFromVec3d(
-                              mod.getBaritone().getEntityContext().headPos(), targetLookPos, mod.getBaritone().getEntityContext().entityRotations()
+                              mod.getBaritone().getPlayerContext().headPos(), targetLookPos, mod.getBaritone().getPlayerContext().entityRotations()
                            );
                            mod.getBaritone().getLookBehavior().updateTarget(targetRotation, true);
                            mod.getBaritone().getInputOverrideHandler().setInputForceState(Input.MOVE_FORWARD, true);

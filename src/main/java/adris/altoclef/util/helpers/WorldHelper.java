@@ -297,7 +297,7 @@ public interface WorldHelper {
    }
 
    static boolean fallingBlockSafeToBreak(AltoClefController controller, BlockPos pos) {
-      BlockStateInterface bsi = new BlockStateInterface(controller.getBaritone().getEntityContext());
+      BlockStateInterface bsi = new BlockStateInterface(controller.getBaritone().getPlayerContext());
       World clientWorld = controller.getWorld();
       if (clientWorld == null) {
          throw new AssertionError();

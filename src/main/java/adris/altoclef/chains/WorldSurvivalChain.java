@@ -63,7 +63,7 @@ public class WorldSurvivalChain extends SingleTaskChain {
                         Optional<Rotation> reach = LookHelper.getReach(this.controller, targetWaterPos.down(), Direction.UP);
                         if (reach.isPresent()) {
                            mod.getBaritone().getLookBehavior().updateTarget(reach.get(), true);
-                           if (mod.getBaritone().getEntityContext().isLookingAt(targetWaterPos.down())
+                           if (mod.getBaritone().getPlayerContext().isLookingAt(targetWaterPos.down())
                               && mod.getSlotHandler().forceEquipItem(Items.WATER_BUCKET)) {
                               this.extinguishWaterPosition = targetWaterPos;
                               mod.getInputControls().tryPress(Input.CLICK_RIGHT);

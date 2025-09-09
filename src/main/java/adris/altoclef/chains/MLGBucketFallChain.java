@@ -64,7 +64,7 @@ public class MLGBucketFallChain extends SingleTaskChain implements ITaskOverride
                   Optional<Rotation> reach = LookHelper.getReach(this.controller, placed, Direction.UP);
                   if (reach.isPresent()) {
                      mod.getBaritone().getLookBehavior().updateTarget(reach.get(), true);
-                     if (mod.getBaritone().getEntityContext().isLookingAt(placed) && mod.getSlotHandler().forceEquipItem(Items.BUCKET)) {
+                     if (mod.getBaritone().getPlayerContext().isLookingAt(placed) && mod.getSlotHandler().forceEquipItem(Items.BUCKET)) {
                         if (this.pickupRepeatTimer.elapsed()) {
                            this.pickupRepeatTimer.reset();
                            mod.getInputControls().tryPress(Input.CLICK_RIGHT);

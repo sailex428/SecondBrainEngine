@@ -27,7 +27,7 @@ import net.minecraft.world.World;
 
 public interface LookHelper {
    static Optional<Rotation> getReach(AltoClefController controller, BlockPos target, Direction side) {
-      IEntityContext context = controller.getBaritone().getEntityContext();
+      IEntityContext context = controller.getBaritone().getPlayerContext();
       Optional<Rotation> reachableRotation;
       if (side == null) {
          reachableRotation = RotationUtils.reachable(context.entity(), target, context.interactionController().getBlockReachDistance());
@@ -37,7 +37,7 @@ public interface LookHelper {
          Vec3d sidePoint = centerOffset.add(target.getX(), target.getY(), target.getZ());
          reachableRotation = RotationUtils.reachableOffset(context.entity(), target, sidePoint, context.interactionController().getBlockReachDistance(), false);
          if (reachableRotation.isPresent()) {
-            Vec3d cameraPos = context.entity().getEyePosition(1.0F);
+            Vec3d cameraPos = context.entity().getEyePos();
             Vec3d vecToPlayerPos = cameraPos.subtract(sidePoint);
             double dotProduct = vecToPlayerPos.normalize().dotProduct(new Vec3d(sideVector.getX(), sideVector.getY(), sideVector.getZ()));
             if (dotProduct < 0.0) {
@@ -125,7 +125,7 @@ public interface LookHelper {
          end = start.add(direction);
       }
 
-      World world = entity.method_48926();
+      World world = entity.getWorld();
       RaycastContext context = new RaycastContext(start, end, ShapeType.COLLIDER, FluidHandling.NONE, entity);
       return world.raycast(context);
    }
@@ -152,8 +152,8 @@ public interface LookHelper {
    }
 
    static Vec3d getCameraPos(AltoClefController mod) {
-      IEntityContext playerContext = mod.getBaritone().getEntityContext();
-      return playerContext.entity().getEyePosition(1.0F);
+      IEntityContext playerContext = mod.getBaritone().getPlayerContext();
+      return playerContext.entity().getEyePos();
    }
 
    static double getLookCloseness(Entity entity, Vec3d pos) {
@@ -182,7 +182,7 @@ public interface LookHelper {
    }
 
    static boolean isLookingAt(AltoClefController mod, BlockPos pos) {
-      return mod.getBaritone().getEntityContext().isLookingAt(pos);
+      return mod.getBaritone().getPlayerContext().isLookingAt(pos);
    }
 
    static boolean isLookingAt(Entity entity, Vec3d toLookAt, double angleThreshold) {
@@ -206,7 +206,7 @@ public interface LookHelper {
 
    static void lookAt(AltoClefController mod, Rotation rotation) {
       mod.getBaritone().getLookBehavior().updateTarget(rotation, true);
-      LivingEntity player = mod.getBaritone().getEntityContext().entity();
+      LivingEntity player = mod.getBaritone().getPlayerContext().entity();
       player.setYaw(rotation.getYaw());
       player.setPitch(rotation.getPitch());
    }
@@ -272,8 +272,8 @@ public interface LookHelper {
    }
 
    static Rotation getLookRotation(AltoClefController mod, Vec3d toLook) {
-      Vec3d playerHead = mod.getBaritone().getEntityContext().headPos();
-      Rotation playerRotations = mod.getBaritone().getEntityContext().entityRotations();
+      Vec3d playerHead = mod.getBaritone().getPlayerContext().headPos();
+      Rotation playerRotations = mod.getBaritone().getPlayerContext().entityRotations();
       return RotationUtils.calcRotationFromVec3d(playerHead, toLook, playerRotations);
    }
 

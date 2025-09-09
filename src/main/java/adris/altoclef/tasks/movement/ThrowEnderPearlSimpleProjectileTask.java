@@ -25,7 +25,7 @@ public class ThrowEnderPearlSimpleProjectileTask extends Task {
    private static boolean cleanThrow(AltoClefController mod, float yaw, float pitch) {
       Rotation rotation = new Rotation(yaw, -1.0F * pitch);
       float range = 3.0F;
-      Vec3d delta = LookHelper.toVec3d(rotation).scale(range);
+      Vec3d delta = LookHelper.toVec3d(rotation).multiply(range);
       Vec3d start = LookHelper.getCameraPos(mod);
       return LookHelper.cleanLineOfSight(mod, start.add(delta), (double)range);
    }

@@ -6,12 +6,11 @@ import adris.altoclef.util.helpers.ItemHelper;
 import adris.altoclef.util.slots.Slot;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-
 import java.util.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.collection.DefaultedList;
 
 public class InventorySubTracker extends Tracker {
    private final Map<Item, List<Integer>> itemToSlotPlayer = new HashMap<>();
@@ -27,7 +26,7 @@ public class InventorySubTracker extends Tracker {
       ItemStack cursorStack = this.mod.getSlotHandler().getCursorStack();
 
       for (Item item : items) {
-         if (cursorStack.is(item)) {
+         if (cursorStack.isOf(item)) {
             result += cursorStack.getCount();
          }
 
@@ -42,7 +41,7 @@ public class InventorySubTracker extends Tracker {
       ItemStack cursorStack = this.mod.getSlotHandler().getCursorStack();
 
       for (Item item : items) {
-         if (cursorStack.is(item)) {
+         if (cursorStack.isOf(item)) {
             return true;
          }
 
@@ -70,14 +69,14 @@ public class InventorySubTracker extends Tracker {
       if (includeArmor) {
          for (int i = 0; i < inventory.armor.size(); i++) {
             ItemStack stack = (ItemStack)inventory.armor.get(i);
-            if (Arrays.stream(items).anyMatch(stack::is)) {
+            if (Arrays.stream(items).anyMatch(stack::isOf)) {
                result.add(new Slot(inventory.armor, i));
             }
          }
       }
 
       ItemStack offhandStack = (ItemStack)inventory.offHand.get(0);
-      if (Arrays.stream(items).anyMatch(offhandStack::is)) {
+      if (Arrays.stream(items).anyMatch(offhandStack::isOf)) {
          result.add(new Slot(inventory.offHand, 0));
       }
 
@@ -102,7 +101,7 @@ public class InventorySubTracker extends Tracker {
          for (int i = 0; i < inventory.main.size(); i++) {
             ItemStack stackInSlot = (ItemStack)inventory.main.get(i);
             if (ItemHelper.canStackTogether(item, stackInSlot)) {
-               int roomLeft = stackInSlot.getMaxStackSize() - stackInSlot.getCount();
+               int roomLeft = stackInSlot.getMaxCount() - stackInSlot.getCount();
                if (acceptPartial || roomLeft >= item.getCount()) {
                   result.add(new Slot(inventory.main, i));
                }
@@ -146,11 +145,11 @@ public class InventorySubTracker extends Tracker {
       }
    }
 
-   private void registerItem(ItemStack stack, int index, NonNullList<ItemStack> inventory) {
+   private void registerItem(ItemStack stack, int index, DefaultedList<ItemStack> inventory) {
       Item item = stack.isEmpty() ? Items.AIR : stack.getItem();
       int count = stack.getCount();
       this.itemCountsPlayer.put(item, this.itemCountsPlayer.getOrDefault(item, 0) + count);
-      if (inventory instanceof NonNullList) {
+      if (inventory instanceof DefaultedList) {
          this.itemToSlotPlayer.computeIfAbsent(item, k -> new ArrayList<>()).add(index);
       }
    }

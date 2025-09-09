@@ -7,11 +7,10 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.trackers.storage.ContainerCache;
 import adris.altoclef.util.BlockRange;
 import adris.altoclef.util.ItemTarget;
-import net.minecraft.core.BlockPos;
-
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
+import net.minecraft.util.math.BlockPos;
 
 public class StoreInStashTask extends Task {
    private final ItemTarget[] toStore;
@@ -54,7 +53,7 @@ public class StoreInStashTask extends Task {
          if (closestContainer.isPresent()) {
             this.setDebugState("Storing in closest stash container.");
             return new StoreInContainerTask(closestContainer.get(), false, itemsToStore);
-         } else if (!this.stashRange.contains(this.controller, this.controller.getEntity().blockPosition())) {
+         } else if (!this.stashRange.contains(this.controller, this.controller.getEntity().getBlockPos())) {
             this.setDebugState("Traveling to stash area.");
             BlockPos centerStash = this.stashRange.getCenter();
             return new GetToXZTask(centerStash.getX(), centerStash.getZ());

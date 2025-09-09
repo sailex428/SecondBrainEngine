@@ -3,7 +3,7 @@ package adris.altoclef.tasks.misc;
 import adris.altoclef.tasksystem.Task;
 import baritone.Baritone;
 import baritone.process.FishingProcess;
-import net.minecraft.world.item.Items;
+import net.minecraft.item.Items;
 
 public class FishTask extends Task {
    @Override

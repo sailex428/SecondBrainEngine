@@ -7,16 +7,15 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.BlockHitResult;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
 
 public class SafeNetherPortalTask extends Task {
    private final TimerGame wait = new TimerGame(1.0);
@@ -45,13 +44,13 @@ public class SafeNetherPortalTask extends Task {
 
          if (mod.getPlayer().getPortalCooldown() < 10) {
             if (this.positions != null && this.directions != null) {
-               BlockPos pos1 = mod.getPlayer().getOnPos().relative(this.axis, 1);
-               BlockPos pos2 = mod.getPlayer().getOnPos().relative(this.axis, -1);
+               BlockPos pos1 = mod.getPlayer().getSteppingPos().offset(this.axis, 1);
+               BlockPos pos2 = mod.getPlayer().getSteppingPos().offset(this.axis, -1);
                if (mod.getWorld().getBlockState(pos1).isAir() || mod.getWorld().getBlockState(pos1).getBlock().equals(Blocks.SOUL_SAND)) {
                   boolean passed = false;
 
                   for (Direction dir : Direction.values()) {
-                     if (mod.getWorld().getBlockState(pos1.above().relative(dir)).getBlock().equals(Blocks.NETHER_PORTAL)) {
+                     if (mod.getWorld().getBlockState(pos1.up().offset(dir)).getBlock().equals(Blocks.NETHER_PORTAL)) {
                         passed = true;
                         break;
                      }
@@ -66,7 +65,7 @@ public class SafeNetherPortalTask extends Task {
                   boolean passed = false;
 
                   for (Direction dirx : Direction.values()) {
-                     if (mod.getWorld().getBlockState(pos2.above().relative(dirx)).getBlock().equals(Blocks.NETHER_PORTAL)) {
+                     if (mod.getWorld().getBlockState(pos2.up().offset(dirx)).getBlock().equals(Blocks.NETHER_PORTAL)) {
                         passed = true;
                         break;
                      }
@@ -82,11 +81,11 @@ public class SafeNetherPortalTask extends Task {
             this.setDebugState("We are not in a portal");
             return null;
          } else {
-            BlockState state = mod.getWorld().getBlockState(mod.getPlayer().blockPosition());
+            BlockState state = mod.getWorld().getBlockState(mod.getPlayer().getBlockPos());
             if (this.positions != null && this.directions != null) {
                for (BlockPos pos : this.positions) {
                   for (Direction dirxx : this.directions) {
-                     BlockPos newPos = pos.below().relative(dirxx);
+                     BlockPos newPos = pos.down().offset(dirxx);
                      if (mod.getWorld().getBlockState(newPos).isAir() || mod.getWorld().getBlockState(newPos).getBlock().equals(Blocks.SOUL_SAND)) {
                         this.setDebugState("Changing block...");
                         return new ReplaceSafeBlock(newPos);
@@ -99,13 +98,13 @@ public class SafeNetherPortalTask extends Task {
                return null;
             } else {
                if (state.getBlock().equals(Blocks.NETHER_PORTAL)) {
-                  this.axis = (Axis)state.getValue(BlockStateProperties.HORIZONTAL_AXIS);
+                  this.axis = (Axis)state.get(Properties.HORIZONTAL_AXIS);
                   this.positions = new ArrayList<>();
-                  this.positions.add(mod.getPlayer().blockPosition());
+                  this.positions.add(mod.getPlayer().getBlockPos());
 
                   for (Direction dirxxx : Direction.values()) {
                      if (!dirxxx.getAxis().isVertical()) {
-                        BlockPos pos = mod.getPlayer().blockPosition().relative(dirxxx);
+                        BlockPos pos = mod.getPlayer().getBlockPos().offset(dirxxx);
                         if (mod.getWorld().getBlockState(pos).getBlock().equals(Blocks.NETHER_PORTAL)) {
                            this.positions.add(pos);
                         }
@@ -175,7 +174,7 @@ public class SafeNetherPortalTask extends Task {
             return null;
          } else {
             LookHelper.lookAt(mod, this.pos);
-            if (mod.getPlayer().pick(3.0, 0.0F, true) instanceof BlockHitResult blockHitResult
+            if (mod.getPlayer().raycast(3.0, 0.0F, true) instanceof BlockHitResult blockHitResult
                && mod.getWorld().getBlockState(blockHitResult.getBlockPos()).getBlock().equals(Blocks.NETHER_PORTAL)) {
                this.setDebugState("Getting closer to target...");
                mod.getInputControls().hold(Input.MOVE_FORWARD);

@@ -11,12 +11,11 @@ import adris.altoclef.util.slots.Slot;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
-
 import java.util.Optional;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.SlotActionType;
 
 public class PlayerInteractionFixChain extends TaskChain {
    private final TimerGame stackHeldTimeout = new TimerGame(1.0);
@@ -88,7 +87,7 @@ public class PlayerInteractionFixChain extends TaskChain {
             if (currentStack == null || currentStack.isEmpty()) {
                this.stackHeldTimeout.reset();
                this.lastHandStack = null;
-            } else if (this.lastHandStack == null || !ItemStack.matches(currentStack, this.lastHandStack)) {
+            } else if (this.lastHandStack == null || !ItemStack.areEqual(currentStack, this.lastHandStack)) {
                this.stackHeldTimeout.reset();
                this.lastHandStack = currentStack.copy();
             }
@@ -96,18 +95,18 @@ public class PlayerInteractionFixChain extends TaskChain {
             if (this.lastHandStack != null && this.stackHeldTimeout.elapsed()) {
                Optional<Slot> moveTo = mod.getItemStorage().getSlotThatCanFitInPlayerInventory(this.lastHandStack, false);
                if (moveTo.isPresent()) {
-                  mod.getSlotHandler().clickSlot(moveTo.get(), 0, ClickType.PICKUP);
+                  mod.getSlotHandler().clickSlot(moveTo.get(), 0, SlotActionType.PICKUP);
                   return Float.NEGATIVE_INFINITY;
                } else if (ItemHelper.canThrowAwayStack(mod, StorageHelper.getItemStackInCursorSlot(this.controller))) {
-                  mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+                  mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
                   return Float.NEGATIVE_INFINITY;
                } else {
                   Optional<Slot> garbage = StorageHelper.getGarbageSlot(mod);
                   if (garbage.isPresent()) {
-                     mod.getSlotHandler().clickSlot(garbage.get(), 0, ClickType.PICKUP);
+                     mod.getSlotHandler().clickSlot(garbage.get(), 0, SlotActionType.PICKUP);
                      return Float.NEGATIVE_INFINITY;
                   } else {
-                     mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+                     mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
                      return Float.NEGATIVE_INFINITY;
                   }
                }

@@ -3,9 +3,9 @@ package adris.altoclef.tasks.movement;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 
 public class GoToStrongholdPortalTask extends Task {
    private LocateStrongholdCoordinatesTask locateCoordsTask;
@@ -39,7 +39,7 @@ public class GoToStrongholdPortalTask extends Task {
          }
       }
 
-      if (mod.getPlayer().position().distanceTo(WorldHelper.toVec3d(this.strongholdCoordinates)) < 10.0
+      if (mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(this.strongholdCoordinates)) < 10.0
          && !mod.getBlockScanner().anyFound(Blocks.END_PORTAL_FRAME)) {
          mod.log("Something went wrong whilst triangulating the stronghold... either the action got disrupted or the second eye went to a different stronghold");
          mod.log("We will try to triangulate again now...");

@@ -5,9 +5,8 @@ import adris.altoclef.util.helpers.BaritoneHelper;
 import baritone.api.pathing.goals.Goal;
 import baritone.api.pathing.goals.GoalXZ;
 import baritone.api.pathing.goals.GoalYLevel;
-import net.minecraft.world.entity.Entity;
-
 import java.util.List;
+import net.minecraft.entity.Entity;
 
 public abstract class GoalRunAwayFromEntities implements Goal {
    private final AltoClefController mod;
@@ -31,9 +30,9 @@ public abstract class GoalRunAwayFromEntities implements Goal {
                if (entity != null && entity.isAlive()) {
                   double sqDistance;
                   if (this.xzOnly) {
-                     sqDistance = entity.position().subtract(x, y, z).multiply(1.0, 0.0, 1.0).lengthSqr();
+                     sqDistance = entity.getPos().subtract(x, y, z).multiply(1.0, 0.0, 1.0).lengthSquared();
                   } else {
-                     sqDistance = entity.distanceToSqr(x, y, z);
+                     sqDistance = entity.squaredDistanceTo(x, y, z);
                   }
 
                   if (sqDistance < this.distance * this.distance) {
@@ -85,9 +84,9 @@ public abstract class GoalRunAwayFromEntities implements Goal {
    protected double getCostOfEntity(Entity entity, int x, int y, int z) {
       double heuristic = 0.0;
       if (!this.xzOnly) {
-         heuristic += GoalYLevel.calculate(entity.blockPosition().getY(), y);
+         heuristic += GoalYLevel.calculate(entity.getBlockPos().getY(), y);
       }
 
-      return heuristic + GoalXZ.calculate(entity.blockPosition().getX() - x, entity.blockPosition().getZ() - z);
+      return heuristic + GoalXZ.calculate(entity.getBlockPos().getX() - x, entity.getBlockPos().getZ() - z);
    }
 }

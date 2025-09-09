@@ -12,21 +12,20 @@ import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
-import net.minecraft.world.entity.boss.EnderDragonPart;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.boss.enderdragon.phases.DragonLandingApproachPhase;
-import net.minecraft.world.entity.boss.enderdragon.phases.DragonLandingPhase;
-import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
-import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.Arrays;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
+import net.minecraft.entity.boss.dragon.phase.LandingApproachPhase;
+import net.minecraft.entity.boss.dragon.phase.LandingPhase;
+import net.minecraft.entity.boss.dragon.phase.Phase;
+import net.minecraft.entity.boss.dragon.phase.PhaseType;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Vec3d;
 
 public class KillEnderDragonWithBedsTask extends Task {
    private final WaitForDragonAndPearlTask whenNotPerchingTask;
@@ -72,9 +71,9 @@ public class KillEnderDragonWithBedsTask extends Task {
          this.setDebugState("Searching for end portal top.");
          return new GetToXZTask(0, 0);
       } else {
-         BlockPos obsidianTarget = this.endPortalTop.above().relative(Direction.NORTH);
+         BlockPos obsidianTarget = this.endPortalTop.up().offset(Direction.NORTH);
          if (!mod.getWorld().getBlockState(obsidianTarget).getBlock().equals(Blocks.OBSIDIAN)) {
-            if (WorldHelper.inRangeXZ(mod.getPlayer().position(), new Vec3(0.0, 0.0, 0.0), 10.0)) {
+            if (WorldHelper.inRangeXZ(mod.getPlayer().getPos(), new Vec3d(0.0, 0.0, 0.0), 10.0)) {
                if (this.placeObsidianTask == null) {
                   this.placeObsidianTask = new PlaceBlockTask(obsidianTarget, Blocks.OBSIDIAN);
                }
@@ -84,20 +83,20 @@ public class KillEnderDragonWithBedsTask extends Task {
                return new GetToXZTask(0, 0);
             }
          } else {
-            BlockState stateAtPortal = mod.getWorld().getBlockState(this.endPortalTop.above());
+            BlockState stateAtPortal = mod.getWorld().getBlockState(this.endPortalTop.up());
             if (!stateAtPortal.isAir()
                && !stateAtPortal.getBlock().equals(Blocks.FIRE)
                && !Arrays.stream(ItemHelper.itemsToBlocks(ItemHelper.BED)).toList().contains(stateAtPortal.getBlock())) {
                if (this.freePortalTopTask == null) {
-                  this.freePortalTopTask = new DestroyBlockTask(this.endPortalTop.above());
+                  this.freePortalTopTask = new DestroyBlockTask(this.endPortalTop.up());
                }
 
                return this.freePortalTopTask;
             } else if (this.dragonDead) {
                this.setDebugState("Waiting for overworld portal to spawn.");
-               return new GetToBlockTask(this.endPortalTop.below(4).west());
+               return new GetToBlockTask(this.endPortalTop.down(4).west());
             } else {
-               if (!mod.getEntityTracker().entityFound(EnderDragon.class) || this.dragonDead) {
+               if (!mod.getEntityTracker().entityFound(EnderDragonEntity.class) || this.dragonDead) {
                   this.setDebugState("No dragon found.");
                   if (!WorldHelper.inRangeXZ(mod.getPlayer(), this.endPortalTop, 1.0)) {
                      this.setDebugState("Going to end portal top at" + this.endPortalTop.toString() + ".");
@@ -105,19 +104,19 @@ public class KillEnderDragonWithBedsTask extends Task {
                   }
                }
 
-               for (EnderDragon dragon : mod.getEntityTracker().getTrackedEntities(EnderDragon.class)) {
-                  DragonPhaseInstance dragonPhase = dragon.getPhaseManager().getCurrentPhase();
-                  if (dragonPhase.getPhase() == EnderDragonPhase.DYING) {
+               for (EnderDragonEntity dragon : mod.getEntityTracker().getTrackedEntities(EnderDragonEntity.class)) {
+                  Phase dragonPhase = dragon.getPhaseManager().getCurrent();
+                  if (dragonPhase.getType() == PhaseType.DYING) {
                      Debug.logMessage("Dragon is dead.");
-                     if (mod.getPlayer().getXRot() != -90.0F) {
-                        mod.getPlayer().setXRot(-90.0F);
+                     if (mod.getPlayer().getPitch() != -90.0F) {
+                        mod.getPlayer().setPitch(-90.0F);
                      }
 
                      this.dragonDead = true;
                      return null;
                   }
 
-                  boolean perching = dragonPhase instanceof DragonLandingPhase || dragonPhase instanceof DragonLandingApproachPhase || dragonPhase.isSitting();
+                  boolean perching = dragonPhase instanceof LandingPhase || dragonPhase instanceof LandingApproachPhase || dragonPhase.isSittingOrHovering();
                   if (dragon.getY() < this.endPortalTop.getY() + 2) {
                      perching = false;
                   }
@@ -140,20 +139,20 @@ public class KillEnderDragonWithBedsTask extends Task {
       }
    }
 
-   private Task performOneCycle(AltoClefController mod, EnderDragon dragon) {
+   private Task performOneCycle(AltoClefController mod, EnderDragonEntity dragon) {
       mod.getFoodChain().shouldStop(true);
       if (mod.getInputControls().isHeldDown(Input.SNEAK)) {
          mod.getInputControls().release(Input.SNEAK);
       }
 
       mod.getSlotHandler().forceEquipItemToOffhand(Items.AIR);
-      BlockPos endPortalTop = locateExitPortalTop(mod).above();
+      BlockPos endPortalTop = locateExitPortalTop(mod).up();
       BlockPos obsidian = null;
       Direction dir = null;
 
       for (Direction direction : new Direction[]{Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH}) {
-         if (mod.getWorld().getBlockState(endPortalTop.relative(direction)).getBlock().equals(Blocks.OBSIDIAN)) {
-            obsidian = endPortalTop.relative(direction);
+         if (mod.getWorld().getBlockState(endPortalTop.offset(direction)).getBlock().equals(Blocks.OBSIDIAN)) {
+            obsidian = endPortalTop.offset(direction);
             dir = direction.getOpposite();
             break;
          }
@@ -164,9 +163,9 @@ public class KillEnderDragonWithBedsTask extends Task {
          return null;
       } else {
          Direction offsetDir = dir.getAxis() == Axis.X ? Direction.SOUTH : Direction.WEST;
-         BlockPos targetBlock = endPortalTop.below(3).relative(offsetDir, 3).relative(dir);
-         double d = this.distanceIgnoreY(WorldHelper.toVec3d(targetBlock), mod.getPlayer().position());
-         if (!(d > 0.7) && mod.getPlayer().blockPosition().below().getY() <= endPortalTop.getY() - 4) {
+         BlockPos targetBlock = endPortalTop.down(3).offset(offsetDir, 3).offset(dir);
+         double d = this.distanceIgnoreY(WorldHelper.toVec3d(targetBlock), mod.getPlayer().getPos());
+         if (!(d > 0.7) && mod.getPlayer().getBlockPos().down().getY() <= endPortalTop.getY() - 4) {
             if (!this.waited) {
                this.waited = true;
                this.waitBeforePlaceTimer.reset();
@@ -189,12 +188,12 @@ public class KillEnderDragonWithBedsTask extends Task {
                } else if (!this.waiTimer.elapsed()) {
                   return null;
                } else {
-                  Vec3 dragonHeadPos = dragon.head.getBoundingBox().getCenter();
-                  Vec3 bedHeadPos = WorldHelper.toVec3d(bedHead);
+                  Vec3d dragonHeadPos = dragon.head.getBoundingBox().getCenter();
+                  Vec3d bedHeadPos = WorldHelper.toVec3d(bedHead);
                   double dist = dragonHeadPos.distanceTo(bedHeadPos);
                   double distXZ = this.distanceIgnoreY(dragonHeadPos, bedHeadPos);
-                  EnderDragonPart body = dragon.getSubEntities()[2];
-                  double destroyDistance = Math.abs(body.getBoundingBox().min(Axis.Y) - bedHeadPos.y());
+                  EnderDragonPart body = dragon.getBodyParts()[2];
+                  double destroyDistance = Math.abs(body.getBoundingBox().getMin(Axis.Y) - bedHeadPos.getY());
                   boolean tooClose = destroyDistance < 1.1;
                   boolean skip = destroyDistance > 3.0 && dist > 4.5 && distXZ > 2.5;
                   mod.log(destroyDistance + " : " + destroyDistance + " : " + dist);
@@ -223,7 +222,7 @@ public class KillEnderDragonWithBedsTask extends Task {
       }
    }
 
-   public double distanceIgnoreY(Vec3 vec, Vec3 vec1) {
+   public double distanceIgnoreY(Vec3d vec, Vec3d vec1) {
       double d = vec.x - vec1.x;
       double f = vec.z - vec1.z;
       return Math.sqrt(d * d + f * f);

@@ -11,25 +11,24 @@ import baritone.api.pathing.goals.Goal;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
 import baritone.pathing.movement.MovementHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.ClipContext.Block;
-import net.minecraft.world.level.ClipContext.Fluid;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.HitResult.Type;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.Optional;
 import java.util.function.Predicate;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.hit.HitResult.Type;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
+import net.minecraft.world.RaycastContext.FluidHandling;
+import net.minecraft.world.RaycastContext.ShapeType;
 
 public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
    private final float strength;
@@ -38,8 +37,8 @@ public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
 
    public EscapeFromLavaTask(AltoClefController mod, float strength) {
       this.strength = strength;
-      this.avoidPlacingRiskyBlock = blockPos -> mod.getPlayer().getBoundingBox().intersects(new AABB(blockPos))
-         && (mod.getWorld().getBlockState(mod.getPlayer().blockPosition().below()).getBlock() == Blocks.LAVA || mod.getPlayer().isInLava());
+      this.avoidPlacingRiskyBlock = blockPos -> mod.getPlayer().getBoundingBox().intersects(new Box(blockPos))
+         && (mod.getWorld().getBlockState(mod.getPlayer().getBlockPos().down()).getBlock() == Blocks.LAVA || mod.getPlayer().isInLava());
    }
 
    public EscapeFromLavaTask(AltoClefController mod) {
@@ -75,9 +74,9 @@ public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
          }
       }
 
-      if (mod.getPlayer().isInLava() || mod.getWorld().getBlockState(mod.getPlayer().blockPosition().below()).getBlock() == Blocks.LAVA) {
+      if (mod.getPlayer().isInLava() || mod.getWorld().getBlockState(mod.getPlayer().getBlockPos().down()).getBlock() == Blocks.LAVA) {
          this.setDebugState("run away from lava");
-         BlockPos steppingPos = mod.getPlayer().getOnPos();
+         BlockPos steppingPos = mod.getPlayer().getSteppingPos();
          if (!mod.getWorld().getBlockState(steppingPos.east()).getBlock().equals(Blocks.LAVA)
             || !mod.getWorld().getBlockState(steppingPos.west()).getBlock().equals(Blocks.LAVA)
             || !mod.getWorld().getBlockState(steppingPos.south()).getBlock().equals(Blocks.LAVA)
@@ -100,8 +99,8 @@ public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
                if (result.getType() == Type.BLOCK) {
                   BlockHitResult blockHitResult = (BlockHitResult)result;
                   BlockPos pos = blockHitResult.getBlockPos();
-                  if (pos.getY() <= mod.getPlayer().getOnPos().getY()) {
-                     Direction facing = blockHitResult.getDirection();
+                  if (pos.getY() <= mod.getPlayer().getSteppingPos().getY()) {
+                     Direction facing = blockHitResult.getSide();
                      if (facing != Direction.UP) {
                         LookHelper.lookAt(this.controller, new Rotation(yaw, pitch));
                         if (mod.getItemStorage().hasItem(Items.NETHERRACK)) {
@@ -164,20 +163,20 @@ public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
    }
 
    public HitResult raycast(AltoClefController mod, double maxDistance, float pitch, float yaw) {
-      Vec3 cameraPos = mod.getPlayer().getEyePosition(0.0F);
-      Vec3 rotationVector = this.getRotationVector(pitch, yaw);
-      Vec3 vec3d3 = cameraPos.add(rotationVector.x * maxDistance, rotationVector.y * maxDistance, rotationVector.z * maxDistance);
-      return mod.getPlayer().level().clip(new ClipContext(cameraPos, vec3d3, Block.OUTLINE, Fluid.NONE, mod.getPlayer()));
+      Vec3d cameraPos = mod.getPlayer().getCameraPosVec(0.0F);
+      Vec3d rotationVector = this.getRotationVector(pitch, yaw);
+      Vec3d vec3d3 = cameraPos.add(rotationVector.x * maxDistance, rotationVector.y * maxDistance, rotationVector.z * maxDistance);
+      return mod.getPlayer().method_48926().raycast(new RaycastContext(cameraPos, vec3d3, ShapeType.OUTLINE, FluidHandling.NONE, mod.getPlayer()));
    }
 
-   protected final Vec3 getRotationVector(float pitch, float yaw) {
+   protected final Vec3d getRotationVector(float pitch, float yaw) {
       float f = pitch * (float) (Math.PI / 180.0);
       float g = -yaw * (float) (Math.PI / 180.0);
-      float h = Mth.cos(g);
-      float i = Mth.sin(g);
-      float j = Mth.cos(f);
-      float k = Mth.sin(f);
-      return new Vec3(i * j, -k, h * j);
+      float h = MathHelper.cos(g);
+      float i = MathHelper.sin(g);
+      float j = MathHelper.cos(f);
+      float k = MathHelper.sin(f);
+      return new Vec3d(i * j, -k, h * j);
    }
 
    @Override

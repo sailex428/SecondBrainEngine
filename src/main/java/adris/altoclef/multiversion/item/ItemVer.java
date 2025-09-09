@@ -1,14 +1,14 @@
 package adris.altoclef.multiversion.item;
 
 import adris.altoclef.multiversion.FoodComponentWrapper;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 public class ItemVer {
    public static FoodComponentWrapper getFoodComponent(Item item) {
-      return FoodComponentWrapper.of(item.getFoodProperties());
+      return FoodComponentWrapper.of(item.getFoodComponent());
    }
 
    public static boolean isFood(ItemStack stack) {
@@ -16,15 +16,15 @@ public class ItemVer {
    }
 
    public static boolean hasCustomName(ItemStack stack) {
-      return stack.hasCustomHoverName();
+      return stack.hasCustomName();
    }
 
    public static boolean isFood(Item item) {
-      return item.isEdible();
+      return item.isFood();
    }
 
    private static boolean isSuitableFor(Item item, BlockState state) {
-      return item.isCorrectToolForDrops(state);
+      return item.isSuitableFor(state);
    }
 
    private static Item RAW_GOLD() {

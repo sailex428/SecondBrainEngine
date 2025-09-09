@@ -20,15 +20,20 @@ import baritone.api.pathing.goals.Goal;
 import baritone.api.pathing.goals.GoalNear;
 import baritone.api.pathing.goals.GoalTwoBlocks;
 import baritone.api.process.ICustomGoalProcess;
-import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.block.FenceBlock;
+import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.FlowerBlock;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.BlockRotation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3i;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -145,35 +150,35 @@ public class InteractWithBlockTask extends Task {
 
    private static BlockPos[] generateSides(BlockPos pos) {
       return new BlockPos[]{
-         pos.offset(1, 0, 0),
-         pos.offset(-1, 0, 0),
-         pos.offset(0, 0, 1),
-         pos.offset(0, 0, -1),
-         pos.offset(1, 0, -1),
-         pos.offset(1, 0, 1),
-         pos.offset(-1, 0, -1),
-         pos.offset(-1, 0, 1)
+         pos.add(1, 0, 0),
+         pos.add(-1, 0, 0),
+         pos.add(0, 0, 1),
+         pos.add(0, 0, -1),
+         pos.add(1, 0, -1),
+         pos.add(1, 0, 1),
+         pos.add(-1, 0, -1),
+         pos.add(-1, 0, 1)
       };
    }
 
    private static Goal createGoalForInteract(BlockPos target, int reachDistance, Direction interactSide, Vec3i interactOffset, boolean walkInto) {
       boolean sideMatters = interactSide != null;
       if (sideMatters) {
-         Vec3i offs = interactSide.getNormal();
+         Vec3i offs = interactSide.getVector();
          if (offs.getY() == -1) {
-            offs = offs.below();
+            offs = offs.down();
          }
 
-         target = target.offset(offs);
+         target = target.add(offs);
       }
 
       if (walkInto) {
          return new GoalTwoBlocks(target);
       } else if (sideMatters) {
          GoalBlockSide goalBlockSide = new GoalBlockSide(target, interactSide, 1.0);
-         return new GoalAnd(goalBlockSide, new GoalNear(target.offset(interactOffset), reachDistance));
+         return new GoalAnd(goalBlockSide, new GoalNear(target.add(interactOffset), reachDistance));
       } else {
-         return new GoalTwoBlocks(target.above());
+         return new GoalTwoBlocks(target.up());
       }
    }
 
@@ -196,11 +201,11 @@ public class InteractWithBlockTask extends Task {
    }
 
    private BlockPos stuckInBlock(AltoClefController mod) {
-      BlockPos p = mod.getPlayer().blockPosition();
+      BlockPos p = mod.getPlayer().getBlockPos();
       if (this.isAnnoying(mod, p)) {
          return p;
-      } else if (this.isAnnoying(mod, p.above())) {
-         return p.above();
+      } else if (this.isAnnoying(mod, p.up())) {
+         return p.up();
       } else {
          BlockPos[] toCheck = generateSides(p);
 
@@ -210,7 +215,7 @@ public class InteractWithBlockTask extends Task {
             }
          }
 
-         BlockPos[] toCheckHigh = generateSides(p.above());
+         BlockPos[] toCheckHigh = generateSides(p.up());
 
          for (BlockPos checkx : toCheckHigh) {
             if (this.isAnnoying(mod, checkx)) {
@@ -387,23 +392,23 @@ public class InteractWithBlockTask extends Task {
          if (!cursorStack.isEmpty()) {
             Optional<Slot> moveTo = mod.getItemStorage().getSlotThatCanFitInPlayerInventory(cursorStack, false);
             if (moveTo.isPresent()) {
-               mod.getSlotHandler().clickSlot(moveTo.get(), 0, ClickType.PICKUP);
+               mod.getSlotHandler().clickSlot(moveTo.get(), 0, SlotActionType.PICKUP);
                return ClickResponse.WAIT_FOR_CLICK;
             } else if (ItemHelper.canThrowAwayStack(mod, cursorStack)) {
-               mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+               mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
                return ClickResponse.WAIT_FOR_CLICK;
             } else {
                Optional<Slot> garbage = StorageHelper.getGarbageSlot(mod);
                if (garbage.isPresent()) {
-                  mod.getSlotHandler().clickSlot(garbage.get(), 0, ClickType.PICKUP);
+                  mod.getSlotHandler().clickSlot(garbage.get(), 0, SlotActionType.PICKUP);
                   return ClickResponse.WAIT_FOR_CLICK;
                } else {
-                  mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+                  mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
                   return ClickResponse.WAIT_FOR_CLICK;
                }
             }
          } else {
-            Optional<Rotation> reachable = this.getCurrentReach();
+            Optional<BlockRotation> reachable = this.getCurrentReach();
             if (reachable.isPresent()) {
                if (LookHelper.isLookingAt(mod, this.target)) {
                   if (this.toUse != null) {
@@ -438,7 +443,7 @@ public class InteractWithBlockTask extends Task {
       }
    }
 
-   public Optional<Rotation> getCurrentReach() {
+   public Optional<BlockRotation> getCurrentReach() {
       return LookHelper.getReach(this.controller, this.target, this.direction);
    }
 

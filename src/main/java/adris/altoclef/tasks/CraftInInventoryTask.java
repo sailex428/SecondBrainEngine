@@ -10,9 +10,9 @@ import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 
 public class CraftInInventoryTask extends ResourceTask {
    private final RecipeTarget target;
@@ -51,10 +51,10 @@ public class CraftInInventoryTask extends ResourceTask {
       if (controller.getItemStorage().getItemCount(outputItem) >= targetCount) {
          return null;
       } else if (this.collect && !StorageHelper.hasRecipeMaterialsOrTarget(controller, this.target)) {
-         this.setDebugState("Collecting ingredients for " + outputItem.getDescription().getString());
+         this.setDebugState("Collecting ingredients for " + outputItem.getName().getString());
          return new CollectRecipeCataloguedResourcesTask(this.ignoreUncataloguedSlots, this.target);
       } else {
-         this.setDebugState("Crafting " + outputItem.getDescription().getString());
+         this.setDebugState("Crafting " + outputItem.getName().getString());
          if (!this.isCrafting) {
             this.craftTimer.reset();
             this.isCrafting = true;
@@ -76,7 +76,7 @@ public class CraftInInventoryTask extends ResourceTask {
                      controller, new RecipeTarget(this.target.getOutputItem(), this.target.getRecipe().outputCount(), this.target.getRecipe())
                   )) {
                      Debug.logWarning(
-                        "Failed to craft " + outputItem.getDescription().getString() + ", not enough ingredients even though we passed the initial check."
+                        "Failed to craft " + outputItem.getName().getString() + ", not enough ingredients even though we passed the initial check."
                      );
                      break;
                   }
@@ -92,7 +92,7 @@ public class CraftInInventoryTask extends ResourceTask {
                   controller.getItemStorage().registerSlotAction();
                }
 
-               controller.getEntity().swing(InteractionHand.MAIN_HAND);
+               controller.getEntity().swingHand(Hand.MAIN_HAND);
                return null;
             }
          }
@@ -110,7 +110,7 @@ public class CraftInInventoryTask extends ResourceTask {
 
    @Override
    protected String toDebugStringName() {
-      return "Craft in inventory: " + this.target.getOutputItem().getDescription().getString();
+      return "Craft in inventory: " + this.target.getOutputItem().getName().getString();
    }
 
    public RecipeTarget getRecipeTarget() {

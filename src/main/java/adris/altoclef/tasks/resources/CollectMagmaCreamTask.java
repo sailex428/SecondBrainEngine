@@ -8,9 +8,9 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.Dimension;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.world.entity.monster.MagmaCube;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.entity.mob.MagmaCubeEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 
 public class CollectMagmaCreamTask extends ResourceTask {
    private final int count;
@@ -34,9 +34,9 @@ public class CollectMagmaCreamTask extends ResourceTask {
         int neededCream = this.count - currentCream;
         switch (WorldHelper.getCurrentDimension(controller).ordinal()) {
             case 1:
-                if (mod.getEntityTracker().entityFound(MagmaCube.class)) {
+                if (mod.getEntityTracker().entityFound(MagmaCubeEntity.class)) {
                     setDebugState("Killing Magma cube");
-                    return (Task) new KillAndLootTask(MagmaCube.class, new ItemTarget[]{new ItemTarget(Items.MAGMA_CREAM)});
+                    return (Task) new KillAndLootTask(MagmaCubeEntity.class, new ItemTarget[]{new ItemTarget(Items.MAGMA_CREAM)});
                 }
                 currentBlazePowderPotential = mod.getItemStorage().getItemCount(new Item[]{Items.BLAZE_POWDER}) + mod.getItemStorage().getItemCount(new Item[]{Items.BLAZE_ROD});
                 if (neededCream > currentBlazePowderPotential) {

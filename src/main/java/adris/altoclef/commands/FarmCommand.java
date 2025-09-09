@@ -7,7 +7,7 @@ import adris.altoclef.commandsystem.Command;
 import adris.altoclef.commandsystem.CommandException;
 import adris.altoclef.tasks.misc.FarmTask;
 import adris.altoclef.tasksystem.Task;
-import net.minecraft.core.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class FarmCommand extends Command {
    public FarmCommand() throws CommandException {
@@ -21,7 +21,7 @@ public class FarmCommand extends Command {
    @Override
    protected void call(AltoClefController controller, ArgParser parser) throws CommandException {
       Integer range = parser.get(Integer.class);
-      BlockPos origin = controller.getEntity().blockPosition();
+      BlockPos origin = controller.getEntity().getBlockPos();
       Task farmTask = new FarmTask(range, origin);
       controller.runUserTask(farmTask, () -> this.finish());
    }

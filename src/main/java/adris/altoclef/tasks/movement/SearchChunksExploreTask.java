@@ -5,8 +5,7 @@ import adris.altoclef.Debug;
 import adris.altoclef.tasksystem.Task;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents.Load;
-import net.minecraft.world.level.ChunkPos;
-
+import net.minecraft.util.math.ChunkPos;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

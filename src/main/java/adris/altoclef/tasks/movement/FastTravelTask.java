@@ -8,14 +8,14 @@ import adris.altoclef.util.Dimension;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Objects;
 import java.util.Optional;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class FastTravelTask extends Task {
    private static final double IN_NETHER_CLOSE_ENOUGH_THRESHOLD = 15.0;
@@ -86,7 +86,7 @@ public class FastTravelTask extends Task {
                Optional<BlockPos> portalEntrance = mod.getMiscBlockTracker().getLastUsedNetherPortal(Dimension.NETHER);
                if (portalEntrance.isPresent()
                   && !portalEntrance.get()
-                     .closerThan(new Vec3i((int)mod.getPlayer().position().x, (int)mod.getPlayer().position().y, (int)mod.getPlayer().position().z), 3.0)) {
+                     .isWithinDistance(new Vec3i((int)mod.getPlayer().getPos().x, (int)mod.getPlayer().getPos().y, (int)mod.getPlayer().getPos().z), 3.0)) {
                   this.forceOverworldWalking = true;
                }
             }

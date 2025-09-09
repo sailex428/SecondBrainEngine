@@ -1,7 +1,7 @@
 package adris.altoclef.tasks.movement;
 
 import adris.altoclef.tasksystem.Task;
-import net.minecraft.core.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class GetCloseToBlockTask extends Task {
    private final BlockPos toApproach;
@@ -30,11 +30,11 @@ public class GetCloseToBlockTask extends Task {
    }
 
    private int getCurrentDistance() {
-      return (int)Math.sqrt(this.controller.getPlayer().blockPosition().distSqr(this.toApproach));
+      return (int)Math.sqrt(this.controller.getPlayer().getBlockPos().getSquaredDistance(this.toApproach));
    }
 
    private boolean inRange() {
-      return this.controller.getPlayer().blockPosition().distSqr(this.toApproach) <= this.currentRange * this.currentRange;
+      return this.controller.getPlayer().getBlockPos().getSquaredDistance(this.toApproach) <= this.currentRange * this.currentRange;
    }
 
    @Override

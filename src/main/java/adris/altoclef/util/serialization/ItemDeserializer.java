@@ -8,13 +8,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 public class ItemDeserializer extends StdDeserializer<Object> {
    public ItemDeserializer() {
@@ -35,13 +34,13 @@ public class ItemDeserializer extends StdDeserializer<Object> {
             Item item = null;
             if (p.getCurrentToken() == JsonToken.VALUE_NUMBER_INT) {
                int rawId = p.getIntValue();
-               item = Item.byId(rawId);
+               item = Item.byRawId(rawId);
             } else {
                String itemKey = p.getText();
                itemKey = ItemHelper.trimItemName(itemKey);
-               ResourceLocation identifier = new ResourceLocation(itemKey);
-               if (BuiltInRegistries.ITEM.containsKey(identifier)) {
-                  item = (Item)BuiltInRegistries.ITEM.get(identifier);
+               Identifier identifier = new Identifier(itemKey);
+               if (Registries.ITEM.containsId(identifier)) {
+                  item = (Item)Registries.ITEM.get(identifier);
                } else {
                   Debug.logWarning("Invalid item name:" + itemKey + " at " + p.getCurrentLocation().toString());
                }

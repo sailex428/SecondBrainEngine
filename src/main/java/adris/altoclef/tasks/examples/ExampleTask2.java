@@ -4,13 +4,12 @@ import adris.altoclef.AltoClefController;
 import adris.altoclef.tasks.movement.GetToBlockTask;
 import adris.altoclef.tasks.movement.TimeoutWanderTask;
 import adris.altoclef.tasksystem.Task;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-
 import java.util.Optional;
 import java.util.function.Predicate;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class ExampleTask2 extends Task {
    private BlockPos target = null;
@@ -38,7 +37,7 @@ public class ExampleTask2 extends Task {
             BlockPos check = new BlockPos((Vec3i)nearest.get());
 
             while (mod.getWorld().getBlockState(check).getBlock() == Blocks.OAK_LOG || mod.getWorld().getBlockState(check).getBlock() == Blocks.OAK_LEAVES) {
-               check = check.above();
+               check = check.up();
             }
 
             this.target = check;
@@ -60,7 +59,7 @@ public class ExampleTask2 extends Task {
 
    @Override
    public boolean isFinished() {
-      return this.target != null ? this.controller.getPlayer().blockPosition().equals(this.target) : super.isFinished();
+      return this.target != null ? this.controller.getPlayer().getBlockPos().equals(this.target) : super.isFinished();
    }
 
    @Override

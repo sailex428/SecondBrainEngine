@@ -1,10 +1,9 @@
 package adris.altoclef.util.baritone;
 
 import baritone.api.schematic.AbstractSchematic;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-
 import java.util.List;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 
 public class PlaceBlockSchematic extends AbstractSchematic {
    private static final int RANGE = 1;

@@ -9,8 +9,13 @@ import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import baritone.api.pathing.goals.Goal;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.block.FenceBlock;
+import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.FlowerBlock;
+import net.minecraft.util.math.BlockPos;
 
 public abstract class CustomBaritoneGoalTask extends Task implements ITaskRequiresGrounded {
    private final Task wanderTask = new TimeoutWanderTask(5.0F, true);
@@ -46,14 +51,14 @@ public abstract class CustomBaritoneGoalTask extends Task implements ITaskRequir
 
    private static BlockPos[] generateSides(BlockPos pos) {
       return new BlockPos[]{
-         pos.offset(1, 0, 0),
-         pos.offset(-1, 0, 0),
-         pos.offset(0, 0, 1),
-         pos.offset(0, 0, -1),
-         pos.offset(1, 0, -1),
-         pos.offset(1, 0, 1),
-         pos.offset(-1, 0, -1),
-         pos.offset(-1, 0, 1)
+         pos.add(1, 0, 0),
+         pos.add(-1, 0, 0),
+         pos.add(0, 0, 1),
+         pos.add(0, 0, -1),
+         pos.add(1, 0, -1),
+         pos.add(1, 0, 1),
+         pos.add(-1, 0, -1),
+         pos.add(-1, 0, 1)
       };
    }
 
@@ -74,11 +79,11 @@ public abstract class CustomBaritoneGoalTask extends Task implements ITaskRequir
    }
 
    private BlockPos stuckInBlock(AltoClefController mod) {
-      BlockPos p = mod.getPlayer().blockPosition();
+      BlockPos p = mod.getPlayer().getBlockPos();
       if (this.isAnnoying(mod, p)) {
          return p;
-      } else if (this.isAnnoying(mod, p.above())) {
-         return p.above();
+      } else if (this.isAnnoying(mod, p.up())) {
+         return p.up();
       } else {
          BlockPos[] toCheck = generateSides(p);
 
@@ -88,7 +93,7 @@ public abstract class CustomBaritoneGoalTask extends Task implements ITaskRequir
             }
          }
 
-         BlockPos[] toCheckHigh = generateSides(p.above());
+         BlockPos[] toCheckHigh = generateSides(p.up());
 
          for (BlockPos checkx : toCheckHigh) {
             if (this.isAnnoying(mod, checkx)) {
@@ -194,7 +199,7 @@ public abstract class CustomBaritoneGoalTask extends Task implements ITaskRequir
          this.cachedGoal = this.newGoal(this.controller);
       }
 
-      return this.cachedGoal != null && this.cachedGoal.isInGoal(this.controller.getPlayer().blockPosition());
+      return this.cachedGoal != null && this.cachedGoal.isInGoal(this.controller.getPlayer().getBlockPos());
    }
 
    @Override

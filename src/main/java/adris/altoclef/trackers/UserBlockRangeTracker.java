@@ -4,14 +4,13 @@ import adris.altoclef.util.helpers.BaritoneHelper;
 import adris.altoclef.util.helpers.ItemHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import com.google.common.collect.Streams;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.math.BlockPos;
 
 public class UserBlockRangeTracker extends Tracker {
    final int AVOID_BREAKING_RANGE = 16;
@@ -45,8 +44,8 @@ public class UserBlockRangeTracker extends Tracker {
       });
 
       for (BlockPos userBlockPos : userBlocks) {
-         BlockPos min = userBlockPos.offset(-16, -16, -16);
-         BlockPos max = userBlockPos.offset(16, 16, 16);
+         BlockPos min = userBlockPos.add(-16, -16, -16);
+         BlockPos max = userBlockPos.add(16, 16, 16);
 
          for (BlockPos possible : WorldHelper.scanRegion(min, max)) {
             Block b = this.mod.getWorld().getBlockState(possible).getBlock();

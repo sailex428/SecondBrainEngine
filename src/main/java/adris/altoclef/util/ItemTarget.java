@@ -2,11 +2,10 @@ package adris.altoclef.util;
 
 import adris.altoclef.TaskCatalogue;
 import adris.altoclef.util.helpers.ItemHelper;
-import net.minecraft.world.item.Item;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import net.minecraft.item.Item;
 
 public class ItemTarget {
    private static final int BASICALLY_INFINITY = 99999999;
@@ -162,7 +161,7 @@ public class ItemTarget {
                if (item == null) {
                   result.append("(null??)");
                } else {
-                  result.append(ItemHelper.trimItemName(item.getDescriptionId()));
+                  result.append(ItemHelper.trimItemName(item.getTranslationKey()));
                }
 
                if (++counter != this.itemMatches.length) {

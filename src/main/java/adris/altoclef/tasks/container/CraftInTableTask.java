@@ -14,15 +14,14 @@ import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Arrays;
 import java.util.Optional;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class CraftInTableTask extends ResourceTask {
    private final RecipeTarget[] targets;
@@ -71,7 +70,7 @@ public class CraftInTableTask extends ResourceTask {
          this.setDebugState("Collecting ingredients");
          return new CollectRecipeCataloguedResourcesTask(false, this.targets);
       } else {
-         if (this.craftingTablePos == null || !controller.getWorld().getBlockState(this.craftingTablePos).is(Blocks.CRAFTING_TABLE)) {
+         if (this.craftingTablePos == null || !controller.getWorld().getBlockState(this.craftingTablePos).isOf(Blocks.CRAFTING_TABLE)) {
             Optional<BlockPos> nearestTable = controller.getBlockScanner().getNearestBlock(Blocks.CRAFTING_TABLE);
             if (nearestTable.isPresent()) {
                this.craftingTablePos = nearestTable.get();
@@ -91,8 +90,8 @@ public class CraftInTableTask extends ResourceTask {
                return TaskCatalogue.getItemTask(Items.CRAFTING_TABLE, 1);
             }
          } else if (!this.craftingTablePos
-            .closerThan(
-               new Vec3i((int)controller.getEntity().position().x, (int)controller.getEntity().position().y, (int)controller.getEntity().position().z), 3.5
+            .isWithinDistance(
+               new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z), 3.5
             )) {
             this.setDebugState("Going to crafting table at: " + this.craftingTablePos.toShortString());
             return new GetCloseToBlockTask(this.craftingTablePos);
@@ -134,7 +133,7 @@ public class CraftInTableTask extends ResourceTask {
                   }
                }
 
-               controller.getEntity().swing(InteractionHand.MAIN_HAND);
+               controller.getEntity().swingHand(Hand.MAIN_HAND);
                return null;
             }
          }
@@ -153,7 +152,7 @@ public class CraftInTableTask extends ResourceTask {
 
    @Override
    protected String toDebugStringName() {
-      return "Craft on table: " + Arrays.toString(Arrays.stream(this.targets).map(t -> t.getOutputItem().getDescription().getString()).toArray());
+      return "Craft on table: " + Arrays.toString(Arrays.stream(this.targets).map(t -> t.getOutputItem().getName().getString()).toArray());
    }
 
    public RecipeTarget[] getRecipeTargets() {

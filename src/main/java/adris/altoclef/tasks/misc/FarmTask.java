@@ -2,9 +2,8 @@ package adris.altoclef.tasks.misc;
 
 import adris.altoclef.tasksystem.Task;
 import baritone.api.process.IFarmProcess;
-import net.minecraft.core.BlockPos;
-
 import java.util.Objects;
+import net.minecraft.util.math.BlockPos;
 
 public class FarmTask extends Task {
    private final Integer range;

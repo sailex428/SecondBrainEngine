@@ -7,10 +7,22 @@ import adris.altoclef.util.slots.PlayerSlot;
 import adris.altoclef.util.slots.Slot;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.item.*;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.BucketItem;
+import net.minecraft.item.EmptyMapItem;
+import net.minecraft.item.EnderEyeItem;
+import net.minecraft.item.FireworkRocketItem;
+import net.minecraft.item.FishingRodItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.OnAStickItem;
+import net.minecraft.item.PotionItem;
+import net.minecraft.item.SpawnEggItem;
+import net.minecraft.item.ToolItem;
+import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.collection.DefaultedList;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
@@ -39,9 +51,9 @@ public class SlotHandler {
       this.controller.getItemStorage().registerSlotAction();
    }
 
-   public void clickSlot(Slot slot, int mouseButton, ClickType type) {
+   public void clickSlot(Slot slot, int mouseButton, SlotActionType type) {
       if (slot != null && !slot.equals(Slot.UNDEFINED)) {
-         NonNullList<ItemStack> inventory = slot.getInventory();
+         DefaultedList<ItemStack> inventory = slot.getInventory();
          int index = slot.getIndex();
          if (inventory == null) {
             Debug.logWarning("Attempt to click a slot without an inventory: " + slot);
@@ -64,7 +76,7 @@ public class SlotHandler {
          }
       } else {
          if (!this.cursorStack.isEmpty()) {
-            this.controller.getEntity().spawnAtLocation(this.cursorStack.copy());
+            this.controller.getEntity().dropStack(this.cursorStack.copy());
             this.setCursorStack(ItemStack.EMPTY);
             this.registerSlotAction();
          }
@@ -74,10 +86,10 @@ public class SlotHandler {
    public void forceEquipItemToOffhand(Item toEquip) {
       LivingEntityInventory inventory = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
       ItemStack offhandStack = inventory.getItem(0);
-      if (!offhandStack.is(toEquip)) {
+      if (!offhandStack.isOf(toEquip)) {
          for (int i = 0; i < inventory.main.size(); i++) {
             ItemStack potential = (ItemStack)inventory.main.get(i);
-            if (potential.is(toEquip)) {
+            if (potential.isOf(toEquip)) {
                inventory.setItem(0, potential);
                inventory.main.set(i, offhandStack);
                this.registerSlotAction();
@@ -167,7 +179,7 @@ public class SlotHandler {
    }
 
    public boolean forceDeequipHitTool() {
-      return this.forceDeequip(stack -> stack.getItem() instanceof TieredItem);
+      return this.forceDeequip(stack -> stack.getItem() instanceof ToolItem);
    }
 
    public boolean forceEquipItem(ItemTarget toEquip, boolean unInterruptable) {
@@ -211,7 +223,7 @@ public class SlotHandler {
                || item == Items.WRITABLE_BOOK
                || item == Items.WRITTEN_BOOK
                || item instanceof FishingRodItem
-               || item instanceof FoodOnAStickItem
+               || item instanceof OnAStickItem
                || item == Items.COMPASS
                || item instanceof EmptyMapItem
                || item instanceof ArmorItem
@@ -238,13 +250,13 @@ public class SlotHandler {
 
       for (Item item : target.getMatches()) {
          if (item instanceof ArmorItem armorItem) {
-            EquipmentSlot slotType = armorItem.getType().getSlot();
-            if (!controller.getEntity().getItemBySlot(slotType).is(item)) {
+            EquipmentSlot slotType = armorItem.getType().getEquipmentSlot();
+            if (!controller.getEntity().getEquippedStack(slotType).isOf(item)) {
                for (int i = 0; i < inventory.getContainerSize(); i++) {
                   ItemStack stackInSlot = inventory.getItem(i);
-                  if (stackInSlot.is(item)) {
-                     ItemStack currentlyEquipped = controller.getEntity().getItemBySlot(slotType).copy();
-                     controller.getEntity().setItemSlot(slotType, stackInSlot.copy());
+                  if (stackInSlot.isOf(item)) {
+                     ItemStack currentlyEquipped = controller.getEntity().getEquippedStack(slotType).copy();
+                     controller.getEntity().equipStack(slotType, stackInSlot.copy());
                      inventory.setItem(i, currentlyEquipped);
                      this.registerSlotAction();
                      break;

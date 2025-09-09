@@ -28,7 +28,7 @@ public class SleepThroughNightTask extends Task {
 
    @Override
    public boolean isFinished() {
-      int time = (int)(this.controller.getWorld().getDayTime() % 24000L);
+      int time = (int)(this.controller.getWorld().getTimeOfDay() % 24000L);
       return 0 <= time && time < 13000;
    }
 }

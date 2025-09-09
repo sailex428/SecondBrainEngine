@@ -5,7 +5,7 @@ import adris.altoclef.tasks.movement.DefaultGoToDimensionTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.Dimension;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.world.item.Items;
+import net.minecraft.item.Items;
 
 public class CollectFuelTask extends Task {
    private final double targetFuel;

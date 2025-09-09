@@ -7,14 +7,13 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.trackers.storage.ContainerCache;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 
 public class StoreInAnyContainerTask extends Task {
    private final ItemTarget[] toStore;
@@ -46,8 +45,8 @@ public class StoreInAnyContainerTask extends Task {
 
          Predicate<BlockPos> isValidContainer = pos -> {
             if (WorldHelper.isChest(this.controller, pos)
-               && WorldHelper.isSolidBlock(this.controller, pos.above())
-               && !WorldHelper.canBreak(this.controller, pos.above())) {
+               && WorldHelper.isSolidBlock(this.controller, pos.up())
+               && !WorldHelper.canBreak(this.controller, pos.up())) {
                return false;
             } else {
                Optional<ContainerCache> cache = this.controller.getItemStorage().getContainerAtPosition(pos);
@@ -69,7 +68,7 @@ public class StoreInAnyContainerTask extends Task {
                if (this.controller.getItemStorage().hasItem(containerBlock.asItem())) {
                   this.setDebugState("Placing a container nearby.");
                   return new PlaceBlockNearbyTask(
-                     pos -> !WorldHelper.isChest(this.controller, pos) || WorldHelper.isAir(this.controller, pos.above()), containerBlock
+                     pos -> !WorldHelper.isChest(this.controller, pos) || WorldHelper.isAir(this.controller, pos.up()), containerBlock
                   );
                }
             }
@@ -94,7 +93,7 @@ public class StoreInAnyContainerTask extends Task {
 
       for (int dx = -range; dx <= range; dx++) {
          for (int dz = -range; dz <= range; dz++) {
-            if (controller.getWorld().getBlockState(pos.offset(dx, 0, dz)).is(Blocks.SPAWNER)) {
+            if (controller.getWorld().getBlockState(pos.add(dx, 0, dz)).isOf(Blocks.SPAWNER)) {
                return true;
             }
          }

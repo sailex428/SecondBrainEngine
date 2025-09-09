@@ -8,14 +8,13 @@ import adris.altoclef.tasks.entity.KillPlayerTask;
 import adris.altoclef.tasksystem.TaskRunner;
 import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Vec3d;
 
 public class PlayerDefenseChain extends SingleTaskChain {
    private Map<String, DamageTarget> damageTargets = new HashMap<>();
@@ -33,7 +32,7 @@ public class PlayerDefenseChain extends SingleTaskChain {
       this.mod = runner.getMod();
       EventBus.subscribe(PlayerDamageEvent.class, evt -> {
          if (this.controller.getPlayer() == evt.target) {
-            this.onPlayerDamage(evt.source.getEntity());
+            this.onPlayerDamage(evt.source.getAttacker());
          }
       });
       EventBus.subscribe(EntitySwungEvent.class, evt -> this.onEntitySwung(evt.entity));
@@ -44,11 +43,11 @@ public class PlayerDefenseChain extends SingleTaskChain {
          this.recentlyDamagedUnknown = null;
          LivingEntity player = this.mod.getPlayer();
 
-         for (Entity entity : this.mod.getWorld().getAllEntities()) {
+         for (Entity entity : this.mod.getWorld().iterateEntities()) {
             if (entity != this.mod.getOwner()) {
                if (entity != null && (!this.recentlySwung.containsKey(entity.getId()) || !this.recentlySwung.get(entity.getId()).elapsed())) {
                   if (!(entity.distanceTo(player) > 5.0F)) {
-                     Vec3 playerCenter = player.position().add(new Vec3(0.0, player.getEyeHeight(), 0.0));
+                     Vec3d playerCenter = player.getPos().add(new Vec3d(0.0, player.getStandingEyeHeight(), 0.0));
                      if (entity.isAlive() && LookHelper.isLookingAt(entity, playerCenter, 60.0)) {
                         this.recentlySwung.remove(entity.getId());
                         this.onPlayerDamage(entity);
@@ -77,7 +76,7 @@ public class PlayerDefenseChain extends SingleTaskChain {
       if (damagedBy != null) {
          LivingEntity clientPlayer = this.mod.getPlayer();
          this.recentlyDamagedUnknown = null;
-         if (damagedBy instanceof Player player) {
+         if (damagedBy instanceof PlayerEntity player) {
             String offendingName = player.getName().getString();
             if (!this.damageTargets.containsKey(offendingName)) {
                this.damageTargets.put(offendingName, new DamageTarget());
@@ -130,7 +129,7 @@ public class PlayerDefenseChain extends SingleTaskChain {
    @Override
    public float getPriority() {
       if (this.currentlyAttackingPlayer != null) {
-         Optional<Player> currentPlayerEntity = this.controller.getEntityTracker().getPlayerEntity(this.currentlyAttackingPlayer);
+         Optional<PlayerEntity> currentPlayerEntity = this.controller.getEntityTracker().getPlayerEntity(this.currentlyAttackingPlayer);
          if (!currentPlayerEntity.isPresent() || !currentPlayerEntity.get().isAlive()) {
             this.currentlyAttackingPlayer = null;
          }

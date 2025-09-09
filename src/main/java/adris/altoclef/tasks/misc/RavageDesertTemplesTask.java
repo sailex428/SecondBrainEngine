@@ -7,12 +7,11 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.MiningRequirement;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.biome.Biomes;
-
 import java.util.List;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.biome.BiomeKeys;
 
 public class RavageDesertTemplesTask extends Task {
    public final Item[] LOOT = new Item[]{
@@ -62,7 +61,7 @@ public class RavageDesertTemplesTask extends Task {
             this.setDebugState("Looting found temple");
             return this.lootTask;
          } else {
-            return new SearchWithinBiomeTask(Biomes.DESERT);
+            return new SearchWithinBiomeTask(BiomeKeys.DESERT);
          }
       }
    }

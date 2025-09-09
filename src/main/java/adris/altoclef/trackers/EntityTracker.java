@@ -11,14 +11,18 @@ import adris.altoclef.util.helpers.BaritoneHelper;
 import adris.altoclef.util.helpers.EntityHelper;
 import adris.altoclef.util.helpers.ProjectileHelper;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.*;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
+import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
+import net.minecraft.item.Item;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -30,8 +34,8 @@ public class EntityTracker extends Tracker {
    private final List<Entity> closeEntities = new ArrayList<>();
    private final List<LivingEntity> hostiles = new ArrayList<>();
    private final List<CachedProjectile> projectiles = new ArrayList<>();
-   private final HashMap<String, Player> playerMap = new HashMap<>();
-   private final HashMap<String, Vec3> playerLastCoordinates = new HashMap<>();
+   private final HashMap<String, PlayerEntity> playerMap = new HashMap<>();
+   private final HashMap<String, Vec3d> playerLastCoordinates = new HashMap<>();
    private final EntityLocateBlacklist entityBlacklist = new EntityLocateBlacklist();
    private final HashMap<LivingEntity, List<Entity>> entitiesCollidingWithPlayerAccumulator = new HashMap<>();
    private final HashMap<LivingEntity, HashSet<Entity>> entitiesCollidingWithPlayer = new HashMap<>();
@@ -42,7 +46,7 @@ public class EntityTracker extends Tracker {
    }
 
    private static Class squashType(Class<?> type) {
-      return Player.class.isAssignableFrom(type) ? Player.class : type;
+      return PlayerEntity.class.isAssignableFrom(type) ? PlayerEntity.class : type;
    }
 
    private void registerPlayerCollision(LivingEntity player, Entity entity) {
@@ -62,22 +66,22 @@ public class EntityTracker extends Tracker {
    }
 
    public Optional<ItemEntity> getClosestItemDrop(Item... items) {
-      return this.getClosestItemDrop(this.mod.getPlayer().position(), items);
+      return this.getClosestItemDrop(this.mod.getPlayer().getPos(), items);
    }
 
-   public Optional<ItemEntity> getClosestItemDrop(Vec3 position, Item... items) {
+   public Optional<ItemEntity> getClosestItemDrop(Vec3d position, Item... items) {
       return this.getClosestItemDrop(position, entity -> true, items);
    }
 
-   public Optional<ItemEntity> getClosestItemDrop(Vec3 position, ItemTarget... items) {
+   public Optional<ItemEntity> getClosestItemDrop(Vec3d position, ItemTarget... items) {
       return this.getClosestItemDrop(position, entity -> true, items);
    }
 
    public Optional<ItemEntity> getClosestItemDrop(Predicate<ItemEntity> acceptPredicate, Item... items) {
-      return this.getClosestItemDrop(this.mod.getPlayer().position(), acceptPredicate, items);
+      return this.getClosestItemDrop(this.mod.getPlayer().getPos(), acceptPredicate, items);
    }
 
-   public Optional<ItemEntity> getClosestItemDrop(Vec3 position, Predicate<ItemEntity> acceptPredicate, Item... items) {
+   public Optional<ItemEntity> getClosestItemDrop(Vec3d position, Predicate<ItemEntity> acceptPredicate, Item... items) {
       this.ensureUpdated();
       ItemTarget[] tempTargetList = new ItemTarget[items.length];
 
@@ -88,7 +92,7 @@ public class EntityTracker extends Tracker {
       return this.getClosestItemDrop(position, acceptPredicate, tempTargetList);
    }
 
-   public Optional<ItemEntity> getClosestItemDrop(Vec3 position, Predicate<ItemEntity> acceptPredicate, ItemTarget... targets) {
+   public Optional<ItemEntity> getClosestItemDrop(Vec3d position, Predicate<ItemEntity> acceptPredicate, ItemTarget... targets) {
       this.ensureUpdated();
       if (targets.length == 0) {
          Debug.logError("You asked for the drop position of zero items... Most likely a typo.");
@@ -103,8 +107,8 @@ public class EntityTracker extends Tracker {
             for (Item item : target.getMatches()) {
                if (this.itemDropped(item)) {
                   for (ItemEntity entity : this.itemDropLocations.get(item)) {
-                     if (!this.entityBlacklist.unreachable(entity) && entity.getItem().getItem().equals(item) && acceptPredicate.test(entity)) {
-                        float cost = (float)BaritoneHelper.calculateGenericHeuristic(position, entity.position());
+                     if (!this.entityBlacklist.unreachable(entity) && entity.getStack().getItem().equals(item) && acceptPredicate.test(entity)) {
+                        float cost = (float)BaritoneHelper.calculateGenericHeuristic(position, entity.getPos());
                         if (cost < minCost) {
                            minCost = cost;
                            closestEntity = entity;
@@ -124,18 +128,18 @@ public class EntityTracker extends Tracker {
    }
 
    public Optional<Entity> getClosestEntity(Class... entityTypes) {
-      return this.getClosestEntity(this.mod.getPlayer().position(), entityTypes);
+      return this.getClosestEntity(this.mod.getPlayer().getPos(), entityTypes);
    }
 
-   public Optional<Entity> getClosestEntity(Vec3 position, Class... entityTypes) {
+   public Optional<Entity> getClosestEntity(Vec3d position, Class... entityTypes) {
       return this.getClosestEntity(position, entity -> true, entityTypes);
    }
 
    public Optional<Entity> getClosestEntity(Predicate<Entity> acceptPredicate, Class... entityTypes) {
-      return this.getClosestEntity(this.mod.getPlayer().position(), acceptPredicate, entityTypes);
+      return this.getClosestEntity(this.mod.getPlayer().getPos(), acceptPredicate, entityTypes);
    }
 
-   public Optional<Entity> getClosestEntity(Vec3 position, Predicate<Entity> acceptPredicate, Class... entityTypes) {
+   public Optional<Entity> getClosestEntity(Vec3d position, Predicate<Entity> acceptPredicate, Class... entityTypes) {
       entityTypes = this.parsePossiblyNullEntityTypes(entityTypes);
       Entity closestEntity = null;
       double minCost = Double.POSITIVE_INFINITY;
@@ -145,7 +149,7 @@ public class EntityTracker extends Tracker {
             if (this.entityMap.containsKey(toFind)) {
                for (Entity entity : this.entityMap.get(toFind)) {
                   if (!this.entityBlacklist.unreachable(entity) && entity.isAlive() && acceptPredicate.test(entity)) {
-                     double cost = entity.distanceToSqr(position);
+                     double cost = entity.squaredDistanceTo(position);
                      if (cost < minCost) {
                         minCost = cost;
                         closestEntity = entity;
@@ -261,14 +265,14 @@ public class EntityTracker extends Tracker {
       }
    }
 
-   public Optional<Vec3> getPlayerMostRecentPosition(String name) {
+   public Optional<Vec3d> getPlayerMostRecentPosition(String name) {
       this.ensureUpdated();
       synchronized (BaritoneHelper.MINECRAFT_LOCK) {
          return Optional.ofNullable(this.playerLastCoordinates.getOrDefault(name, null));
       }
    }
 
-   public Optional<Player> getPlayerEntity(String name) {
+   public Optional<PlayerEntity> getPlayerEntity(String name) {
       if (this.isPlayerLoaded(name)) {
          synchronized (BaritoneHelper.MINECRAFT_LOCK) {
             return Optional.of(this.playerMap.get(name));
@@ -305,7 +309,7 @@ public class EntityTracker extends Tracker {
 
             this.entitiesCollidingWithPlayerAccumulator.clear();
 
-            for (Entity entity : this.mod.getWorld().getAllEntities()) {
+            for (Entity entity : this.mod.getWorld().iterateEntities()) {
                Class<?> type = entity.getClass();
                type = squashType(type);
                if (entity != null && entity.isAlive() && (type != LivingEntity.class || !entity.equals(this.mod.getPlayer()))) {
@@ -319,11 +323,11 @@ public class EntityTracker extends Tracker {
                   }
 
                   if (entity instanceof ItemEntity ientity) {
-                     Item droppedItem = ientity.getItem().getItem();
-                     if (ientity.onGround()
-                        || ientity.isInWater()
-                        || WorldHelper.isSolidBlock(this.mod, ientity.blockPosition().below(2))
-                        || WorldHelper.isSolidBlock(this.mod, ientity.blockPosition().below(3))) {
+                     Item droppedItem = ientity.getStack().getItem();
+                     if (ientity.isOnGround()
+                        || ientity.isTouchingWater()
+                        || WorldHelper.isSolidBlock(this.mod, ientity.getBlockPos().down(2))
+                        || WorldHelper.isSolidBlock(this.mod, ientity.getBlockPos().down(3))) {
                         if (!this.itemDropLocations.containsKey(droppedItem)) {
                            this.itemDropLocations.put(droppedItem, new ArrayList<>());
                         }
@@ -332,36 +336,36 @@ public class EntityTracker extends Tracker {
                      }
                   }
 
-                  if (entity instanceof Mob) {
+                  if (entity instanceof MobEntity) {
                      if (EntityHelper.isAngryAtPlayer(this.mod, entity)) {
-                        boolean closeEnough = entity.closerThan(this.mod.getPlayer(), 26.0);
+                        boolean closeEnough = entity.isInRange(this.mod.getPlayer(), 26.0);
                         if (closeEnough) {
                            this.hostiles.add((LivingEntity)entity);
                         }
                      }
-                  } else if (entity instanceof Projectile projEntity) {
+                  } else if (entity instanceof ProjectileEntity projEntity) {
                      if (!this.mod.getBehaviour().shouldAvoidDodgingProjectile(entity)) {
                         CachedProjectile proj = new CachedProjectile();
                         boolean inGround = false;
-                        if (entity instanceof AbstractArrow) {
+                        if (entity instanceof PersistentProjectileEntity) {
                            inGround = ((PersistentProjectileEntityAccessor)entity).isInGround();
                         }
 
-                        if (!(projEntity instanceof FishingHook)
-                           && !(projEntity instanceof ThrownEnderpearl)
-                           && !(projEntity instanceof ThrownExperienceBottle)
+                        if (!(projEntity instanceof FishingBobberEntity)
+                           && !(projEntity instanceof EnderPearlEntity)
+                           && !(projEntity instanceof ExperienceBottleEntity)
                            && !inGround) {
-                           proj.position = projEntity.position();
-                           proj.velocity = projEntity.getDeltaMovement();
+                           proj.position = projEntity.getPos();
+                           proj.velocity = projEntity.getVelocity();
                            proj.gravity = ProjectileHelper.hasGravity(projEntity) ? 0.05F : 0.0;
                            proj.projectileType = projEntity.getClass();
                            this.projectiles.add(proj);
                         }
                      }
-                  } else if (entity instanceof Player player) {
+                  } else if (entity instanceof PlayerEntity player) {
                      String name = player.getName().getString();
                      this.playerMap.put(name, player);
-                     this.playerLastCoordinates.put(name, player.position());
+                     this.playerLastCoordinates.put(name, player.getPos());
                   }
                }
             }

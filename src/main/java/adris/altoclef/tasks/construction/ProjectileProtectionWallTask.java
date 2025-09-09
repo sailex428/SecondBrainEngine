@@ -8,19 +8,30 @@ import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.slots.Slot;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.Skeleton;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.block.AbstractPressurePlateBlock;
+import net.minecraft.block.AnvilBlock;
+import net.minecraft.block.BedBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ButtonBlock;
+import net.minecraft.block.CraftingTableBlock;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.NoteBlock;
+import net.minecraft.block.ShapeContext;
+import net.minecraft.block.TrapdoorBlock;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.mob.SkeletonEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -44,7 +55,7 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
       if (this.targetPlacePos != null && !WorldHelper.isSolidBlock(this.controller, this.targetPlacePos)) {
          Optional<Slot> slot = StorageHelper.getSlotWithThrowawayBlock(this.mod, true);
          if (slot.isPresent()) {
-            this.place(this.targetPlacePos, InteractionHand.MAIN_HAND, slot.get().getInventorySlot());
+            this.place(this.targetPlacePos, Hand.MAIN_HAND, slot.get().getInventorySlot());
             this.targetPlacePos = null;
             this.setDebugState(null);
          }
@@ -54,13 +65,13 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
          Optional<Entity> sentity = this.mod
             .getEntityTracker()
             .getClosestEntity(
-               (Predicate<Entity>)(e -> e instanceof Skeleton && EntityHelper.isAngryAtPlayer(this.mod, e) && ((Skeleton)e).getTicksUsingItem() > 8),
-               Skeleton.class
+               (Predicate<Entity>)(e -> e instanceof SkeletonEntity && EntityHelper.isAngryAtPlayer(this.mod, e) && ((SkeletonEntity)e).getItemUseTime() > 8),
+               SkeletonEntity.class
             );
          if (sentity.isPresent()) {
-            Vec3 playerPos = this.mod.getPlayer().position();
-            Vec3 targetPos = sentity.get().position();
-            Vec3 direction = playerPos.subtract(targetPos).normalize();
+            Vec3d playerPos = this.mod.getPlayer().getPos();
+            Vec3d targetPos = sentity.get().getPos();
+            Vec3d direction = playerPos.subtract(targetPos).normalize();
             double x = playerPos.x - 2.0 * direction.x;
             double y = playerPos.y + direction.y;
             double z = playerPos.z - 2.0 * direction.z;
@@ -84,8 +95,8 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
       Optional<Entity> entity = this.mod
          .getEntityTracker()
          .getClosestEntity(
-            (Predicate<Entity>)(e -> e instanceof Skeleton && EntityHelper.isAngryAtPlayer(this.mod, e) && ((Skeleton)e).getTicksUsingItem() > 3),
-            Skeleton.class
+            (Predicate<Entity>)(e -> e instanceof SkeletonEntity && EntityHelper.isAngryAtPlayer(this.mod, e) && ((SkeletonEntity)e).getItemUseTime() > 3),
+            SkeletonEntity.class
          );
       return this.targetPlacePos != null && WorldHelper.isSolidBlock(this.mod, this.targetPlacePos) || entity.isEmpty();
    }
@@ -102,7 +113,7 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
 
    public Direction getPlaceSide(BlockPos blockPos) {
       for (Direction side : Direction.values()) {
-         BlockPos neighbor = blockPos.relative(side);
+         BlockPos neighbor = blockPos.offset(side);
          BlockState state = this.mod.getWorld().getBlockState(neighbor);
          if (!state.isAir() && !isClickable(state.getBlock()) && state.getFluidState().isEmpty()) {
             return side;
@@ -112,23 +123,23 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
       return null;
    }
 
-   public boolean place(BlockPos blockPos, InteractionHand hand, int slot) {
+   public boolean place(BlockPos blockPos, Hand hand, int slot) {
       if (slot < 0 || slot > 8) {
          return false;
       } else if (!this.canPlace(blockPos)) {
          return false;
       } else {
-         Vec3 hitPos = Vec3.atCenterOf(blockPos);
+         Vec3d hitPos = Vec3d.ofCenter(blockPos);
          Direction side = this.getPlaceSide(blockPos);
          if (side == null) {
-            this.place(blockPos.below(), hand, slot);
+            this.place(blockPos.down(), hand, slot);
             return false;
          } else {
-            BlockPos neighbour = blockPos.relative(side);
-            hitPos = hitPos.add(side.getStepX() * 0.5, side.getStepY() * 0.5, side.getStepZ() * 0.5);
+            BlockPos neighbour = blockPos.offset(side);
+            hitPos = hitPos.add(side.getOffsetX() * 0.5, side.getOffsetY() * 0.5, side.getOffsetZ() * 0.5);
             BlockHitResult bhr = new BlockHitResult(hitPos, side.getOpposite(), neighbour, false);
-            this.mod.getPlayer().setYRot((float)this.getYaw(hitPos));
-            this.mod.getPlayer().setXRot((float)this.getPitch(hitPos));
+            this.mod.getPlayer().setYaw((float)this.getYaw(hitPos));
+            this.mod.getPlayer().setPitch((float)this.getPitch(hitPos));
             this.swap(slot);
             this.interact(bhr, hand);
             return true;
@@ -140,39 +151,39 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
       return block instanceof CraftingTableBlock
          || block instanceof AnvilBlock
          || block instanceof ButtonBlock
-         || block instanceof BasePressurePlateBlock
-         || block instanceof BaseEntityBlock
+         || block instanceof AbstractPressurePlateBlock
+         || block instanceof BlockWithEntity
          || block instanceof BedBlock
          || block instanceof FenceGateBlock
          || block instanceof DoorBlock
          || block instanceof NoteBlock
-         || block instanceof TrapDoorBlock;
+         || block instanceof TrapdoorBlock;
    }
 
-   public void interact(BlockHitResult blockHitResult, InteractionHand hand) {
-      boolean wasSneaking = this.mod.getPlayer().isShiftKeyDown();
-      this.mod.getPlayer().setShiftKeyDown(false);
-      InteractionResult result = this.mod
+   public void interact(BlockHitResult blockHitResult, Hand hand) {
+      boolean wasSneaking = this.mod.getPlayer().isSneaking();
+      this.mod.getPlayer().setSneaking(false);
+      ActionResult result = this.mod
          .getBaritone()
          .getEntityContext()
          .playerController()
          .processRightClickBlock(this.mod.getPlayer(), this.mod.getWorld(), hand, blockHitResult);
-      if (result.shouldSwing()) {
-         this.mod.getPlayer().swing(hand);
+      if (result.shouldSwingHand()) {
+         this.mod.getPlayer().swingHand(hand);
       }
 
-      this.mod.getPlayer().setShiftKeyDown(wasSneaking);
+      this.mod.getPlayer().setSneaking(wasSneaking);
    }
 
    public boolean canPlace(BlockPos blockPos, boolean checkEntities) {
       if (blockPos == null) {
          return false;
-      } else if (!Level.isInSpawnableBounds(blockPos) || !this.controller.getWorld().isInWorldBounds(blockPos)) {
+      } else if (!World.isValid(blockPos) || !this.controller.getWorld().isInBuildLimit(blockPos)) {
          return false;
       } else {
-         return !this.mod.getWorld().getBlockState(blockPos).canBeReplaced()
+         return !this.mod.getWorld().getBlockState(blockPos).isReplaceable()
             ? false
-            : !checkEntities || this.mod.getWorld().isUnobstructed(Blocks.OBSIDIAN.defaultBlockState(), blockPos, CollisionContext.empty());
+            : !checkEntities || this.mod.getWorld().canPlace(Blocks.OBSIDIAN.getDefaultState(), blockPos, ShapeContext.absent());
       }
    }
 
@@ -191,20 +202,20 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
       }
    }
 
-   public double getYaw(Vec3 pos) {
-      return this.mod.getPlayer().getYRot()
-         + Mth.wrapDegrees(
-            (float)Math.toDegrees(Math.atan2(pos.z() - this.mod.getPlayer().getZ(), pos.x() - this.mod.getPlayer().getX()))
+   public double getYaw(Vec3d pos) {
+      return this.mod.getPlayer().getYaw()
+         + MathHelper.wrapDegrees(
+            (float)Math.toDegrees(Math.atan2(pos.getZ() - this.mod.getPlayer().getZ(), pos.getX() - this.mod.getPlayer().getX()))
                - 90.0F
-               - this.mod.getPlayer().getYRot()
+               - this.mod.getPlayer().getYaw()
          );
    }
 
-   public double getPitch(Vec3 pos) {
-      double diffX = pos.x() - this.mod.getPlayer().getX();
-      double diffY = pos.y() - this.mod.getPlayer().getY() + this.mod.getPlayer().getEyeHeight(this.mod.getPlayer().getPose());
-      double diffZ = pos.z() - this.mod.getPlayer().getZ();
+   public double getPitch(Vec3d pos) {
+      double diffX = pos.getX() - this.mod.getPlayer().getX();
+      double diffY = pos.getY() - this.mod.getPlayer().getY() + this.mod.getPlayer().getEyeHeight(this.mod.getPlayer().getPose());
+      double diffZ = pos.getZ() - this.mod.getPlayer().getZ();
       double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
-      return this.mod.getPlayer().getXRot() + Mth.wrapDegrees((float)(-Math.toDegrees(Math.atan2(diffY, diffXZ))) - this.mod.getPlayer().getXRot());
+      return this.mod.getPlayer().getPitch() + MathHelper.wrapDegrees((float)(-Math.toDegrees(Math.atan2(diffY, diffXZ))) - this.mod.getPlayer().getPitch());
    }
 }

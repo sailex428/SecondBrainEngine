@@ -1,6 +1,14 @@
 package adris.altoclef.trackers.storage;
 
-import net.minecraft.world.level.block.*;
+import net.minecraft.block.AbstractFurnaceBlock;
+import net.minecraft.block.BarrelBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.BrewingStandBlock;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.HopperBlock;
+import net.minecraft.block.ShulkerBoxBlock;
 
 public enum ContainerType {
    CHEST,

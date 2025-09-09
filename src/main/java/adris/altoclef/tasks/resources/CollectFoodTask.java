@@ -12,16 +12,20 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.*;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.*;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CropBlock;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.entity.passive.RabbitEntity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -30,11 +34,11 @@ import java.util.function.Predicate;
 
 public class CollectFoodTask extends Task {
    public static final CookableFoodTarget[] COOKABLE_FOODS = new CookableFoodTarget[]{
-      new CookableFoodTarget("beef", Cow.class),
-      new CookableFoodTarget("porkchop", Pig.class),
-      new CookableFoodTarget("chicken", Chicken.class),
-      new CookableFoodTarget("mutton", Sheep.class),
-      new CookableFoodTarget("rabbit", Rabbit.class)
+      new CookableFoodTarget("beef", CowEntity.class),
+      new CookableFoodTarget("porkchop", PigEntity.class),
+      new CookableFoodTarget("chicken", ChickenEntity.class),
+      new CookableFoodTarget("mutton", SheepEntity.class),
+      new CookableFoodTarget("rabbit", RabbitEntity.class)
    };
    public static final Item[] ITEMS_TO_PICK_UP = new Item[]{
       Items.ENCHANTED_GOLDEN_APPLE, Items.GOLDEN_APPLE, Items.GOLDEN_CARROT, Items.BREAD, Items.BAKED_POTATO
@@ -98,7 +102,7 @@ public class CollectFoodTask extends Task {
 
             for (Item item : ITEMS_TO_PICK_UP) {
                if (this.controller.getEntityTracker().itemDropped(item)) {
-                  this.setDebugState("Picking up high-value food: " + item.getDescription().getString());
+                  this.setDebugState("Picking up high-value food: " + item.getName().getString());
                   this.currentResourceTask = new PickupDroppedItemTask(new ItemTarget(item), true);
                   return this.currentResourceTask;
                }
@@ -119,7 +123,7 @@ public class CollectFoodTask extends Task {
             } else {
                for (CropTarget crop : CROPS) {
                   if (this.controller.getBlockScanner().anyFound(pos -> isCropMature(this.controller, pos, crop.cropBlock), crop.cropBlock)) {
-                     this.setDebugState("Harvesting " + crop.cropItem.getDescription().getString());
+                     this.setDebugState("Harvesting " + crop.cropItem.getName().getString());
                      this.currentResourceTask = new CollectCropTask(new ItemTarget(crop.cropItem, 9999), new Block[]{crop.cropBlock}, crop.cropItem);
                      return this.currentResourceTask;
                   }
@@ -127,7 +131,7 @@ public class CollectFoodTask extends Task {
 
                Entity bestEntityToKill = this.getBestAnimalToKill(this.controller);
                if (bestEntityToKill != null) {
-                  this.setDebugState("Killing " + bestEntityToKill.getType().getDescription().getString());
+                  this.setDebugState("Killing " + bestEntityToKill.getType().getName().getString());
                   Item rawFood = Arrays.stream(COOKABLE_FOODS).filter(c -> c.mobToKill == bestEntityToKill.getClass()).findFirst().get().getRaw();
                   this.currentResourceTask = new KillAndLootTask(bestEntityToKill.getClass(), new ItemTarget(rawFood, 1));
                   return this.currentResourceTask;
@@ -184,9 +188,9 @@ public class CollectFoodTask extends Task {
 
       for (CookableFoodTarget cookable : COOKABLE_FOODS) {
          if (controller.getEntityTracker().entityFound(cookable.mobToKill)) {
-            Optional<Entity> nearest = controller.getEntityTracker().getClosestEntity(controller.getEntity().position(), notBaby, cookable.mobToKill);
+            Optional<Entity> nearest = controller.getEntityTracker().getClosestEntity(controller.getEntity().getPos(), notBaby, cookable.mobToKill);
             if (nearest.isPresent()) {
-               double distanceSq = nearest.get().position().distanceToSqr(controller.getEntity().position());
+               double distanceSq = nearest.get().getPos().squaredDistanceTo(controller.getEntity().getPos());
                if (distanceSq != 0.0) {
                   double score = cookable.getCookedUnits() / distanceSq;
                   if (score > bestScore) {
@@ -202,8 +206,8 @@ public class CollectFoodTask extends Task {
    }
 
    public static void blackListChickenJockeys(AltoClefController controller) {
-      for (Chicken chicken : controller.getEntityTracker().getTrackedEntities(Chicken.class)) {
-         if (chicken.isVehicle()) {
+      for (ChickenEntity chicken : controller.getEntityTracker().getTrackedEntities(ChickenEntity.class)) {
+         if (chicken.hasPassengers()) {
             controller.getEntityTracker().requestEntityUnreachable(chicken);
          }
       }
@@ -211,7 +215,7 @@ public class CollectFoodTask extends Task {
 
    private static void blacklistPillagerHayBales(AltoClefController controller) {
       for (BlockPos pos : controller.getBlockScanner().getKnownLocations(Blocks.HAY_BLOCK)) {
-         if (controller.getWorld().getBlockState(pos.above()).is(Blocks.CARVED_PUMPKIN)) {
+         if (controller.getWorld().getBlockState(pos.up()).isOf(Blocks.CARVED_PUMPKIN)) {
             controller.getBlockScanner().requestBlockUnreachable(pos, 0);
          }
       }
@@ -221,7 +225,7 @@ public class CollectFoodTask extends Task {
       if (!controller.getChunkTracker().isChunkLoaded(pos)) {
          return false;
       } else {
-         return controller.getWorld().getBlockState(pos).getBlock() instanceof CropBlock crop ? crop.isMaxAge(controller.getWorld().getBlockState(pos)) : true;
+         return controller.getWorld().getBlockState(pos).getBlock() instanceof CropBlock crop ? crop.isMature(controller.getWorld().getBlockState(pos)) : true;
       }
    }
 

@@ -8,9 +8,9 @@ import adris.altoclef.util.time.TimerGame;
 import baritone.api.pathing.goals.Goal;
 import baritone.api.utils.input.Input;
 import baritone.pathing.movement.MovementHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.util.math.BlockPos;
 
 public class GetOutOfWaterTask extends CustomBaritoneGoalTask {
    private boolean startedShimmying = false;
@@ -23,19 +23,19 @@ public class GetOutOfWaterTask extends CustomBaritoneGoalTask {
    @Override
    protected Task onTick() {
       AltoClefController mod = this.controller;
-      if (mod.getPlayer().getAirSupply() >= mod.getPlayer().getMaxAirSupply() && !mod.getPlayer().isUnderWater()) {
+      if (mod.getPlayer().getAir() >= mod.getPlayer().getMaxAir() && !mod.getPlayer().isSubmergedInWater()) {
          boolean hasBlockBelow = false;
 
          for (int i = 0; i < 3; i++) {
-            if (mod.getWorld().getBlockState(mod.getPlayer().getOnPos().below(i)).getBlock() != Blocks.WATER) {
+            if (mod.getWorld().getBlockState(mod.getPlayer().getSteppingPos().down(i)).getBlock() != Blocks.WATER) {
                hasBlockBelow = true;
             }
          }
 
-         boolean hasAirAbove = mod.getWorld().getBlockState(mod.getPlayer().blockPosition().above(2)).getBlock().equals(Blocks.AIR);
+         boolean hasAirAbove = mod.getWorld().getBlockState(mod.getPlayer().getBlockPos().up(2)).getBlock().equals(Blocks.AIR);
          if (hasAirAbove && hasBlockBelow && StorageHelper.getNumberOfThrowawayBlocks(mod) > 0) {
             mod.getInputControls().tryPress(Input.JUMP);
-            if (mod.getPlayer().onGround()) {
+            if (mod.getPlayer().isOnGround()) {
                if (!this.startedShimmying) {
                   this.startedShimmying = true;
                   this.shimmyTaskTimer.reset();
@@ -45,7 +45,7 @@ public class GetOutOfWaterTask extends CustomBaritoneGoalTask {
             }
 
             mod.getSlotHandler().forceEquipItem(mod.getBaritoneSettings().acceptableThrowawayItems.get().toArray(new Item[0]));
-            LookHelper.lookAt(mod, mod.getPlayer().getOnPos().below());
+            LookHelper.lookAt(mod, mod.getPlayer().getSteppingPos().down());
             mod.getInputControls().tryPress(Input.CLICK_RIGHT);
          }
 
@@ -76,7 +76,7 @@ public class GetOutOfWaterTask extends CustomBaritoneGoalTask {
 
    @Override
    public boolean isFinished() {
-      return !this.controller.getPlayer().isInWater() && this.controller.getPlayer().onGround();
+      return !this.controller.getPlayer().isTouchingWater() && this.controller.getPlayer().isOnGround();
    }
 
    private class EscapeFromWaterGoal implements Goal {

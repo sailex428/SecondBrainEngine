@@ -14,11 +14,11 @@ public class LookAtOwnerTask extends Task {
     @Override
     protected Task onTick() {
         if (this.controller.getOwner() != null) {
-            LookHelper.lookAt(this.controller, this.controller.getOwner().getEyePosition());
+            LookHelper.lookAt(this.controller, this.controller.getOwner().getEyePos());
         } else {
             this.controller.getClosestPlayer().ifPresent(
                     (player) -> {
-                        LookHelper.lookAt(controller, player.getEyePosition());
+                        LookHelper.lookAt(controller, player.getEyePos());
                     });
         }
         Playground.IDLE_TEST_TICK_FUNCTION(this.controller);

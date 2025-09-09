@@ -1,22 +1,21 @@
 package adris.altoclef.eventbus;
 
-import net.minecraft.util.Tuple;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
+import net.minecraft.util.Pair;
 
 public class EventBus {
    private static final HashMap<Class, List<Subscription>> topics = new HashMap<>();
-   private static final List<Tuple<Class, Subscription>> toAdd = new ArrayList<>();
+   private static final List<Pair<Class, Subscription>> toAdd = new ArrayList<>();
    private static boolean lock;
 
    public static <T> void publish(T event) {
       Class<?> type = event.getClass();
 
-      for (Tuple<Class, Subscription> toAdd : EventBus.toAdd) {
-         subscribeInternal((Class<T>)toAdd.getA(), (Subscription<T>)toAdd.getB());
+      for (Pair<Class, Subscription> toAdd : EventBus.toAdd) {
+         subscribeInternal((Class<T>)toAdd.getLeft(), (Subscription<T>)toAdd.getRight());
       }
 
       EventBus.toAdd.clear();
@@ -53,7 +52,7 @@ public class EventBus {
    public static <T> Subscription<T> subscribe(Class<T> type, Consumer<T> consumeEvent) {
       Subscription<T> sub = new Subscription<>(consumeEvent);
       if (lock) {
-         toAdd.add(new Tuple(type, sub));
+         toAdd.add(new Pair(type, sub));
       } else {
          subscribeInternal(type, sub);
       }

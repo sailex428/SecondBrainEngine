@@ -13,13 +13,12 @@ import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import adris.altoclef.util.slots.Slot;
 import baritone.api.pathing.goals.GoalRunAway;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult.Type;
-
 import java.util.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult.Type;
 
 public abstract class AbstractDoToEntityTask extends Task implements ITaskRequiresGrounded {
    protected final MovementProgressChecker progress = new MovementProgressChecker();
@@ -49,14 +48,14 @@ public abstract class AbstractDoToEntityTask extends Task implements ITaskRequir
       ItemStack cursorStack = StorageHelper.getItemStackInCursorSlot(this.controller);
       if (!cursorStack.isEmpty()) {
          Optional<Slot> moveTo = mod.getItemStorage().getSlotThatCanFitInPlayerInventory(cursorStack, false);
-         moveTo.ifPresent(slot -> mod.getSlotHandler().clickSlot(slot, 0, ClickType.PICKUP));
+         moveTo.ifPresent(slot -> mod.getSlotHandler().clickSlot(slot, 0, SlotActionType.PICKUP));
          if (ItemHelper.canThrowAwayStack(mod, cursorStack)) {
-            mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+            mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
          }
 
          Optional<Slot> garbage = StorageHelper.getGarbageSlot(mod);
-         garbage.ifPresent(slot -> mod.getSlotHandler().clickSlot(slot, 0, ClickType.PICKUP));
-         mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+         garbage.ifPresent(slot -> mod.getSlotHandler().clickSlot(slot, 0, SlotActionType.PICKUP));
+         mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
       }
    }
 
@@ -79,7 +78,7 @@ public abstract class AbstractDoToEntityTask extends Task implements ITaskRequir
          Entity entity = checkEntity.get();
          double playerReach = mod.getModSettings().getEntityReachRange();
          EntityHitResult result = LookHelper.raycast(mod.getPlayer(), entity, playerReach);
-         double sqDist = entity.distanceToSqr(mod.getPlayer());
+         double sqDist = entity.squaredDistanceTo(mod.getPlayer());
          if (sqDist < this.combatGuardLowerRange * this.combatGuardLowerRange) {
             mod.getMobDefenseChain().setForceFieldRange(this.combatGuardLowerFieldRadius);
          } else {
@@ -89,7 +88,7 @@ public abstract class AbstractDoToEntityTask extends Task implements ITaskRequir
          double maintainDistance = this.maintainDistance >= 0.0 ? this.maintainDistance : playerReach - 1.0;
          boolean tooClose = sqDist < maintainDistance * maintainDistance;
          if (tooClose && !mod.getBaritone().getCustomGoalProcess().isActive()) {
-            mod.getBaritone().getCustomGoalProcess().setGoalAndPath(new GoalRunAway(maintainDistance, entity.blockPosition()));
+            mod.getBaritone().getCustomGoalProcess().setGoalAndPath(new GoalRunAway(maintainDistance, entity.getBlockPos()));
          }
 
          if (mod.getControllerExtras().inRange(entity)
@@ -100,7 +99,7 @@ public abstract class AbstractDoToEntityTask extends Task implements ITaskRequir
             && mod.getMLGBucketChain().doneMLG()
             && !mod.getMLGBucketChain().isChorusFruiting()
             && mod.getBaritone().getPathingBehavior().isSafeToCancel()
-            && mod.getPlayer().onGround()) {
+            && mod.getPlayer().isOnGround()) {
             this.progress.reset();
             return this.onEntityInteract(mod, entity);
          }

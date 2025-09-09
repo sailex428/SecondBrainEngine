@@ -5,16 +5,15 @@ import adris.altoclef.multiversion.recipemanager.RecipeManagerWrapper;
 import adris.altoclef.multiversion.recipemanager.WrappedRecipeEntry;
 import adris.altoclef.util.CraftingRecipe;
 import adris.altoclef.util.RecipeTarget;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.SpecialCraftingRecipe;
 
 public class CraftingRecipeTracker extends Tracker {
    private final HashMap<Item, List<CraftingRecipe>> itemRecipeMap = new HashMap<>();
@@ -91,9 +90,9 @@ public class CraftingRecipeTracker extends Tracker {
             for (WrappedRecipeEntry recipe : recipeManager.values()) {
                Recipe<?> recipe1 = recipe.value();
                if (recipe1 instanceof CraftingRecipe) {
-                  net.minecraft.world.item.crafting.CraftingRecipe craftingRecipe = (net.minecraft.world.item.crafting.CraftingRecipe)recipe1;
-                  if (!(craftingRecipe instanceof CustomRecipe)) {
-                     ItemStack result = new ItemStack(craftingRecipe.getResultItem(null).getItem(), craftingRecipe.getResultItem(null).getCount());
+                  net.minecraft.recipe.CraftingRecipe craftingRecipe = (net.minecraft.recipe.CraftingRecipe)recipe1;
+                  if (!(craftingRecipe instanceof SpecialCraftingRecipe)) {
+                     ItemStack result = new ItemStack(craftingRecipe.getOutput(null).getItem(), craftingRecipe.getOutput(null).getCount());
                      Item[][] altoclefRecipeItems = getShapedCraftingRecipe(craftingRecipe.getIngredients());
                      CraftingRecipe altoclefRecipe = CraftingRecipe.newShapedRecipe(altoclefRecipeItems, result.getCount());
                      if (this.itemRecipeMap.containsKey(result.getItem())) {
@@ -120,7 +119,7 @@ public class CraftingRecipeTracker extends Tracker {
       int x = 0;
 
       for (Ingredient ingredient : ingredients) {
-         ItemStack[] stacks = ingredient.getItems();
+         ItemStack[] stacks = ingredient.getMatchingStacks();
          Item[] items = new Item[stacks.length];
 
          for (int i = 0; i < stacks.length; i++) {

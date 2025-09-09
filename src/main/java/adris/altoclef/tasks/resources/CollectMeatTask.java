@@ -8,12 +8,16 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.SmeltTarget;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.*;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.entity.passive.RabbitEntity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -22,11 +26,11 @@ import java.util.stream.Stream;
 
 public class CollectMeatTask extends Task {
    public static final CollectFoodTask.CookableFoodTarget[] COOKABLE_MEATS = new CollectFoodTask.CookableFoodTarget[]{
-      new CollectFoodTask.CookableFoodTarget("beef", Cow.class),
-      new CollectFoodTask.CookableFoodTarget("porkchop", Pig.class),
-      new CollectFoodTask.CookableFoodTarget("chicken", Chicken.class),
-      new CollectFoodTask.CookableFoodTarget("mutton", Sheep.class),
-      new CollectFoodTask.CookableFoodTarget("rabbit", Rabbit.class)
+      new CollectFoodTask.CookableFoodTarget("beef", CowEntity.class),
+      new CollectFoodTask.CookableFoodTarget("porkchop", PigEntity.class),
+      new CollectFoodTask.CookableFoodTarget("chicken", ChickenEntity.class),
+      new CollectFoodTask.CookableFoodTarget("mutton", SheepEntity.class),
+      new CollectFoodTask.CookableFoodTarget("rabbit", RabbitEntity.class)
    };
    private static final double NEARBY_PICKUP_RADIUS = 15.0;
    private final double unitsNeeded;
@@ -70,7 +74,7 @@ public class CollectMeatTask extends Task {
          return this.currentResourceTask;
       } else {
          Item[] allMeats = Arrays.stream(COOKABLE_MEATS).flatMap(meat -> Stream.of(meat.getRaw(), meat.getCooked())).toArray(Item[]::new);
-         Optional<ItemEntity> closestDrop = this.controller.getEntityTracker().getClosestItemDrop(this.controller.getPlayer().position(), allMeats);
+         Optional<ItemEntity> closestDrop = this.controller.getEntityTracker().getClosestItemDrop(this.controller.getPlayer().getPos(), allMeats);
          if (closestDrop.isPresent() && closestDrop.get().distanceTo(this.controller.getPlayer()) < 15.0) {
             this.setDebugState("Picking up nearby dropped meat");
             this.currentResourceTask = new PickupDroppedItemTask(new ItemTarget(allMeats, 9999), true);
@@ -78,7 +82,7 @@ public class CollectMeatTask extends Task {
          } else {
             Entity bestEntityToKill = this.getBestAnimalToKill(this.controller);
             if (bestEntityToKill != null) {
-               this.setDebugState("Hunting " + bestEntityToKill.getType().getDescription().getString());
+               this.setDebugState("Hunting " + bestEntityToKill.getType().getName().getString());
                Item rawFood = Arrays.stream(COOKABLE_MEATS).filter(c -> c.mobToKill == bestEntityToKill.getClass()).findFirst().get().getRaw();
                this.currentResourceTask = new KillAndLootTask(bestEntityToKill.getClass(), new ItemTarget(rawFood, 1));
                return this.currentResourceTask;
@@ -134,9 +138,9 @@ public class CollectMeatTask extends Task {
 
       for (CollectFoodTask.CookableFoodTarget cookable : COOKABLE_MEATS) {
          if (controller.getEntityTracker().entityFound(cookable.mobToKill)) {
-            Optional<Entity> nearest = controller.getEntityTracker().getClosestEntity(controller.getEntity().position(), notBaby, cookable.mobToKill);
+            Optional<Entity> nearest = controller.getEntityTracker().getClosestEntity(controller.getEntity().getPos(), notBaby, cookable.mobToKill);
             if (nearest.isPresent()) {
-               double distanceSq = nearest.get().position().distanceToSqr(controller.getEntity().position());
+               double distanceSq = nearest.get().getPos().squaredDistanceTo(controller.getEntity().getPos());
                if (distanceSq != 0.0) {
                   double score = cookable.getCookedUnits() / distanceSq;
                   if (score > bestScore) {

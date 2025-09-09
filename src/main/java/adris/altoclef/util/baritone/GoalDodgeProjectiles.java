@@ -5,10 +5,9 @@ import adris.altoclef.Debug;
 import adris.altoclef.util.helpers.BaritoneHelper;
 import adris.altoclef.util.helpers.ProjectileHelper;
 import baritone.api.pathing.goals.Goal;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.util.math.Vec3d;
 
 public class GoalDodgeProjectiles implements Goal {
    private static final double Y_SCALE = 0.3F;
@@ -30,7 +29,7 @@ public class GoalDodgeProjectiles implements Goal {
    @Override
    public boolean isInGoal(int x, int y, int z) {
       List<CachedProjectile> projectiles = this.getProjectiles();
-      Vec3 p = new Vec3(x, y, z);
+      Vec3d p = new Vec3d(x, y, z);
       synchronized (BaritoneHelper.MINECRAFT_LOCK) {
          if (!projectiles.isEmpty()) {
             for (CachedProjectile projectile : projectiles) {
@@ -40,7 +39,7 @@ public class GoalDodgeProjectiles implements Goal {
                         projectile.setCacheHit(ProjectileHelper.calculateArrowClosestApproach(projectile, p));
                      }
 
-                     Vec3 hit = projectile.getCachedHit();
+                     Vec3d hit = projectile.getCachedHit();
                      if (this.isHitCloseEnough(hit, p)) {
                         return false;
                      }
@@ -57,7 +56,7 @@ public class GoalDodgeProjectiles implements Goal {
 
    @Override
    public double heuristic(int x, int y, int z) {
-      Vec3 p = new Vec3(x, y, z);
+      Vec3d p = new Vec3d(x, y, z);
       double costFactor = 0.0;
       List<CachedProjectile> projectiles = this.getProjectiles();
       synchronized (BaritoneHelper.MINECRAFT_LOCK) {
@@ -68,7 +67,7 @@ public class GoalDodgeProjectiles implements Goal {
                      projectile.setCacheHit(ProjectileHelper.calculateArrowClosestApproach(projectile, p));
                   }
 
-                  Vec3 hit = projectile.getCachedHit();
+                  Vec3d hit = projectile.getCachedHit();
                   double arrowPenalty = ProjectileHelper.getFlatDistanceSqr(
                      projectile.position.x, projectile.position.z, projectile.velocity.x, projectile.velocity.z, p.x, p.z
                   );
@@ -83,8 +82,8 @@ public class GoalDodgeProjectiles implements Goal {
       return -1.0 * costFactor;
    }
 
-   private boolean isHitCloseEnough(Vec3 hit, Vec3 to) {
-      Vec3 delta = to.subtract(hit);
+   private boolean isHitCloseEnough(Vec3d hit, Vec3d to) {
+      Vec3d delta = to.subtract(hit);
       double horizontalSquared = delta.x * delta.x + delta.z * delta.z;
       double vertical = Math.abs(delta.y);
       return horizontalSquared < this.distanceHorizontal * this.distanceHorizontal && vertical < this.distanceVertical;

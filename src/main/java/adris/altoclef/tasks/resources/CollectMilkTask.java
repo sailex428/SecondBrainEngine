@@ -6,12 +6,11 @@ import adris.altoclef.TaskCatalogue;
 import adris.altoclef.tasks.ResourceTask;
 import adris.altoclef.tasks.entity.AbstractDoToEntityTask;
 import adris.altoclef.tasksystem.Task;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.Cow;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-
 import java.util.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 public class CollectMilkTask extends ResourceTask {
    private final int count;
@@ -35,7 +34,7 @@ public class CollectMilkTask extends ResourceTask {
       if (!mod.getItemStorage().hasItem(Items.BUCKET)) {
          return TaskCatalogue.getItemTask(Items.BUCKET, 1);
       } else {
-         return (Task)(!mod.getEntityTracker().entityFound(Cow.class) && this.isInWrongDimension(mod)
+         return (Task)(!mod.getEntityTracker().entityFound(CowEntity.class) && this.isInWrongDimension(mod)
             ? this.getToCorrectDimensionTask(mod)
             : new MilkCowTask());
       }
@@ -81,7 +80,7 @@ public class CollectMilkTask extends ResourceTask {
 
       @Override
       protected Optional<Entity> getEntityTarget(AltoClefController mod) {
-         return mod.getEntityTracker().getClosestEntity(mod.getPlayer().position(), Cow.class);
+         return mod.getEntityTracker().getClosestEntity(mod.getPlayer().getPos(), CowEntity.class);
       }
 
       @Override

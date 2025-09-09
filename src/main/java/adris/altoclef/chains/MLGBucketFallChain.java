@@ -9,15 +9,14 @@ import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ClipContext.Fluid;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Optional;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.RaycastContext.FluidHandling;
 
 public class MLGBucketFallChain extends SingleTaskChain implements ITaskOverridesGrounded {
    private final TimerGame tryCollectWaterTimer = new TimerGame(4.0);
@@ -59,9 +58,9 @@ public class MLGBucketFallChain extends SingleTaskChain implements ITaskOverride
                   isPlacedWater = false;
                }
 
-               if (placed != null && placed.closerToCenterThan(mod.getPlayer().position(), 5.5) && isPlacedWater) {
+               if (placed != null && placed.isWithinDistance(mod.getPlayer().getPos(), 5.5) && isPlacedWater) {
                   mod.getBehaviour().push();
-                  mod.getBehaviour().setRayTracingFluidHandling(Fluid.SOURCE_ONLY);
+                  mod.getBehaviour().setRayTracingFluidHandling(FluidHandling.SOURCE_ONLY);
                   Optional<Rotation> reach = LookHelper.getReach(this.controller, placed, Direction.UP);
                   if (reach.isPresent()) {
                      mod.getBaritone().getLookBehavior().updateTarget(reach.get(), true);
@@ -88,8 +87,8 @@ public class MLGBucketFallChain extends SingleTaskChain implements ITaskOverride
                this.lastMLG = null;
             }
 
-            if (mod.getPlayer().hasEffect(MobEffects.LEVITATION)
-               && ((MobEffectInstance)mod.getPlayer().getActiveEffectsMap().get(MobEffects.LEVITATION)).getDuration() <= 70
+            if (mod.getPlayer().hasStatusEffect(StatusEffects.LEVITATION)
+               && ((StatusEffectInstance)mod.getPlayer().getActiveStatusEffects().get(StatusEffects.LEVITATION)).getDuration() <= 70
                && mod.getItemStorage().hasItemInventoryOnly(Items.CHORUS_FRUIT)
                && !mod.getItemStorage().hasItemInventoryOnly(Items.WATER_BUCKET)) {
                this.doingChorusFruit = true;
@@ -129,8 +128,8 @@ public class MLGBucketFallChain extends SingleTaskChain implements ITaskOverride
    public boolean isFalling(AltoClefController mod) {
       if (!mod.getModSettings().shouldAutoMLGBucket()) {
          return false;
-      } else if (!mod.getPlayer().isSwimming() && !mod.getPlayer().isInWater() && !mod.getPlayer().onGround() && !mod.getPlayer().onClimbable()) {
-         double ySpeed = mod.getPlayer().getDeltaMovement().y;
+      } else if (!mod.getPlayer().isSwimming() && !mod.getPlayer().isTouchingWater() && !mod.getPlayer().isOnGround() && !mod.getPlayer().isClimbing()) {
+         double ySpeed = mod.getPlayer().getVelocity().y;
          return ySpeed < -0.7;
       } else {
          return false;

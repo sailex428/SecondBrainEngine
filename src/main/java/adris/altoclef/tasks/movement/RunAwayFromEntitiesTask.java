@@ -3,10 +3,9 @@ package adris.altoclef.tasks.movement;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.util.baritone.GoalRunAwayFromEntities;
 import baritone.api.pathing.goals.Goal;
-import net.minecraft.world.entity.Entity;
-
 import java.util.List;
 import java.util.function.Supplier;
+import net.minecraft.entity.Entity;
 
 public abstract class RunAwayFromEntitiesTask extends CustomBaritoneGoalTask {
    private final Supplier<List<Entity>> runAwaySupplier;

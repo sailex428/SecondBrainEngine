@@ -2,12 +2,11 @@ package adris.altoclef.tasks.movement;
 
 import adris.altoclef.AltoClefController;
 import adris.altoclef.tasksystem.Task;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class FollowPlayerTask extends Task {
    private final String playerName;
@@ -29,18 +28,18 @@ public class FollowPlayerTask extends Task {
    @Override
    protected Task onTick() {
       AltoClefController mod = this.controller;
-      Optional<Vec3> lastPos = mod.getEntityTracker().getPlayerMostRecentPosition(this.playerName);
+      Optional<Vec3d> lastPos = mod.getEntityTracker().getPlayerMostRecentPosition(this.playerName);
       if (lastPos.isEmpty()) {
          this.setDebugState("No player found/detected. Doing nothing until player loads into render distance.");
          return null;
       } else {
-         Vec3 target = lastPos.get();
-         if (target.closerThan(mod.getPlayer().position(), 1.0) && !mod.getEntityTracker().isPlayerLoaded(this.playerName)) {
+         Vec3d target = lastPos.get();
+         if (target.isInRange(mod.getPlayer().getPos(), 1.0) && !mod.getEntityTracker().isPlayerLoaded(this.playerName)) {
             mod.logWarning("Failed to get to player \"" + this.playerName + "\". We moved to where we last saw them but now have no idea where they are.");
             this.stop();
             return null;
          } else {
-            Optional<Player> player = mod.getEntityTracker().getPlayerEntity(this.playerName);
+            Optional<PlayerEntity> player = mod.getEntityTracker().getPlayerEntity(this.playerName);
             return (Task)(player.isEmpty()
                ? new GetToBlockTask(new BlockPos((int)target.x, (int)target.y, (int)target.z), false)
                : new GetToEntityTask((Entity)player.get(), this.followDistance));

@@ -1,12 +1,12 @@
 package adris.altoclef.util.progresscheck;
 
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.Vec3d;
 
-public class DistanceProgressChecker implements IProgressChecker<Vec3> {
+public class DistanceProgressChecker implements IProgressChecker<Vec3d> {
    private final IProgressChecker<Double> distanceChecker;
    private final boolean reduceDistance;
-   private Vec3 start;
-   private Vec3 prevPos;
+   private Vec3d start;
+   private Vec3d prevPos;
 
    public DistanceProgressChecker(IProgressChecker<Double> distanceChecker, boolean reduceDistance) {
       this.distanceChecker = distanceChecker;
@@ -26,7 +26,7 @@ public class DistanceProgressChecker implements IProgressChecker<Vec3> {
       this(timeout, minDistanceToMake, false);
    }
 
-   public void setProgress(Vec3 position) {
+   public void setProgress(Vec3d position) {
       if (this.start == null) {
          this.start = position;
       } else {

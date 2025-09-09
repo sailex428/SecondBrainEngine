@@ -2,8 +2,8 @@ package adris.altoclef.tasks.movement;
 
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.biome.BiomeKeys;
 
 public class LocateDesertTempleTask extends Task {
    private BlockPos finalPos;
@@ -16,14 +16,14 @@ public class LocateDesertTempleTask extends Task {
    protected Task onTick() {
       BlockPos desertTemplePos = WorldHelper.getADesertTemple(this.controller);
       if (desertTemplePos != null) {
-         this.finalPos = desertTemplePos.above(14);
+         this.finalPos = desertTemplePos.up(14);
       }
 
       if (this.finalPos != null) {
          this.setDebugState("Going to found desert temple");
          return new GetToBlockTask(this.finalPos, false);
       } else {
-         return new SearchWithinBiomeTask(Biomes.DESERT);
+         return new SearchWithinBiomeTask(BiomeKeys.DESERT);
       }
    }
 
@@ -43,6 +43,6 @@ public class LocateDesertTempleTask extends Task {
 
    @Override
    public boolean isFinished() {
-      return this.controller.getPlayer().blockPosition().equals(this.finalPos);
+      return this.controller.getPlayer().getBlockPos().equals(this.finalPos);
    }
 }

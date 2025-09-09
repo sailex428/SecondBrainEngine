@@ -8,10 +8,10 @@ import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.projectile.ThrownEnderpearl;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class ThrowEnderPearlSimpleProjectileTask extends Task {
    private final TimerGame thrownTimer = new TimerGame(5.0);
@@ -25,14 +25,14 @@ public class ThrowEnderPearlSimpleProjectileTask extends Task {
    private static boolean cleanThrow(AltoClefController mod, float yaw, float pitch) {
       Rotation rotation = new Rotation(yaw, -1.0F * pitch);
       float range = 3.0F;
-      Vec3 delta = LookHelper.toVec3d(rotation).scale(range);
-      Vec3 start = LookHelper.getCameraPos(mod);
+      Vec3d delta = LookHelper.toVec3d(rotation).scale(range);
+      Vec3d start = LookHelper.getCameraPos(mod);
       return LookHelper.cleanLineOfSight(mod, start.add(delta), (double)range);
    }
 
    private static Rotation calculateThrowLook(AltoClefController mod, BlockPos end) {
-      Vec3 start = ProjectileHelper.getThrowOrigin(mod.getPlayer());
-      Vec3 endCenter = WorldHelper.toVec3d(end);
+      Vec3d start = ProjectileHelper.getThrowOrigin(mod.getPlayer());
+      Vec3d endCenter = WorldHelper.toVec3d(end);
       double gravity = 0.03;
       double speed = 1.5;
       float yaw = LookHelper.getLookRotation(mod, end).getYaw();
@@ -51,7 +51,7 @@ public class ThrowEnderPearlSimpleProjectileTask extends Task {
    @Override
    protected Task onTick() {
       AltoClefController mod = this.controller;
-      if (mod.getEntityTracker().entityFound(ThrownEnderpearl.class)) {
+      if (mod.getEntityTracker().entityFound(EnderPearlEntity.class)) {
          this.thrownTimer.reset();
       }
 

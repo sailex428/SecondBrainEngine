@@ -35,22 +35,31 @@ import adris.altoclef.util.slots.Slot;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.entity.LivingEntityInventory;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.EndPortalFrameBlock;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.EndermanEntity;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.PillagerEntity;
+import net.minecraft.entity.mob.SilverfishEntity;
+import net.minecraft.entity.mob.WitchEntity;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.EnderEyeItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.SwordItem;
+import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.*;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EndPortalFrameBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
@@ -203,7 +212,7 @@ public class BeatMinecraftTask extends Task {
             if (optionalPos.isEmpty()) {
                return pair;
             } else {
-               double distance = Math.sqrt(BlockPosVer.getSquaredDistance(optionalPos.get(), mod.getPlayer().position()));
+               double distance = Math.sqrt(BlockPosVer.getSquaredDistance(optionalPos.get(), mod.getPlayer().getPos()));
                if (distance > 55.0) {
                   return pair;
                } else {
@@ -232,7 +241,7 @@ public class BeatMinecraftTask extends Task {
       List<BlockPos> frameBlocks = new ArrayList<>();
 
       for (BlockPos pos : mod.getBlockScanner().getKnownLocations(Blocks.END_PORTAL_FRAME)) {
-         if (pos.closerThan(endPortalCenter, 20.0)) {
+         if (pos.isWithinDistance(endPortalCenter, 20.0)) {
             frameBlocks.add(pos);
          }
       }
@@ -264,7 +273,7 @@ public class BeatMinecraftTask extends Task {
             Debug.logInternal("Block is not an End Portal Frame");
             return false;
          } else {
-            boolean isFilled = (Boolean)blockState.getValue(EndPortalFrameBlock.HAS_EYE);
+            boolean isFilled = (Boolean)blockState.get(EndPortalFrameBlock.EYE);
             Debug.logInternal("End Portal Frame is " + (isFilled ? "filled" : "not filled"));
             return isFilled;
          }
@@ -292,9 +301,9 @@ public class BeatMinecraftTask extends Task {
    public static void throwAwaySlots(AltoClefController mod, List<Slot> slots) {
       for (Slot slot : slots) {
          if (Slot.isCursor(slot)) {
-            mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+            mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
          } else {
-            mod.getSlotHandler().clickSlot(slot, 0, ClickType.PICKUP);
+            mod.getSlotHandler().clickSlot(slot, 0, SlotActionType.PICKUP);
          }
       }
    }
@@ -380,7 +389,7 @@ public class BeatMinecraftTask extends Task {
                return Double.NEGATIVE_INFINITY;
             } else {
                Optional<BlockPos> pos = mod.getBlockScanner().getNearestBlock(ItemHelper.itemsToBlocks(ItemHelper.BED));
-               return pos.isPresent() && pos.get().closerToCenterThan(mod.getPlayer().position(), 30.0) ? 1000000.0 : Double.NEGATIVE_INFINITY;
+               return pos.isPresent() && pos.get().isWithinDistance(mod.getPlayer().getPos(), 30.0) ? 1000000.0 : Double.NEGATIVE_INFINITY;
             }
          }
       }));
@@ -513,9 +522,9 @@ public class BeatMinecraftTask extends Task {
          if (chest.isEmpty()) {
             return pair;
          } else {
-            double dst = Math.sqrt(BlockPosVer.getSquaredDistance(chest.get(), mod.getPlayer().position()));
+            double dst = Math.sqrt(BlockPosVer.getSquaredDistance(chest.get(), mod.getPlayer().getPos()));
             pair.setRight(30.0 / dst * 175.0);
-            pair.setLeft(new GetToBlockTask(chest.get().above()));
+            pair.setLeft(new GetToBlockTask(chest.get().up()));
             return pair;
          }
       }, a -> true, false, false, true));
@@ -525,7 +534,7 @@ public class BeatMinecraftTask extends Task {
          if (chest.isEmpty()) {
             return pair;
          } else {
-            if (LookHelper.cleanLineOfSight(mod.getPlayer(), chest.get(), 10.0) && chest.get().closerToCenterThan(mod.getPlayer().getEyePosition(), 5.0)) {
+            if (LookHelper.cleanLineOfSight(mod.getPlayer(), chest.get(), 10.0) && chest.get().isWithinDistance(mod.getPlayer().getEyePos(), 5.0)) {
                pair.setLeft(new LootContainerTask(chest.get(), this.lootableItems(mod), noCurseOfBinding));
                pair.setRight(Double.POSITIVE_INFINITY);
             }
@@ -731,8 +740,8 @@ public class BeatMinecraftTask extends Task {
          this.cachedEndItemDrops.clear();
 
          for (ItemEntity entity : droppedItems) {
-            Item item = entity.getItem().getItem();
-            int count = entity.getItem().getCount();
+            Item item = entity.getStack().getItem();
+            int count = entity.getStack().getCount();
             this.cachedEndItemDrops.put(item, this.cachedEndItemDrops.getOrDefault(item, 0) + count);
             Debug.logInternal("Added dropped item: " + item + " with count: " + count);
          }
@@ -861,17 +870,17 @@ public class BeatMinecraftTask extends Task {
                      return false;
                   } else {
                      boolean isUnopenedChest = WorldHelper.isUnopenedChest(mod, blockPos);
-                     boolean isWithinDistance = mod.getPlayer().blockPosition().closerThan(blockPos, 150.0);
+                     boolean isWithinDistance = mod.getPlayer().getBlockPos().isWithinDistance(blockPos, 150.0);
                      boolean isLootableChest = this.canBeLootablePortalChest(mod, blockPos);
                      Optional<BlockPos> nearestSpawner = mod.getBlockScanner().getNearestBlock(WorldHelper.toVec3d(blockPos), Blocks.SPAWNER);
-                     if (nearestSpawner.isPresent() && nearestSpawner.get().closerThan(blockPos, 6.0)) {
+                     if (nearestSpawner.isPresent() && nearestSpawner.get().isWithinDistance(blockPos, 6.0)) {
                         this.blacklistedChests.add(blockPos);
                         return false;
                      } else {
-                        AABB box = new AABB(
+                        Box box = new Box(
                            blockPos.getX() - 5, blockPos.getY() - 5, blockPos.getZ() - 5, blockPos.getX() + 5, blockPos.getY() + 5, blockPos.getZ() + 5
                         );
-                        Stream<BlockState> states = BlockPos.betweenClosedStream(box).map(pos -> mod.getWorld().getBlockState(pos));
+                        Stream<BlockState> states = BlockPos.stream(box).map(pos -> mod.getWorld().getBlockState(pos));
                         if (states.anyMatch(state -> state.getBlock().equals(Blocks.WATER))) {
                            this.blacklistedChests.add(blockPos);
                            return false;
@@ -991,11 +1000,11 @@ public class BeatMinecraftTask extends Task {
    private void blackListDangerousBlock(AltoClefController mod, Block block) {
       Optional<BlockPos> nearestTracking = mod.getBlockScanner().getNearestBlock(block);
       if (nearestTracking.isPresent()) {
-         for (Entity entity : mod.getWorld().getAllEntities()) {
+         for (Entity entity : mod.getWorld().iterateEntities()) {
             if (!mod.getBlockScanner().isUnreachable(nearestTracking.get())
-               && entity instanceof Monster
-               && mod.getPlayer().distanceToSqr(entity.position()) < 150.0
-               && nearestTracking.get().closerToCenterThan(entity.position(), 30.0)) {
+               && entity instanceof HostileEntity
+               && mod.getPlayer().squaredDistanceTo(entity.getPos()) < 150.0
+               && nearestTracking.get().isWithinDistance(entity.getPos(), 30.0)) {
                Debug.logMessage("Blacklisting dangerous " + block.toString());
                mod.getBlockScanner().requestBlockUnreachable(nearestTracking.get(), 0);
             }
@@ -1014,7 +1023,7 @@ public class BeatMinecraftTask extends Task {
       }
 
       this.mod.getBaritoneSettings().blockPlacementPenalty.set(blockPlacementPenalty);
-      if (this.mod.getPlayer().getMainHandItem().getItem() instanceof EnderEyeItem && !openingEndPortal) {
+      if (this.mod.getPlayer().getMainHandStack().getItem() instanceof EnderEyeItem && !openingEndPortal) {
          for (ItemStack itemStack : itemStorage.getItemStacksPlayerInventory(true)) {
             Item item = itemStack.getItem();
             if (item instanceof SwordItem || item instanceof AxeItem) {
@@ -1060,10 +1069,10 @@ public class BeatMinecraftTask extends Task {
          }
 
          if (!this.mod.getBlockScanner().isUnreachable(craftingTable)) {
-            BlockState craftingTablePosUp = this.mod.getWorld().getBlockState(craftingTable.above(2));
-            if (this.mod.getEntityTracker().entityFound(Witch.class)) {
-               Optional<Entity> witch = this.mod.getEntityTracker().getClosestEntity(Witch.class);
-               if (witch.isPresent() && craftingTable.closerToCenterThan(witch.get().position(), 15.0)) {
+            BlockState craftingTablePosUp = this.mod.getWorld().getBlockState(craftingTable.up(2));
+            if (this.mod.getEntityTracker().entityFound(WitchEntity.class)) {
+               Optional<Entity> witch = this.mod.getEntityTracker().getClosestEntity(WitchEntity.class);
+               if (witch.isPresent() && craftingTable.isWithinDistance(witch.get().getPos(), 15.0)) {
                   Debug.logMessage("Blacklisting witch crafting table.");
                   this.mod.getBlockScanner().requestBlockUnreachable(craftingTable, 0);
                }
@@ -1094,8 +1103,8 @@ public class BeatMinecraftTask extends Task {
       }
 
       for (BlockPos log : this.mod.getBlockScanner().getKnownLocations(ItemHelper.itemsToBlocks(ItemHelper.LOG))) {
-         for (Entity entity : this.mod.getWorld().getAllEntities()) {
-            if (entity instanceof Pillager && !this.mod.getBlockScanner().isUnreachable(log) && log.closerToCenterThan(entity.position(), 40.0)) {
+         for (Entity entity : this.mod.getWorld().iterateEntities()) {
+            if (entity instanceof PillagerEntity && !this.mod.getBlockScanner().isUnreachable(log) && log.isWithinDistance(entity.getPos(), 40.0)) {
                Debug.logMessage("Blacklisting pillage log.");
                this.mod.getBlockScanner().requestBlockUnreachable(log, 0);
             }
@@ -1133,7 +1142,7 @@ public class BeatMinecraftTask extends Task {
          for (int x = -5; x < 5; x++) {
             for (int y = -5; y < 5; y++) {
                for (int z = -5; z < 5; z++) {
-                  BlockPos p = pos.offset(x, y, z);
+                  BlockPos p = pos.add(x, y, z);
                   Block block = this.mod.getWorld().getBlockState(p).getBlock();
                   if (ancientCityBlocks.contains(block)) {
                      Debug.logMessage("Blacklisting ancient city wool " + pos);
@@ -1355,9 +1364,9 @@ public class BeatMinecraftTask extends Task {
                                           LookHelper.randomOrientation(this.controller);
                                        }
 
-                                       this.mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+                                       this.mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
                                     } else {
-                                       this.mod.getSlotHandler().clickSlot(throwGear, 0, ClickType.PICKUP);
+                                       this.mod.getSlotHandler().clickSlot(throwGear, 0, SlotActionType.PICKUP);
                                     }
                                  }
 
@@ -1367,9 +1376,9 @@ public class BeatMinecraftTask extends Task {
                                           LookHelper.randomOrientation(this.controller);
                                        }
 
-                                       this.mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+                                       this.mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
                                     } else {
-                                       this.mod.getSlotHandler().clickSlot(ironArmor, 0, ClickType.PICKUP);
+                                       this.mod.getSlotHandler().clickSlot(ironArmor, 0, SlotActionType.PICKUP);
                                     }
                                  }
                               }
@@ -1403,7 +1412,7 @@ public class BeatMinecraftTask extends Task {
                                     Optional<BlockPos> silverfish = this.mod
                                        .getBlockScanner()
                                        .getNearestBlock(
-                                          (Predicate<BlockPos>)(blockPos -> WorldHelper.getSpawnerEntity(this.mod, blockPos) instanceof Silverfish),
+                                          (Predicate<BlockPos>)(blockPos -> WorldHelper.getSpawnerEntity(this.mod, blockPos) instanceof SilverfishEntity),
                                           Blocks.SPAWNER
                                        );
                                     if (silverfish.isPresent()) {
@@ -1429,7 +1438,7 @@ public class BeatMinecraftTask extends Task {
                                           this.mod.getExtraBaritoneSettings().canWalkOnEndPortal(true);
                                        }
 
-                                       return new DoToClosestBlockTask(blockPos -> new GetToBlockTask(blockPos.above()), Blocks.END_PORTAL);
+                                       return new DoToClosestBlockTask(blockPos -> new GetToBlockTask(blockPos.up()), Blocks.END_PORTAL);
                                     }
                                  } else if (itemStorage.hasItem(Items.OBSIDIAN)) {
                                     this.setDebugState("Opening End Portal");
@@ -1457,7 +1466,7 @@ public class BeatMinecraftTask extends Task {
                                              .getBlockScanner()
                                              .getNearestBlock(
                                                 WorldHelper.toVec3d(this.endPortalCenterLocation),
-                                                blockPos -> !blockPos.closerThan(this.endPortalCenterLocation, 8.0),
+                                                blockPos -> !blockPos.isWithinDistance(this.endPortalCenterLocation, 8.0),
                                                 Blocks.LAVA
                                              )
                                              .get()
@@ -1486,9 +1495,9 @@ public class BeatMinecraftTask extends Task {
                                        LookHelper.randomOrientation(this.controller);
                                     }
 
-                                    this.mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+                                    this.mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
                                  } else {
-                                    this.mod.getSlotHandler().clickSlot(throwGearx, 0, ClickType.PICKUP);
+                                    this.mod.getSlotHandler().clickSlot(throwGearx, 0, SlotActionType.PICKUP);
                                  }
                               }
 
@@ -1498,9 +1507,9 @@ public class BeatMinecraftTask extends Task {
                                        LookHelper.randomOrientation(this.controller);
                                     }
 
-                                    this.mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, ClickType.PICKUP);
+                                    this.mod.getSlotHandler().clickSlot(Slot.UNDEFINED, 0, SlotActionType.PICKUP);
                                  } else {
-                                    this.mod.getSlotHandler().clickSlot(ironArmorx, 0, ClickType.PICKUP);
+                                    this.mod.getSlotHandler().clickSlot(ironArmorx, 0, SlotActionType.PICKUP);
                                  }
                               }
                            }
@@ -1513,7 +1522,7 @@ public class BeatMinecraftTask extends Task {
                         return this.getEyesOfEnderTask(this.mod, eyesNeeded);
                      }
                   }
-               } else if (!this.mod.getWorld().hasChunk(0, 0)) {
+               } else if (!this.mod.getWorld().isChunkLoaded(0, 0)) {
                   this.setDebugState("Waiting for chunks to load");
                   return null;
                } else {
@@ -1566,7 +1575,7 @@ public class BeatMinecraftTask extends Task {
                            }
 
                            return new DoToClosestBlockTask(
-                              blockPos -> new GetToBlockTask(blockPos.above()), pos -> Math.abs(pos.getX()) + Math.abs(pos.getZ()) <= 1, Blocks.END_PORTAL
+                              blockPos -> new GetToBlockTask(blockPos.up()), pos -> Math.abs(pos.getX()) + Math.abs(pos.getZ()) <= 1, Blocks.END_PORTAL
                            );
                         } else if (!itemStorage.hasItem(ItemHelper.BED) && !this.mod.getBlockScanner().anyFound(ItemHelper.itemsToBlocks(ItemHelper.BED))) {
                            this.setDebugState("No beds, regular strats.");
@@ -1625,10 +1634,10 @@ public class BeatMinecraftTask extends Task {
             ? new EquipArmorTask(Items.GOLDEN_HELMET)
             : new TradeWithPiglinsTask(32, Items.ENDER_PEARL, count));
       } else {
-         boolean endermanFound = mod.getEntityTracker().entityFound(EnderMan.class);
+         boolean endermanFound = mod.getEntityTracker().entityFound(EndermanEntity.class);
          boolean pearlDropped = mod.getEntityTracker().itemDropped(Items.ENDER_PEARL);
          if (endermanFound || pearlDropped) {
-            Optional<Entity> toKill = mod.getEntityTracker().getClosestEntity(EnderMan.class);
+            Optional<Entity> toKill = mod.getEntityTracker().getClosestEntity(EndermanEntity.class);
             if (toKill.isPresent() && mod.getEntityTracker().isEntityReachable(toKill.get())) {
                return new KillEndermanTask(count);
             }
@@ -1698,13 +1707,13 @@ public class BeatMinecraftTask extends Task {
    private BlockPos doSimpleSearchForEndPortal(AltoClefController mod) {
       List<BlockPos> frames = mod.getBlockScanner().getKnownLocations(Blocks.END_PORTAL_FRAME);
       if (frames.size() >= 12) {
-         Vec3 average = frames.stream()
+         Vec3d average = frames.stream()
             .reduce(
-               Vec3.ZERO,
+               Vec3d.ZERO,
                (accum, bpos) -> accum.add((int)Math.round(bpos.getX() + 0.5), (int)Math.round(bpos.getY() + 0.5), (int)Math.round(bpos.getZ() + 0.5)),
-               Vec3::add
+               Vec3d::add
             )
-            .scale(1.0 / frames.size());
+            .multiply(1.0 / frames.size());
          mod.log("Average Position: " + average);
          return new BlockPos(new Vec3i((int)average.x, (int)average.y, (int)average.z));
       } else {
@@ -1736,7 +1745,7 @@ public class BeatMinecraftTask extends Task {
    }
 
    private boolean canBeLootablePortalChest(AltoClefController mod, BlockPos blockPos) {
-      return mod.getWorld().getBlockState(blockPos.above()).getBlock() != Blocks.WATER && blockPos.getY() >= 50;
+      return mod.getWorld().getBlockState(blockPos.up()).getBlock() != Blocks.WATER && blockPos.getY() >= 50;
    }
 
    private Task getEyesOfEnderTask(AltoClefController mod, int targetEyes) {
@@ -1807,14 +1816,14 @@ public class BeatMinecraftTask extends Task {
                         return this.lastTask;
                      } else {
                         if (!sameTask) {
-                           this.taskChanges.add(0, new TaskChange(this.lastGather, toGather, mod.getPlayer().blockPosition()));
+                           this.taskChanges.add(0, new TaskChange(this.lastGather, toGather, mod.getPlayer().getBlockPos()));
                         }
 
                         if (this.taskChanges.size() >= 3 && !sameTask) {
                            TaskChange t1 = this.taskChanges.get(0);
                            TaskChange t2 = this.taskChanges.get(1);
                            TaskChange t3 = this.taskChanges.get(2);
-                           if (t1.original == t2.interrupt && t1.pos.closerThan(t3.pos, 5.0) && t3.original == t1.interrupt) {
+                           if (t1.original == t2.interrupt && t1.pos.isWithinDistance(t3.pos, 5.0) && t3.original == t1.interrupt) {
                               this.forcedTaskTimer.reset();
                               mod.logWarning("Probably stuck! Forcing timer...");
                               this.taskChanges.clear();
@@ -1895,7 +1904,7 @@ public class BeatMinecraftTask extends Task {
                      mod.getInputControls().release(Input.MOVE_FORWARD);
                      mod.getInputControls().release(Input.MOVE_LEFT);
                      mod.getInputControls().release(Input.SNEAK);
-                     BlockPos pos = mod.getPlayer().getOnPos();
+                     BlockPos pos = mod.getPlayer().getSteppingPos();
                      if (this.escaped
                         || !mod.getWorld().getBlockState(pos).getBlock().equals(Blocks.SOUL_SAND)
                         || !mod.getWorld().getBlockState(pos.east()).getBlock().equals(Blocks.OBSIDIAN)
@@ -1989,7 +1998,7 @@ public class BeatMinecraftTask extends Task {
                               }
 
                               if (WorldHelper.inRangeXZ(
-                                 mod.getPlayer().position(), WorldHelper.toVec3d(mod.getBlockScanner().getNearestBlock(Blocks.NETHER_BRICKS).get()), 2.0
+                                 mod.getPlayer().getPos(), WorldHelper.toVec3d(mod.getBlockScanner().getNearestBlock(Blocks.NETHER_BRICKS).get()), 2.0
                               )) {
                                  this.setDebugState("trying to get to fortress");
                                  return new GetToBlockTask(mod.getBlockScanner().getNearestBlock(Blocks.NETHER_BRICKS).get());
@@ -1999,15 +2008,15 @@ public class BeatMinecraftTask extends Task {
                               if ((
                                     this.cachedFortressTask != null
                                           && !this.fortressTimer.elapsed()
-                                          && mod.getPlayer().position().distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos)) - 1.0
-                                             > this.prevPos.distManhattan(this.cachedFortressTask.blockPos) / 2.0
+                                          && mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos)) - 1.0
+                                             > this.prevPos.getManhattanDistance(this.cachedFortressTask.blockPos) / 2.0
                                        || !mod.getBaritone().getPathingBehavior().isSafeToCancel()
                                  )
                                  && this.cachedFortressTask != null) {
                                  mod.log(
-                                    mod.getPlayer().position().distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos))
+                                    mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos))
                                        + " : "
-                                       + mod.getPlayer().position().distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos))
+                                       + mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos))
                                  );
                                  return this.cachedFortressTask;
                               }
@@ -2020,9 +2029,9 @@ public class BeatMinecraftTask extends Task {
                               this.resetFortressTask = true;
                               this.fortressTimer.reset();
                               mod.log("new");
-                              this.prevPos = mod.getPlayer().blockPosition();
+                              this.prevPos = mod.getPlayer().getBlockPos();
                               BlockPos p = mod.getBlockScanner().getNearestBlock(Blocks.NETHER_BRICKS).get();
-                              int distance = (int)(mod.getPlayer().position().distanceTo(WorldHelper.toVec3d(p)) / 2.0);
+                              int distance = (int)(mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(p)) / 2.0);
                               if (this.cachedFortressTask != null) {
                                  distance = Math.min(this.cachedFortressTask.range - 1, distance);
                               }

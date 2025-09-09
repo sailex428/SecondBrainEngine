@@ -10,12 +10,11 @@ import adris.altoclef.tasks.squashed.CataloguedResourceTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-
 import java.util.Optional;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.math.BlockPos;
 
 public class CollectHoneycombTask extends ResourceTask {
    private final boolean campfire;
@@ -62,13 +61,13 @@ public class CollectHoneycombTask extends ResourceTask {
             return new CataloguedResourceTask(new ItemTarget(Items.CAMPFIRE, 1));
          } else {
             this.setDebugState("Placing campfire");
-            return new PlaceBlockTask(this.nest.below(2), Blocks.CAMPFIRE);
+            return new PlaceBlockTask(this.nest.down(2), Blocks.CAMPFIRE);
          }
       } else if (!mod.getItemStorage().hasItemInventoryOnly(Items.SHEARS)) {
          this.setDebugState("Getting shears");
          return new CataloguedResourceTask(new ItemTarget(Items.SHEARS, 1));
-      } else if ((Integer)mod.getWorld().getBlockState(this.nest).getValue(BlockStateProperties.LEVEL_HONEY) != 5) {
-         if (!this.nest.closerToCenterThan(mod.getPlayer().position(), 20.0)) {
+      } else if ((Integer)mod.getWorld().getBlockState(this.nest).get(Properties.HONEY_LEVEL) != 5) {
+         if (!this.nest.isWithinDistance(mod.getPlayer().getPos(), 20.0)) {
             this.setDebugState("Getting close to nest");
             return new GetCloseToBlockTask(this.nest);
          } else {
@@ -101,7 +100,7 @@ public class CollectHoneycombTask extends ResourceTask {
    }
 
    private boolean isCampfireUnderNest(AltoClefController mod, BlockPos pos) {
-      for (BlockPos underPos : WorldHelper.scanRegion(pos.below(6), pos.below())) {
+      for (BlockPos underPos : WorldHelper.scanRegion(pos.down(6), pos.down())) {
          if (mod.getWorld().getBlockState(underPos).getBlock() == Blocks.CAMPFIRE) {
             return true;
          }

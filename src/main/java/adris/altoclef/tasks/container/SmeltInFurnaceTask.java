@@ -16,18 +16,17 @@ import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class SmeltInFurnaceTask extends ResourceTask {
    private final SmeltTarget[] targets;
@@ -104,12 +103,12 @@ public class SmeltInFurnaceTask extends ResourceTask {
                }
             }
 
-            if (this.furnacePos == null || !controller.getWorld().getBlockState(this.furnacePos).is(Blocks.FURNACE)) {
+            if (this.furnacePos == null || !controller.getWorld().getBlockState(this.furnacePos).isOf(Blocks.FURNACE)) {
                Optional<BlockPos> nearestFurnace = controller.getBlockScanner().getNearestBlock(Blocks.FURNACE);
                if (nearestFurnace.isPresent()
                   && !nearestFurnace.get()
-                     .closerThan(
-                        new Vec3i((int)controller.getEntity().position().x, (int)controller.getEntity().position().y, (int)controller.getEntity().position().z),
+                     .isWithinDistance(
+                        new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z),
                         100.0
                      )) {
                   nearestFurnace = Optional.empty();
@@ -129,13 +128,13 @@ public class SmeltInFurnaceTask extends ResourceTask {
             }
 
             if (!this.furnacePos
-               .closerThan(
-                  new Vec3i((int)controller.getEntity().position().x, (int)controller.getEntity().position().y, (int)controller.getEntity().position().z), 4.5
+               .isWithinDistance(
+                  new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z), 4.5
                )) {
                this.setDebugState("Going to furnace.");
                return new GetCloseToBlockTask(this.furnacePos);
             } else if (controller.getWorld().getBlockEntity(this.furnacePos) instanceof AbstractFurnaceBlockEntity furnace) {
-               ItemStack outputStack = furnace.getItem(2);
+               ItemStack outputStack = furnace.getStack(2);
                if (!outputStack.isEmpty()) {
                   this.setDebugState("Taking smelted items.");
                   LivingEntityInventory playerInv = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
@@ -144,8 +143,8 @@ public class SmeltInFurnaceTask extends ResourceTask {
                      return null;
                   }
 
-                  furnace.setItem(2, ItemStack.EMPTY);
-                  furnace.setChanged();
+                  furnace.setStack(2, ItemStack.EMPTY);
+                  furnace.markDirty();
                }
 
                if (this.isSmelting) {
@@ -156,16 +155,16 @@ public class SmeltInFurnaceTask extends ResourceTask {
 
                   return null;
                } else {
-                  ItemStack materialSlot = furnace.getItem(0);
-                  ItemStack fuelSlot = furnace.getItem(1);
+                  ItemStack materialSlot = furnace.getStack(0);
+                  ItemStack fuelSlot = furnace.getStack(1);
                   LivingEntityInventory playerInv = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
                   if (((MixinAbstractFurnaceBlockEntity)furnace).getPropertyDelegate().get(0) <= 1 && fuelSlot.isEmpty()) {
                      this.setDebugState("Adding fuel.");
                      Item fuelItem = controller.getModSettings().getSupportedFuelItems()[0];
                      int fuelSlotIndex = playerInv.getSlotWithStack(new ItemStack(fuelItem));
                      if (fuelSlotIndex != -1) {
-                        furnace.setItem(1, playerInv.removeItem(fuelSlotIndex, fuelNeeded));
-                        furnace.setChanged();
+                        furnace.setStack(1, playerInv.removeItem(fuelSlotIndex, fuelNeeded));
+                        furnace.markDirty();
                      }
                   }
 
@@ -174,10 +173,10 @@ public class SmeltInFurnaceTask extends ResourceTask {
                      Item materialItem = currentTarget.getMaterial().getMatches()[0];
                      int materialSlotIndex = playerInv.getSlotWithStack(new ItemStack(materialItem));
                      if (materialSlotIndex != -1) {
-                        furnace.setItem(0, playerInv.removeItem(materialSlotIndex, currentTarget.getMaterial().getTargetCount()));
+                        furnace.setStack(0, playerInv.removeItem(materialSlotIndex, currentTarget.getMaterial().getTargetCount()));
                         this.isSmelting = true;
                         this.smeltTimer.reset();
-                        furnace.setChanged();
+                        furnace.markDirty();
                         return null;
                      }
                   }

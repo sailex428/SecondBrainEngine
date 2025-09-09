@@ -9,11 +9,10 @@ import adris.altoclef.util.Dimension;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Objects;
 import java.util.function.Predicate;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.math.BlockPos;
 
 public class EnterNetherPortalTask extends Task {
    private final Task getPortalTask;
@@ -60,7 +59,7 @@ public class EnterNetherPortalTask extends Task {
          this.portalTimeout.reset();
          this.leftPortal = true;
          return this.wanderTask;
-      } else if (mod.getWorld().getBlockState(mod.getPlayer().blockPosition()).getBlock() == Blocks.NETHER_PORTAL) {
+      } else if (mod.getWorld().getBlockState(mod.getPlayer().getBlockPos()).getBlock() == Blocks.NETHER_PORTAL) {
          if (this.portalTimeout.elapsed() && !this.leftPortal) {
             return this.wanderTask;
          } else {
@@ -85,7 +84,7 @@ public class EnterNetherPortalTask extends Task {
             } else if (!mod.getChunkTracker().isChunkLoaded(blockPos)) {
                return this.goodPortal.test(blockPos);
             } else {
-               BlockPos below = blockPos.below();
+               BlockPos below = blockPos.down();
                boolean canStand = WorldHelper.isSolidBlock(this.controller, below) && !mod.getBlockScanner().isBlockAtPosition(below, Blocks.NETHER_PORTAL);
                return canStand && this.goodPortal.test(blockPos);
             }

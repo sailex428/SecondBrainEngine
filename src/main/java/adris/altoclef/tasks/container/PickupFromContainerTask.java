@@ -7,13 +7,12 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
-
 import java.util.Arrays;
 import java.util.Objects;
+import net.minecraft.block.entity.LootableContainerBlockEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class PickupFromContainerTask extends Task {
    private final BlockPos containerPos;
@@ -33,25 +32,25 @@ public class PickupFromContainerTask extends Task {
       if (this.isFinished()) {
          return null;
       } else if (!this.containerPos
-         .closerThan(
+         .isWithinDistance(
             new Vec3i(
-               (int)this.controller.getEntity().position().x, (int)this.controller.getEntity().position().y, (int)this.controller.getEntity().position().z
+               (int)this.controller.getEntity().getPos().x, (int)this.controller.getEntity().getPos().y, (int)this.controller.getEntity().getPos().z
             ),
             4.5
          )) {
          return new GetToBlockTask(this.containerPos);
-      } else if (!(this.controller.getWorld().getBlockEntity(this.containerPos) instanceof RandomizableContainerBlockEntity container)) {
+      } else if (!(this.controller.getWorld().getBlockEntity(this.containerPos) instanceof LootableContainerBlockEntity container)) {
          Debug.logWarning("Block at " + this.containerPos + " is not a lootable container. Stopping.");
          return null;
       } else {
-         RandomizableContainerBlockEntity containerInventory = container;
+         LootableContainerBlockEntity containerInventory = container;
          LivingEntityInventory playerInventory = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
 
          for (ItemTarget target : this.targets) {
             int needed = target.getTargetCount() - this.controller.getItemStorage().getItemCount(target);
             if (needed > 0) {
-               for (int i = 0; i < containerInventory.getContainerSize(); i++) {
-                  ItemStack stack = containerInventory.getItem(i);
+               for (int i = 0; i < containerInventory.size(); i++) {
+                  ItemStack stack = containerInventory.getStack(i);
                   if (target.matches(stack.getItem())) {
                      this.setDebugState("Looting " + target);
                      if (!playerInventory.insertStack(new ItemStack(stack.getItem()))) {
@@ -62,9 +61,9 @@ public class PickupFromContainerTask extends Task {
                      int moveAmount = Math.min(toMove.getCount(), needed);
                      toMove.setCount(moveAmount);
                      if (playerInventory.insertStack(toMove)) {
-                        stack.shrink(moveAmount);
-                        containerInventory.setItem(i, stack);
-                        container.setChanged();
+                        stack.decrement(moveAmount);
+                        containerInventory.setStack(i, stack);
+                        container.markDirty();
                         this.controller.getItemStorage().registerSlotAction();
                      }
 

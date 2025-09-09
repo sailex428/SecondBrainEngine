@@ -6,16 +6,15 @@ import adris.altoclef.tasks.container.StoreInAnyContainerTask;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ItemHelper;
 import adris.altoclef.util.helpers.StorageHelper;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolItem;
 
 public class DepositCommand extends Command {
    private static final int NEARBY_RANGE = 20;
@@ -40,7 +39,7 @@ public class DepositCommand extends Command {
             ItemStack stack = StorageHelper.getItemStackInSlot(slot);
             if (!stack.isEmpty()) {
                Item item = stack.getItem();
-               return !(item instanceof TieredItem);
+               return !(item instanceof ToolItem);
             } else {
                return false;
             }

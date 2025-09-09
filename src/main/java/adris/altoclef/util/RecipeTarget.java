@@ -1,8 +1,7 @@
 package adris.altoclef.util;
 
-import net.minecraft.world.item.Item;
-
 import java.util.Objects;
+import net.minecraft.item.Item;
 
 public class RecipeTarget {
    private final CraftingRecipe recipe;

@@ -14,16 +14,16 @@ import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import baritone.api.schematic.AbstractSchematic;
 import baritone.api.utils.BlockOptionalMeta;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 
 public class PlaceBlockTask extends Task implements ITaskRequiresGrounded {
    private static final int MIN_MATERIALS = 1;
@@ -125,7 +125,7 @@ public class PlaceBlockTask extends Task implements ITaskRequiresGrounded {
 
          if (this.tryingAlternativeWay()) {
             this.setDebugState("Alternative way: Trying to go above block to place block.");
-            return new GetToBlockTask(this.target.above(), false);
+            return new GetToBlockTask(this.target.up(), false);
          } else {
             this.setDebugState("Letting baritone place a block.");
             if (!mod.getBaritone().getBuilderProcess().isActive()) {

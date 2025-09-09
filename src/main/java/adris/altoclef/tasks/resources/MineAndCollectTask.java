@@ -17,17 +17,16 @@ import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import adris.altoclef.util.slots.CursorSlot;
 import adris.altoclef.util.slots.PlayerSlot;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.*;
+import net.minecraft.block.Block;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.MiningToolItem;
+import net.minecraft.util.Pair;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class MineAndCollectTask extends ResourceTask {
    private final Block[] blocksToMine;
@@ -59,7 +58,7 @@ public class MineAndCollectTask extends ResourceTask {
 
       for (ItemTarget target : targets) {
          for (Item item : target.getMatches()) {
-            Block block = Block.byItem(item);
+            Block block = Block.getBlockFromItem(item);
             if (block != null && !WorldHelper.isAir(block)) {
                result.add(block);
             }
@@ -118,11 +117,11 @@ public class MineAndCollectTask extends ResourceTask {
          ItemStack cursorStack = StorageHelper.getItemStackInCursorSlot(this.controller);
          if (cursorStack != null && !cursorStack.isEmpty()) {
             Item item = cursorStack.getItem();
-            if (item.isCorrectToolForDrops(mod.getWorld().getBlockState(this.subtask.miningPos()))) {
+            if (item.isSuitableFor(mod.getWorld().getBlockState(this.subtask.miningPos()))) {
                Item currentlyEquipped = StorageHelper.getItemStackInSlot(PlayerSlot.getEquipSlot(mod.getInventory())).getItem();
-               if (item instanceof DiggerItem) {
-                  if (currentlyEquipped instanceof DiggerItem currentPick) {
-                     DiggerItem swapPick = (DiggerItem)item;
+               if (item instanceof MiningToolItem) {
+                  if (currentlyEquipped instanceof MiningToolItem currentPick) {
+                     MiningToolItem swapPick = (MiningToolItem)item;
                      if (ToolMaterialVer.getMiningLevel(swapPick) > ToolMaterialVer.getMiningLevel(currentPick)) {
                         mod.getSlotHandler().forceEquipSlot(this.controller, CursorSlot.SLOT);
                      }
@@ -152,11 +151,11 @@ public class MineAndCollectTask extends ResourceTask {
       }
 
       @Override
-      protected Vec3 getPos(AltoClefController mod, Object obj) {
+      protected Vec3d getPos(AltoClefController mod, Object obj) {
          if (obj instanceof BlockPos b) {
             return WorldHelper.toVec3d(b);
          } else if (obj instanceof ItemEntity item) {
-            return item.position();
+            return item.getPos();
          } else {
             throw new UnsupportedOperationException(
                "Shouldn't try to get the position of object " + obj + " of type " + (obj != null ? obj.getClass().toString() : "(null object)")
@@ -165,36 +164,36 @@ public class MineAndCollectTask extends ResourceTask {
       }
 
       @Override
-      protected Optional<Object> getClosestTo(AltoClefController mod, Vec3 pos) {
-         Tuple<Double, Optional<BlockPos>> closestBlock = getClosestBlock(mod, pos, this.blocks);
-         Tuple<Double, Optional<ItemEntity>> closestDrop = getClosestItemDrop(mod, pos, this.targets);
-         double blockSq = (Double)closestBlock.getA();
-         double dropSq = (Double)closestDrop.getA();
+      protected Optional<Object> getClosestTo(AltoClefController mod, Vec3d pos) {
+         Pair<Double, Optional<BlockPos>> closestBlock = getClosestBlock(mod, pos, this.blocks);
+         Pair<Double, Optional<ItemEntity>> closestDrop = getClosestItemDrop(mod, pos, this.targets);
+         double blockSq = (Double)closestBlock.getLeft();
+         double dropSq = (Double)closestDrop.getLeft();
          if (mod.getExtraBaritoneSettings().isInteractionPaused()) {
-            return ((Optional)closestDrop.getB()).map(Object.class::cast);
+            return ((Optional)closestDrop.getRight()).map(Object.class::cast);
          } else {
-            return dropSq <= blockSq ? ((Optional)closestDrop.getB()).map(Object.class::cast) : ((Optional)closestBlock.getB()).map(Object.class::cast);
+            return dropSq <= blockSq ? ((Optional)closestDrop.getRight()).map(Object.class::cast) : ((Optional)closestBlock.getRight()).map(Object.class::cast);
          }
       }
 
-      public static Tuple<Double, Optional<ItemEntity>> getClosestItemDrop(AltoClefController mod, Vec3 pos, ItemTarget... items) {
+      public static Pair<Double, Optional<ItemEntity>> getClosestItemDrop(AltoClefController mod, Vec3d pos, ItemTarget... items) {
          Optional<ItemEntity> closestDrop = Optional.empty();
          if (mod.getEntityTracker().itemDropped(items)) {
             closestDrop = mod.getEntityTracker().getClosestItemDrop(pos, items);
          }
 
-         return new Tuple(closestDrop.<Double>map(itemEntity -> itemEntity.distanceToSqr(pos) + 10.0).orElse(Double.POSITIVE_INFINITY), closestDrop);
+         return new Pair(closestDrop.<Double>map(itemEntity -> itemEntity.squaredDistanceTo(pos) + 10.0).orElse(Double.POSITIVE_INFINITY), closestDrop);
       }
 
-      public static Tuple<Double, Optional<BlockPos>> getClosestBlock(AltoClefController mod, Vec3 pos, Block... blocks) {
+      public static Pair<Double, Optional<BlockPos>> getClosestBlock(AltoClefController mod, Vec3d pos, Block... blocks) {
          Optional<BlockPos> closestBlock = mod.getBlockScanner()
             .getNearestBlock(pos, check -> mod.getBlockScanner().isUnreachable(check) ? false : WorldHelper.canBreak(mod, check), blocks);
-         return new Tuple(closestBlock.<Double>map(blockPos -> BlockPosVer.getSquaredDistance(blockPos, pos)).orElse(Double.POSITIVE_INFINITY), closestBlock);
+         return new Pair(closestBlock.<Double>map(blockPos -> BlockPosVer.getSquaredDistance(blockPos, pos)).orElse(Double.POSITIVE_INFINITY), closestBlock);
       }
 
       @Override
-      protected Vec3 getOriginPos(AltoClefController mod) {
-         return mod.getPlayer().position();
+      protected Vec3d getOriginPos(AltoClefController mod) {
+         return mod.getPlayer().getPos();
       }
 
       @Override
@@ -244,7 +243,7 @@ public class MineAndCollectTask extends ResourceTask {
          } else if (!(obj instanceof ItemEntity drop)) {
             return false;
          } else {
-            Item item = drop.getItem().getItem();
+            Item item = drop.getStack().getItem();
             if (this.targets != null) {
                for (ItemTarget target : this.targets) {
                   if (target.matches(item)) {

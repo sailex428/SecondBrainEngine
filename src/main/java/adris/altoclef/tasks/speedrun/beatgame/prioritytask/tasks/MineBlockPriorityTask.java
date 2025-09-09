@@ -7,16 +7,15 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.MiningRequirement;
 import adris.altoclef.util.helpers.StorageHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
+import net.minecraft.block.Block;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.Item;
+import net.minecraft.util.Pair;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class MineBlockPriorityTask extends PriorityTask {
    public final Block[] toMine;
@@ -92,9 +91,9 @@ public class MineBlockPriorityTask extends PriorityTask {
    }
 
    private double getClosestDist(AltoClefController mod) {
-      Vec3 pos = mod.getPlayer().position();
-      Tuple<Double, Optional<BlockPos>> closestBlock = MineAndCollectTask.MineOrCollectTask.getClosestBlock(mod, pos, this.toMine);
-      Tuple<Double, Optional<ItemEntity>> closestDrop = MineAndCollectTask.MineOrCollectTask.getClosestItemDrop(mod, pos, this.droppedItemTargets);
-      return Math.min((Double)closestBlock.getA(), (Double)closestDrop.getA());
+      Vec3d pos = mod.getPlayer().getPos();
+      Pair<Double, Optional<BlockPos>> closestBlock = MineAndCollectTask.MineOrCollectTask.getClosestBlock(mod, pos, this.toMine);
+      Pair<Double, Optional<ItemEntity>> closestDrop = MineAndCollectTask.MineOrCollectTask.getClosestItemDrop(mod, pos, this.droppedItemTargets);
+      return Math.min((Double)closestBlock.getLeft(), (Double)closestDrop.getLeft());
    }
 }

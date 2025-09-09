@@ -16,18 +16,17 @@ import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class SmeltInSmokerTask extends ResourceTask {
    private final SmeltTarget[] targets;
@@ -99,7 +98,7 @@ public class SmeltInSmokerTask extends ResourceTask {
                }
             }
 
-            if (this.smokerPos == null || !controller.getWorld().getBlockState(this.smokerPos).is(Blocks.SMOKER)) {
+            if (this.smokerPos == null || !controller.getWorld().getBlockState(this.smokerPos).isOf(Blocks.SMOKER)) {
                Optional<BlockPos> nearestSmoker = controller.getBlockScanner().getNearestBlock(Blocks.SMOKER);
                if (!nearestSmoker.isPresent()) {
                   if (controller.getItemStorage().hasItem(Items.SMOKER)) {
@@ -115,13 +114,13 @@ public class SmeltInSmokerTask extends ResourceTask {
             }
 
             if (!this.smokerPos
-               .closerThan(
-                  new Vec3i((int)controller.getEntity().position().x, (int)controller.getEntity().position().y, (int)controller.getEntity().position().z), 4.5
+               .isWithinDistance(
+                  new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z), 4.5
                )) {
                this.setDebugState("Going to smoker.");
                return new GetCloseToBlockTask(this.smokerPos);
             } else if (controller.getWorld().getBlockEntity(this.smokerPos) instanceof AbstractFurnaceBlockEntity smoker) {
-               ItemStack outputStack = smoker.getItem(2);
+               ItemStack outputStack = smoker.getStack(2);
                if (!outputStack.isEmpty()) {
                   this.setDebugState("Taking smoked items.");
                   LivingEntityInventory playerInv = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
@@ -130,8 +129,8 @@ public class SmeltInSmokerTask extends ResourceTask {
                      return null;
                   }
 
-                  smoker.setItem(2, ItemStack.EMPTY);
-                  smoker.setChanged();
+                  smoker.setStack(2, ItemStack.EMPTY);
+                  smoker.markDirty();
                }
 
                if (this.isSmelting) {
@@ -143,25 +142,25 @@ public class SmeltInSmokerTask extends ResourceTask {
                   return null;
                } else {
                   LivingEntityInventory playerInv = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
-                  if (((MixinAbstractFurnaceBlockEntity)smoker).getPropertyDelegate().get(0) <= 1 && smoker.getItem(1).isEmpty()) {
+                  if (((MixinAbstractFurnaceBlockEntity)smoker).getPropertyDelegate().get(0) <= 1 && smoker.getStack(1).isEmpty()) {
                      this.setDebugState("Adding fuel.");
                      Item fuelItem = controller.getModSettings().getSupportedFuelItems()[0];
                      int fuelSlotIndex = playerInv.getSlotWithStack(new ItemStack(fuelItem));
                      if (fuelSlotIndex != -1) {
-                        smoker.setItem(1, playerInv.removeItem(fuelSlotIndex, fuelNeeded));
-                        smoker.setChanged();
+                        smoker.setStack(1, playerInv.removeItem(fuelSlotIndex, fuelNeeded));
+                        smoker.markDirty();
                      }
                   }
 
-                  if (smoker.getItem(0).isEmpty()) {
+                  if (smoker.getStack(0).isEmpty()) {
                      this.setDebugState("Adding raw food.");
                      Item materialItem = currentTarget.getMaterial().getMatches()[0];
                      int materialSlotIndex = playerInv.getSlotWithStack(new ItemStack(materialItem));
                      if (materialSlotIndex != -1) {
-                        smoker.setItem(0, playerInv.removeItem(materialSlotIndex, currentTarget.getMaterial().getTargetCount()));
+                        smoker.setStack(0, playerInv.removeItem(materialSlotIndex, currentTarget.getMaterial().getTargetCount()));
                         this.isSmelting = true;
                         this.smeltTimer.reset();
-                        smoker.setChanged();
+                        smoker.markDirty();
                         return null;
                      }
                   }

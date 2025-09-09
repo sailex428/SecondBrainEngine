@@ -10,12 +10,11 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.MiningRequirement;
 import adris.altoclef.util.RecipeTarget;
 import adris.altoclef.util.helpers.ItemHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Optional;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 
 public class CollectSticksTask extends ResourceTask {
    private final int targetCount;
@@ -53,7 +52,7 @@ public class CollectSticksTask extends ResourceTask {
          );
       } else {
          Optional<BlockPos> nearestBush = mod.getBlockScanner().getNearestBlock(Blocks.DEAD_BUSH);
-         return (Task)(nearestBush.isPresent() && nearestBush.get().closerToCenterThan(mod.getPlayer().position(), 20.0)
+         return (Task)(nearestBush.isPresent() && nearestBush.get().isWithinDistance(mod.getPlayer().getPos(), 20.0)
             ? new MineAndCollectTask(Items.DEAD_BUSH, 1, new Block[]{Blocks.DEAD_BUSH}, MiningRequirement.HAND)
             : new CraftInInventoryTask(
                new RecipeTarget(

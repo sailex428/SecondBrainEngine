@@ -8,11 +8,10 @@ import adris.altoclef.tasks.construction.DestroyBlockTask;
 import adris.altoclef.tasks.construction.PlaceBlockNearbyTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Optional;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 
 public class CollectFlintTask extends ResourceTask {
    private static final float CLOSE_ENOUGH_FLINT = 10.0F;
@@ -36,11 +35,11 @@ public class CollectFlintTask extends ResourceTask {
    protected Task onResourceTick(AltoClefController mod) {
       Optional<BlockPos> closest = mod.getBlockScanner()
          .getNearestBlock(
-            mod.getPlayer().position(),
+            mod.getPlayer().getPos(),
             validGravel -> WorldHelper.fallingBlockSafeToBreak(this.controller, validGravel) && WorldHelper.canBreak(this.controller, validGravel),
             Blocks.GRAVEL
          );
-      if (closest.isPresent() && closest.get().closerToCenterThan(mod.getPlayer().position(), 10.0)) {
+      if (closest.isPresent() && closest.get().isWithinDistance(mod.getPlayer().getPos(), 10.0)) {
          return new DoToClosestBlockTask(DestroyBlockTask::new, Blocks.GRAVEL);
       } else {
          return (Task)(mod.getItemStorage().hasItem(Items.GRAVEL) ? new PlaceBlockNearbyTask(Blocks.GRAVEL) : TaskCatalogue.getItemTask(Items.GRAVEL, 1));

@@ -1,14 +1,13 @@
 package adris.altoclef.trackers.storage;
 
 import adris.altoclef.util.Dimension;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.FurnaceMenu;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-
 import java.util.HashMap;
 import java.util.function.Consumer;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.screen.FurnaceScreenHandler;
+import net.minecraft.util.math.BlockPos;
 
 public class ContainerCache {
    private final BlockPos blockPos;
@@ -23,15 +22,15 @@ public class ContainerCache {
       this.containerType = containerType;
    }
 
-   public void update(Container screenHandler, Consumer<ItemStack> onStack) {
+   public void update(Inventory screenHandler, Consumer<ItemStack> onStack) {
       this.itemCounts.clear();
       this.emptySlots = 0;
       int start = 0;
-      int end = screenHandler.getContainerSize();
-      boolean isFurnace = screenHandler instanceof FurnaceMenu;
+      int end = screenHandler.size();
+      boolean isFurnace = screenHandler instanceof FurnaceScreenHandler;
 
       for (int i = start; i < end; i++) {
-         ItemStack stack = screenHandler.getItem(i).copy();
+         ItemStack stack = screenHandler.getStack(i).copy();
          if (stack.isEmpty()) {
             if (!isFurnace || i != 2) {
                this.emptySlots++;

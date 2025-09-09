@@ -1,10 +1,10 @@
 package adris.altoclef.util.baritone;
 
 import baritone.api.pathing.goals.Goal;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 public class GoalBlockSide implements Goal {
    private final BlockPos block;
@@ -32,9 +32,9 @@ public class GoalBlockSide implements Goal {
    }
 
    private double getDistanceInRightDirection(int x, int y, int z) {
-      Vec3 delta = new Vec3(x, y, z).subtract(this.block.getX(), this.block.getY(), this.block.getZ());
-      Vec3i dir = this.direction.getNormal();
-      double dot = new Vec3(dir.getX(), dir.getY(), dir.getZ()).dot(delta);
+      Vec3d delta = new Vec3d(x, y, z).subtract(this.block.getX(), this.block.getY(), this.block.getZ());
+      Vec3i dir = this.direction.getVector();
+      double dot = new Vec3d(dir.getX(), dir.getY(), dir.getZ()).dotProduct(delta);
       return dot - this.buffer;
    }
 }

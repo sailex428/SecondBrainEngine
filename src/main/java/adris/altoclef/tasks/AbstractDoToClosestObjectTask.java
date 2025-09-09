@@ -3,11 +3,10 @@ package adris.altoclef.tasks;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.tasks.movement.TimeoutWanderTask;
 import adris.altoclef.tasksystem.Task;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.OptionalDouble;
+import net.minecraft.util.math.Vec3d;
 
 public abstract class AbstractDoToClosestObjectTask<T> extends Task {
    private final HashMap<T, CachedHeuristic> heuristicMap = new HashMap<>();
@@ -15,11 +14,11 @@ public abstract class AbstractDoToClosestObjectTask<T> extends Task {
    private boolean wasWandering;
    private Task goalTask = null;
 
-   protected abstract Vec3 getPos(AltoClefController var1, T var2);
+   protected abstract Vec3d getPos(AltoClefController var1, T var2);
 
-   protected abstract Optional<T> getClosestTo(AltoClefController var1, Vec3 var2);
+   protected abstract Optional<T> getClosestTo(AltoClefController var1, Vec3d var2);
 
-   protected abstract Vec3 getOriginPos(AltoClefController var1);
+   protected abstract Vec3d getOriginPos(AltoClefController var1);
 
    protected abstract Task getGoalTask(T var1);
 
@@ -61,8 +60,8 @@ public abstract class AbstractDoToClosestObjectTask<T> extends Task {
          } else if (this.goalTask != null) {
             this.setDebugState("Moving towards closest...");
             double currentHeuristic = this.getCurrentCalculatedHeuristic(mod);
-            double closestDistanceSqr = this.getPos(mod, this.currentlyPursuing).distanceToSqr(mod.getPlayer().position());
-            int lastTick = this.controller.getWorld().getServer().getTickCount();
+            double closestDistanceSqr = this.getPos(mod, this.currentlyPursuing).squaredDistanceTo(mod.getPlayer().getPos());
+            int lastTick = this.controller.getWorld().getServer().getTicks();
             if (!this.heuristicMap.containsKey(this.currentlyPursuing)) {
                this.heuristicMap.put(this.currentlyPursuing, new CachedHeuristic());
             }
@@ -73,7 +72,7 @@ public abstract class AbstractDoToClosestObjectTask<T> extends Task {
             h.setTickAttempted(lastTick);
             if (this.heuristicMap.containsKey(newClosest)) {
                CachedHeuristic maybeReAttempt = this.heuristicMap.get(newClosest);
-               double maybeClosestDistance = this.getPos(mod, newClosest).distanceToSqr(mod.getPlayer().position());
+               double maybeClosestDistance = this.getPos(mod, newClosest).squaredDistanceTo(mod.getPlayer().getPos());
                if (maybeReAttempt.getHeuristicValue() < h.getHeuristicValue() || maybeClosestDistance < maybeReAttempt.getClosestDistanceSqr() / 4.0) {
                   this.setDebugState("Retrying old heuristic!");
                   this.currentlyPursuing = newClosest;

@@ -3,12 +3,11 @@ package adris.altoclef.util.helpers;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.util.CraftingRecipe;
 import adris.altoclef.util.ItemTarget;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class CraftingHelper {
    public static boolean canCraftItemNow(AltoClefController mod, Item item) {

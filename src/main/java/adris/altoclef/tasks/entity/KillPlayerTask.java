@@ -1,11 +1,10 @@
 package adris.altoclef.tasks.entity;
 
 import adris.altoclef.AltoClefController;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-
 import java.util.Objects;
 import java.util.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class KillPlayerTask extends AbstractKillEntityTask {
    private String playerName;
@@ -21,8 +20,8 @@ public class KillPlayerTask extends AbstractKillEntityTask {
 
    @Override
    protected Optional<Entity> getEntityTarget(AltoClefController mod) {
-      for (Entity entity : this.controller.getWorld().getAllEntities()) {
-         if (entity.isAlive() && entity instanceof Player) {
+      for (Entity entity : this.controller.getWorld().iterateEntities()) {
+         if (entity.isAlive() && entity instanceof PlayerEntity) {
             String playerName = entity.getName().getString().toLowerCase();
             if (playerName != null && playerName.equals(this.playerName.toLowerCase())) {
                return Optional.of(entity);

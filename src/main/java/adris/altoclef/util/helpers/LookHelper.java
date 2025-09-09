@@ -6,25 +6,24 @@ import baritone.api.utils.IEntityContext;
 import baritone.api.utils.RayTraceUtils;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.RotationUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.ClipContext.Block;
-import net.minecraft.world.level.ClipContext.Fluid;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult.Type;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.Objects;
 import java.util.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult.Type;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.RaycastContext;
+import net.minecraft.world.RaycastContext.FluidHandling;
+import net.minecraft.world.RaycastContext.ShapeType;
+import net.minecraft.world.World;
 
 public interface LookHelper {
    static Optional<Rotation> getReach(AltoClefController controller, BlockPos target, Direction side) {
@@ -33,14 +32,14 @@ public interface LookHelper {
       if (side == null) {
          reachableRotation = RotationUtils.reachable(context.entity(), target, context.playerController().getBlockReachDistance());
       } else {
-         Vec3i sideVector = side.getNormal();
-         Vec3 centerOffset = new Vec3(0.5 + sideVector.getX() * 0.5, 0.5 + sideVector.getY() * 0.5, 0.5 + sideVector.getZ() * 0.5);
-         Vec3 sidePoint = centerOffset.add(target.getX(), target.getY(), target.getZ());
+         Vec3i sideVector = side.getVector();
+         Vec3d centerOffset = new Vec3d(0.5 + sideVector.getX() * 0.5, 0.5 + sideVector.getY() * 0.5, 0.5 + sideVector.getZ() * 0.5);
+         Vec3d sidePoint = centerOffset.add(target.getX(), target.getY(), target.getZ());
          reachableRotation = RotationUtils.reachableOffset(context.entity(), target, sidePoint, context.playerController().getBlockReachDistance(), false);
          if (reachableRotation.isPresent()) {
-            Vec3 cameraPos = context.entity().getEyePosition(1.0F);
-            Vec3 vecToPlayerPos = cameraPos.subtract(sidePoint);
-            double dotProduct = vecToPlayerPos.normalize().dot(new Vec3(sideVector.getX(), sideVector.getY(), sideVector.getZ()));
+            Vec3d cameraPos = context.entity().getEyePosition(1.0F);
+            Vec3d vecToPlayerPos = cameraPos.subtract(sidePoint);
+            double dotProduct = vecToPlayerPos.normalize().dotProduct(new Vec3d(sideVector.getX(), sideVector.getY(), sideVector.getZ()));
             if (dotProduct < 0.0) {
                return Optional.empty();
             }
@@ -56,33 +55,33 @@ public interface LookHelper {
    }
 
    static EntityHitResult raycast(Entity from, Entity to, double reachDistance) {
-      Vec3 start = getCameraPos(from);
-      Vec3 end = getCameraPos(to);
-      Vec3 direction = end.subtract(start).normalize().scale(reachDistance);
-      AABB box = to.getBoundingBox();
-      return ProjectileUtil.getEntityHitResult(from, start, start.add(direction), box, entity -> entity.equals(to), 0.0);
+      Vec3d start = getCameraPos(from);
+      Vec3d end = getCameraPos(to);
+      Vec3d direction = end.subtract(start).normalize().multiply(reachDistance);
+      Box box = to.getBoundingBox();
+      return ProjectileUtil.raycast(from, start, start.add(direction), box, entity -> entity.equals(to), 0.0);
    }
 
-   static boolean seesPlayer(Entity entity, Entity player, double maxRange, Vec3 entityOffset, Vec3 playerOffset) {
+   static boolean seesPlayer(Entity entity, Entity player, double maxRange, Vec3d entityOffset, Vec3d playerOffset) {
       return seesPlayerOffset(entity, player, maxRange, entityOffset, playerOffset)
          || seesPlayerOffset(entity, player, maxRange, entityOffset, playerOffset.add(0.0, -1.0, 0.0));
    }
 
    static boolean seesPlayer(Entity entity, Entity player, double maxRange) {
-      return seesPlayer(entity, player, maxRange, new Vec3(0.0, 0.0, 0.0), new Vec3(0.0, 0.0, 0.0));
+      return seesPlayer(entity, player, maxRange, new Vec3d(0.0, 0.0, 0.0), new Vec3d(0.0, 0.0, 0.0));
    }
 
-   static boolean cleanLineOfSight(Entity entity, Vec3 start, Vec3 end, double maxRange) {
+   static boolean cleanLineOfSight(Entity entity, Vec3d start, Vec3d end, double maxRange) {
       BlockHitResult blockHitResult = raycast(entity, start, end, maxRange);
       return blockHitResult.getType() == Type.MISS;
    }
 
-   static boolean cleanLineOfSight(Entity entity, Vec3 end, double maxRange) {
-      Vec3 start = getCameraPos(entity);
+   static boolean cleanLineOfSight(Entity entity, Vec3d end, double maxRange) {
+      Vec3d start = getCameraPos(entity);
       return cleanLineOfSight(entity, start, end, maxRange);
    }
 
-   static boolean cleanLineOfSight(AltoClefController controller, Vec3 end, double maxRange) {
+   static boolean cleanLineOfSight(AltoClefController controller, Vec3d end, double maxRange) {
       LivingEntity clientPlayerEntity = controller.getPlayer();
       return cleanLineOfSight(clientPlayerEntity, end, maxRange);
    }
@@ -90,7 +89,7 @@ public interface LookHelper {
    // $VF: Unable to simplify switch-on-enum, as the enum class was not able to be found.
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
    static boolean cleanLineOfSight(Entity entity, BlockPos block, double maxRange) {
-      Vec3 targetPosition = WorldHelper.toVec3d(block);
+      Vec3d targetPosition = WorldHelper.toVec3d(block);
       BlockHitResult hitResult = raycast(entity, getCameraPos(entity), targetPosition, maxRange);
       if (hitResult == null) {
          return true;
@@ -106,39 +105,39 @@ public interface LookHelper {
       }
    }
 
-   static Vec3 toVec3d(Rotation rotation) throws NullPointerException {
+   static Vec3d toVec3d(Rotation rotation) throws NullPointerException {
       Objects.requireNonNull(rotation, "Rotation cannot be null");
       return calcLookDirectionFromRotation(rotation);
    }
 
-   static Vec3 calcLookDirectionFromRotation(Rotation rotation) {
-      float flatZ = Mth.cos(-rotation.getYaw() * (float) (Math.PI / 180.0) - (float) Math.PI);
-      float flatX = Mth.sin(-rotation.getYaw() * (float) (Math.PI / 180.0) - (float) Math.PI);
-      float pitchBase = -Mth.cos(-rotation.getPitch() * (float) (Math.PI / 180.0));
-      float pitchHeight = Mth.sin(-rotation.getPitch() * (float) (Math.PI / 180.0));
-      return new Vec3(flatX * pitchBase, pitchHeight, flatZ * pitchBase);
+   static Vec3d calcLookDirectionFromRotation(Rotation rotation) {
+      float flatZ = MathHelper.cos(-rotation.getYaw() * (float) (Math.PI / 180.0) - (float) Math.PI);
+      float flatX = MathHelper.sin(-rotation.getYaw() * (float) (Math.PI / 180.0) - (float) Math.PI);
+      float pitchBase = -MathHelper.cos(-rotation.getPitch() * (float) (Math.PI / 180.0));
+      float pitchHeight = MathHelper.sin(-rotation.getPitch() * (float) (Math.PI / 180.0));
+      return new Vec3d(flatX * pitchBase, pitchHeight, flatZ * pitchBase);
    }
 
-   static BlockHitResult raycast(Entity entity, Vec3 start, Vec3 end, double maxRange) {
-      Vec3 direction = end.subtract(start);
-      if (direction.lengthSqr() > maxRange * maxRange) {
-         direction = direction.normalize().scale(maxRange);
+   static BlockHitResult raycast(Entity entity, Vec3d start, Vec3d end, double maxRange) {
+      Vec3d direction = end.subtract(start);
+      if (direction.lengthSquared() > maxRange * maxRange) {
+         direction = direction.normalize().multiply(maxRange);
          end = start.add(direction);
       }
 
-      Level world = entity.level();
-      ClipContext context = new ClipContext(start, end, Block.COLLIDER, Fluid.NONE, entity);
-      return world.clip(context);
+      World world = entity.method_48926();
+      RaycastContext context = new RaycastContext(start, end, ShapeType.COLLIDER, FluidHandling.NONE, entity);
+      return world.raycast(context);
    }
 
-   static BlockHitResult raycast(Entity entity, Vec3 end, double maxRange) {
-      Vec3 start = getCameraPos(entity);
+   static BlockHitResult raycast(Entity entity, Vec3d end, double maxRange) {
+      Vec3d start = getCameraPos(entity);
       return raycast(entity, start, end, maxRange);
    }
 
    static Rotation getLookRotation(Entity entity) {
-      float pitch = entity.getXRot();
-      float yaw = entity.getYRot();
+      float pitch = entity.getPitch();
+      float yaw = entity.getYaw();
       return new Rotation(yaw, pitch);
    }
 
@@ -147,27 +146,27 @@ public interface LookHelper {
       return clientPlayerEntity == null ? new Rotation(0.0F, 0.0F) : getLookRotation(clientPlayerEntity);
    }
 
-   static Vec3 getCameraPos(Entity entity) {
-      boolean isPlayerSneaking = entity instanceof LivingEntity && entity.isShiftKeyDown();
-      return isPlayerSneaking ? RayTraceUtils.inferSneakingEyePosition(entity) : entity.getEyePosition(1.0F);
+   static Vec3d getCameraPos(Entity entity) {
+      boolean isPlayerSneaking = entity instanceof LivingEntity && entity.isSneaking();
+      return isPlayerSneaking ? RayTraceUtils.inferSneakingEyePosition(entity) : entity.getCameraPosVec(1.0F);
    }
 
-   static Vec3 getCameraPos(AltoClefController mod) {
+   static Vec3d getCameraPos(AltoClefController mod) {
       IEntityContext playerContext = mod.getBaritone().getEntityContext();
       return playerContext.entity().getEyePosition(1.0F);
    }
 
-   static double getLookCloseness(Entity entity, Vec3 pos) {
-      Vec3 rotDirection = entity.getForward();
-      Vec3 lookStart = getCameraPos(entity);
-      Vec3 deltaToPos = pos.subtract(lookStart);
-      Vec3 deltaDirection = deltaToPos.normalize();
-      return rotDirection.dot(deltaDirection);
+   static double getLookCloseness(Entity entity, Vec3d pos) {
+      Vec3d rotDirection = entity.getRotationVecClient();
+      Vec3d lookStart = getCameraPos(entity);
+      Vec3d deltaToPos = pos.subtract(lookStart);
+      Vec3d deltaDirection = deltaToPos.normalize();
+      return rotDirection.dotProduct(deltaDirection);
    }
 
-   private static boolean seesPlayerOffset(Entity entity, Entity player, double maxRange, Vec3 offsetEntity, Vec3 offsetPlayer) {
-      Vec3 entityCameraPos = getCameraPos(entity).add(offsetEntity);
-      Vec3 playerCameraPos = getCameraPos(player).add(offsetPlayer);
+   private static boolean seesPlayerOffset(Entity entity, Entity player, double maxRange, Vec3d offsetEntity, Vec3d offsetPlayer) {
+      Vec3d entityCameraPos = getCameraPos(entity).add(offsetEntity);
+      Vec3d playerCameraPos = getCameraPos(player).add(offsetPlayer);
       return cleanLineOfSight(entity, entityCameraPos, playerCameraPos, maxRange);
    }
 
@@ -186,12 +185,12 @@ public interface LookHelper {
       return mod.getBaritone().getEntityContext().isLookingAt(pos);
    }
 
-   static boolean isLookingAt(Entity entity, Vec3 toLookAt, double angleThreshold) {
-      Vec3 head = entity.position().add(new Vec3(0.0, entity.getEyeHeight(), 0.0));
-      Rotation rotation = new Rotation(entity.getYRot(), entity.getXRot());
-      Vec3 look = calcLookDirectionFromRotation(rotation);
-      Vec3 targetLook = toLookAt.subtract(head).normalize();
-      double dot = look.dot(targetLook);
+   static boolean isLookingAt(Entity entity, Vec3d toLookAt, double angleThreshold) {
+      Vec3d head = entity.getPos().add(new Vec3d(0.0, entity.getStandingEyeHeight(), 0.0));
+      Rotation rotation = new Rotation(entity.getYaw(), entity.getPitch());
+      Vec3d look = calcLookDirectionFromRotation(rotation);
+      Vec3d targetLook = toLookAt.subtract(head).normalize();
+      double dot = look.dotProduct(targetLook);
       double angle = Math.toDegrees(Math.acos(dot));
       return Math.abs(angle) < angleThreshold;
    }
@@ -201,18 +200,18 @@ public interface LookHelper {
          mod.getBaritone().getLookBehavior().updateTarget(rotation, true);
       }
 
-      mod.getPlayer().setYRot(rotation.getYaw());
-      mod.getPlayer().setXRot(rotation.getPitch());
+      mod.getPlayer().setYaw(rotation.getYaw());
+      mod.getPlayer().setPitch(rotation.getPitch());
    }
 
    static void lookAt(AltoClefController mod, Rotation rotation) {
       mod.getBaritone().getLookBehavior().updateTarget(rotation, true);
       LivingEntity player = mod.getBaritone().getEntityContext().entity();
-      player.setYRot(rotation.getYaw());
-      player.setXRot(rotation.getPitch());
+      player.setYaw(rotation.getYaw());
+      player.setPitch(rotation.getPitch());
    }
 
-   static void lookAt(AltoClefController mod, Vec3 toLook, boolean withBaritone) {
+   static void lookAt(AltoClefController mod, Vec3d toLook, boolean withBaritone) {
       if (mod != null && toLook != null) {
          Rotation targetRotation = getLookRotation(mod, toLook);
          lookAt(mod, targetRotation, withBaritone);
@@ -221,7 +220,7 @@ public interface LookHelper {
       }
    }
 
-   static void lookAt(AltoClefController mod, Vec3 toLook) {
+   static void lookAt(AltoClefController mod, Vec3d toLook) {
       if (mod != null && toLook != null) {
          Rotation targetRotation = getLookRotation(mod, toLook);
          lookAt(mod, targetRotation, true);
@@ -235,15 +234,15 @@ public interface LookHelper {
       double centerY = toLook.getY() + 0.5;
       double centerZ = toLook.getZ() + 0.5;
       if (side != null) {
-         double offsetX = side.getNormal().getX() * 0.5;
-         double offsetY = side.getNormal().getY() * 0.5;
-         double offsetZ = side.getNormal().getZ() * 0.5;
+         double offsetX = side.getVector().getX() * 0.5;
+         double offsetY = side.getVector().getY() * 0.5;
+         double offsetZ = side.getVector().getZ() * 0.5;
          centerX += offsetX;
          centerY += offsetY;
          centerZ += offsetZ;
       }
 
-      Vec3 target = new Vec3(centerX, centerY, centerZ);
+      Vec3d target = new Vec3d(centerX, centerY, centerZ);
       lookAt(mod, target, withBaritone);
    }
 
@@ -252,15 +251,15 @@ public interface LookHelper {
       double centerY = toLook.getY() + 0.5;
       double centerZ = toLook.getZ() + 0.5;
       if (side != null) {
-         double offsetX = side.getNormal().getX() * 0.5;
-         double offsetY = side.getNormal().getY() * 0.5;
-         double offsetZ = side.getNormal().getZ() * 0.5;
+         double offsetX = side.getVector().getX() * 0.5;
+         double offsetY = side.getVector().getY() * 0.5;
+         double offsetZ = side.getVector().getZ() * 0.5;
          centerX += offsetX;
          centerY += offsetY;
          centerZ += offsetZ;
       }
 
-      Vec3 target = new Vec3(centerX, centerY, centerZ);
+      Vec3d target = new Vec3d(centerX, centerY, centerZ);
       lookAt(mod, target, true);
    }
 
@@ -272,14 +271,14 @@ public interface LookHelper {
       lookAt(mod, toLook, null, true);
    }
 
-   static Rotation getLookRotation(AltoClefController mod, Vec3 toLook) {
-      Vec3 playerHead = mod.getBaritone().getEntityContext().headPos();
+   static Rotation getLookRotation(AltoClefController mod, Vec3d toLook) {
+      Vec3d playerHead = mod.getBaritone().getEntityContext().headPos();
       Rotation playerRotations = mod.getBaritone().getEntityContext().entityRotations();
       return RotationUtils.calcRotationFromVec3d(playerHead, toLook, playerRotations);
    }
 
    static Rotation getLookRotation(AltoClefController mod, BlockPos toLook) {
-      Vec3 targetPosition = WorldHelper.toVec3d(toLook);
+      Vec3d targetPosition = WorldHelper.toVec3d(toLook);
       return getLookRotation(mod, targetPosition);
    }
 }

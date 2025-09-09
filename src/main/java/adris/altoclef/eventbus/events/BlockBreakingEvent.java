@@ -1,6 +1,6 @@
 package adris.altoclef.eventbus.events;
 
-import net.minecraft.core.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class BlockBreakingEvent {
    public BlockPos blockPos;

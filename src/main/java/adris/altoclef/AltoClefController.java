@@ -21,13 +21,12 @@ import baritone.api.entity.LivingEntityInventory;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.IInteractionController;
 import baritone.autoclef.AltoClefSettings;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +62,7 @@ public class AltoClefController {
    private boolean paused = false;
    private Task storedTask;
    public boolean isStopping = false;
-   private Player owner;
+   private PlayerEntity owner;
 
    public AltoClefController(IBaritone baritone, Character character, String player2GameId) {
       this.baritone = baritone;
@@ -194,7 +193,7 @@ public class AltoClefController {
       return this.ctx.entity();
    }
 
-   public ServerLevel getWorld() {
+   public ServerWorld getWorld() {
       return this.ctx.world();
    }
 
@@ -338,16 +337,16 @@ public class AltoClefController {
       }
    }
 
-   public Player getOwner() {
+   public PlayerEntity getOwner() {
       return this.owner;
    }
 
-   public void setOwner(Player owner) {
+   public void setOwner(PlayerEntity owner) {
       this.owner = owner;
       aiPersistantData.updateSystemPrompt();
    }
    public boolean isOwner(UUID playerToCheck) {
-      return playerToCheck.equals(owner.getUUID());
+      return playerToCheck.equals(owner.getUuid());
    }
    public adris.altoclef.player2api.AIPersistantData getAIPersistantData() {
       return this.aiPersistantData;
@@ -364,8 +363,8 @@ public class AltoClefController {
       return getOwner().getName().getString();
    }
 
-   public Optional<ServerPlayer> getClosestPlayer(){
-      return this.getWorld().players().stream().sorted((a,b)-> {
+   public Optional<ServerPlayerEntity> getClosestPlayer(){
+      return this.getWorld().getPlayers().stream().sorted((a,b)-> {
          float adist = a.distanceTo(this.getEntity());
          float bdist = b.distanceTo(this.getEntity());
          return Float.compare(adist, bdist);

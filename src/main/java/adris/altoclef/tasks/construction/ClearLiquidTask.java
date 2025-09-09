@@ -3,9 +3,9 @@ package adris.altoclef.tasks.construction;
 import adris.altoclef.tasks.InteractWithBlockTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.RaycastContext.FluidHandling;
 
 public class ClearLiquidTask extends Task {
    private final BlockPos liquidPos;
@@ -21,7 +21,7 @@ public class ClearLiquidTask extends Task {
    @Override
    protected Task onTick() {
       if (this.controller.getItemStorage().hasItem(Items.BUCKET)) {
-         this.controller.getBehaviour().setRayTracingFluidHandling(Fluid.SOURCE_ONLY);
+         this.controller.getBehaviour().setRayTracingFluidHandling(FluidHandling.SOURCE_ONLY);
          return new InteractWithBlockTask(new ItemTarget(Items.BUCKET, 1), this.liquidPos, false);
       } else {
          return new PlaceStructureBlockTask(this.liquidPos);

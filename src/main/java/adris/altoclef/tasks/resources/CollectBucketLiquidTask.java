@@ -18,17 +18,16 @@ import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ClipContext.Fluid;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.HashSet;
 import java.util.function.Predicate;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.RaycastContext.FluidHandling;
 
 public class CollectBucketLiquidTask extends ResourceTask {
    private final HashSet<BlockPos> blacklist = new HashSet<>();
@@ -59,7 +58,7 @@ public class CollectBucketLiquidTask extends ResourceTask {
    @Override
    protected void onResourceStart(AltoClefController mod) {
       mod.getBehaviour().push();
-      mod.getBehaviour().setRayTracingFluidHandling(Fluid.SOURCE_ONLY);
+      mod.getBehaviour().setRayTracingFluidHandling(FluidHandling.SOURCE_ONLY);
       mod.getBehaviour().avoidBlockBreaking((Predicate<BlockPos>)(pos -> this.controller.getWorld().getBlockState(pos).getBlock() == this.toCollect));
       mod.getBehaviour().avoidBlockPlacing(pos -> this.controller.getWorld().getBlockState(pos).getBlock() == this.toCollect);
       mod.getBaritoneSettings().avoidUpdatingFallingBlocks.set(Boolean.TRUE);
@@ -83,8 +82,8 @@ public class CollectBucketLiquidTask extends ResourceTask {
       }
 
       if (this.tryImmediatePickupTimer.elapsed() && !mod.getItemStorage().hasItem(Items.WATER_BUCKET)) {
-         Block standingInside = mod.getWorld().getBlockState(mod.getPlayer().blockPosition()).getBlock();
-         if (standingInside == this.toCollect && WorldHelper.isSourceBlock(this.controller, mod.getPlayer().blockPosition(), false)) {
+         Block standingInside = mod.getWorld().getBlockState(mod.getPlayer().getBlockPos()).getBlock();
+         if (standingInside == this.toCollect && WorldHelper.isSourceBlock(this.controller, mod.getPlayer().getBlockPos(), false)) {
             this.setDebugState("Trying to collect (we are in it)");
             mod.getInputControls().forceLook(0.0F, 90.0F);
             this.tryImmediatePickupTimer.reset();
@@ -114,15 +113,15 @@ public class CollectBucketLiquidTask extends ResourceTask {
                   return false;
                } else if (!WorldHelper.canReach(this.controller, blockPos)) {
                   return false;
-               } else if (!WorldHelper.canReach(this.controller, blockPos.above())) {
+               } else if (!WorldHelper.canReach(this.controller, blockPos.up())) {
                   return false;
                } else {
                   assert this.controller.getWorld() != null;
 
-                  Block above = mod.getWorld().getBlockState(blockPos.above()).getBlock();
+                  Block above = mod.getWorld().getBlockState(blockPos.up()).getBlock();
                   if (above != Blocks.BEDROCK && above != Blocks.WATER) {
                      for (Direction direction : Direction.values()) {
-                        if (!direction.getAxis().isVertical() && mod.getWorld().getBlockState(blockPos.above().relative(direction)).getBlock() == Blocks.WATER) {
+                        if (!direction.getAxis().isVertical() && mod.getWorld().getBlockState(blockPos.up().offset(direction)).getBlock() == Blocks.WATER) {
                            return false;
                         }
                      }
@@ -136,7 +135,7 @@ public class CollectBucketLiquidTask extends ResourceTask {
             if (mod.getBlockScanner().anyFound(isSafeSourceLiquid, this.toCollect)) {
                this.setDebugState("Trying to collect...");
                return new DoToClosestBlockTask(blockPos -> {
-                  if (mod.getWorld().getBlockState(blockPos.above()).isSolid()) {
+                  if (mod.getWorld().getBlockState(blockPos.up()).isSolid()) {
                      if (!this.progressChecker.check(mod)) {
                         mod.getBaritone().getPathingBehavior().cancelEverything();
                         mod.getBaritone().getPathingBehavior().forceCancel();
@@ -147,7 +146,7 @@ public class CollectBucketLiquidTask extends ResourceTask {
                         this.blacklist.add(blockPos);
                      }
 
-                     return new DestroyBlockTask(blockPos.above());
+                     return new DestroyBlockTask(blockPos.up());
                   } else if (this.tries > 75) {
                      if (this.timeoutTimer.elapsed()) {
                         this.tries = 0;
@@ -162,11 +161,11 @@ public class CollectBucketLiquidTask extends ResourceTask {
                         return new InteractWithBlockTask(new ItemTarget(Items.BUCKET, 1), blockPos, this.toCollect != Blocks.LAVA, new Vec3i(0, 1, 0));
                      } else {
                         if (this.thisOrChildAreTimedOut() && !this.wasWandering) {
-                           mod.getBlockScanner().requestBlockUnreachable(blockPos.above());
+                           mod.getBlockScanner().requestBlockUnreachable(blockPos.up());
                            this.wasWandering = true;
                         }
 
-                        return new GetCloseToBlockTask(blockPos.above());
+                        return new GetCloseToBlockTask(blockPos.up());
                      }
                   }
                }, isSafeSourceLiquid, this.toCollect);

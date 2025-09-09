@@ -4,7 +4,7 @@ import adris.altoclef.AltoClefController;
 import adris.altoclef.tasksystem.Task;
 import baritone.api.pathing.goals.Goal;
 import baritone.api.pathing.goals.GoalNear;
-import net.minecraft.core.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class GetWithinRangeOfBlockTask extends CustomBaritoneGoalTask {
    public final BlockPos blockPos;

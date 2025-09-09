@@ -13,15 +13,14 @@ import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ClipContext.Fluid;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.RaycastContext.FluidHandling;
 
 public class CollectObsidianTask extends ResourceTask {
    private final TimerGame placeWaterTimeout = new TimerGame(6.0);
@@ -38,16 +37,16 @@ public class CollectObsidianTask extends ResourceTask {
    }
 
    private static BlockPos getLavaStructurePos(BlockPos lavaPos) {
-      return lavaPos.offset(1, 1, 0);
+      return lavaPos.add(1, 1, 0);
    }
 
    private static BlockPos getLavaWaterPos(BlockPos lavaPos) {
-      return lavaPos.above();
+      return lavaPos.up();
    }
 
    private static BlockPos getGoodObsidianPosition(AltoClefController mod) {
-      BlockPos start = mod.getPlayer().blockPosition().offset(-3, -3, -3);
-      BlockPos end = mod.getPlayer().blockPosition().offset(3, 3, 3);
+      BlockPos start = mod.getPlayer().getBlockPos().add(-3, -3, -3);
+      BlockPos end = mod.getPlayer().getBlockPos().add(3, 3, 3);
 
       for (BlockPos pos : WorldHelper.scanRegion(start, end)) {
          if (!WorldHelper.canBreak(mod, pos) || !WorldHelper.canPlace(mod, pos)) {
@@ -55,7 +54,7 @@ public class CollectObsidianTask extends ResourceTask {
          }
       }
 
-      return mod.getPlayer().blockPosition();
+      return mod.getPlayer().getBlockPos();
    }
 
    @Override
@@ -66,7 +65,7 @@ public class CollectObsidianTask extends ResourceTask {
    @Override
    protected void onResourceStart(AltoClefController mod) {
       mod.getBehaviour().push();
-      mod.getBehaviour().setRayTracingFluidHandling(Fluid.SOURCE_ONLY);
+      mod.getBehaviour().setRayTracingFluidHandling(FluidHandling.SOURCE_ONLY);
       mod.getBehaviour()
          .avoidBlockPlacing(
             pos -> this.lavaWaitCurrentPos != null ? pos.equals(this.lavaWaitCurrentPos) || pos.equals(getLavaWaterPos(this.lavaWaitCurrentPos)) : false
@@ -89,7 +88,7 @@ public class CollectObsidianTask extends ResourceTask {
       } else if (this.forceCompleteTask != null && this.forceCompleteTask.isActive() && !this.forceCompleteTask.isFinished()) {
          return this.forceCompleteTask;
       } else {
-         Predicate<BlockPos> goodObsidian = blockPos -> blockPos.closerToCenterThan(mod.getPlayer().position(), 800.0) && WorldHelper.canBreak(mod, blockPos);
+         Predicate<BlockPos> goodObsidian = blockPos -> blockPos.isWithinDistance(mod.getPlayer().getPos(), 800.0) && WorldHelper.canBreak(mod, blockPos);
          if (mod.getBlockScanner().anyFound(goodObsidian, Blocks.OBSIDIAN) || mod.getEntityTracker().itemDropped(Items.OBSIDIAN)) {
             this.setDebugState("Mining/Collecting obsidian");
             this.placeObsidianTask = null;
@@ -112,7 +111,7 @@ public class CollectObsidianTask extends ResourceTask {
 
             if (this.placeObsidianTask != null
                && !mod.getItemStorage().hasItem(Items.LAVA_BUCKET)
-               && !this.placeObsidianTask.getPos().closerToCenterThan(mod.getPlayer().position(), 4.0)) {
+               && !this.placeObsidianTask.getPos().isWithinDistance(mod.getPlayer().getPos(), 4.0)) {
                BlockPos goodPos = getGoodObsidianPosition(mod);
                if (goodPos != null) {
                   Debug.logMessage("(nudged obsidian target closer)");

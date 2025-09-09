@@ -5,10 +5,9 @@ import adris.altoclef.Debug;
 import adris.altoclef.tasksystem.Task;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents.Load;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.phys.Vec3;
-
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Vec3d;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +28,7 @@ abstract class ChunkSearchTask extends Task {
    }
 
    public ChunkSearchTask(ChunkPos chunkPos) {
-      this(chunkPos.getWorldPosition().offset(1, 1, 1));
+      this(chunkPos.getStartPos().add(1, 1, 1));
    }
 
    public Set<ChunkPos> getSearchedChunks() {
@@ -91,12 +90,12 @@ abstract class ChunkSearchTask extends Task {
       ChunkPos bestChunk = null;
       if (!chunks.isEmpty()) {
          for (ChunkPos toSearch : chunks) {
-            double cx = (toSearch.getMinBlockX() + toSearch.getMaxBlockX() + 1) / 2.0;
-            double cz = (toSearch.getMinBlockZ() + toSearch.getMaxBlockZ() + 1) / 2.0;
+            double cx = (toSearch.getStartX() + toSearch.getEndX() + 1) / 2.0;
+            double cz = (toSearch.getStartZ() + toSearch.getEndZ() + 1) / 2.0;
             double px = mod.getPlayer().getX();
             double pz = mod.getPlayer().getZ();
             double distanceSq = (cx - px) * (cx - px) + (cz - pz) * (cz - pz);
-            double distanceToCenterSq = new Vec3(this.startPoint.getX() - cx, 0.0, this.startPoint.getZ() - cz).lengthSqr();
+            double distanceToCenterSq = new Vec3d(this.startPoint.getX() - cx, 0.0, this.startPoint.getZ() - cz).lengthSquared();
             double score = distanceSq + distanceToCenterSq * 0.8;
             if (score < lowestScore) {
                lowestScore = score;

@@ -1,7 +1,7 @@
 package adris.altoclef.player2api.status;
 
 import adris.altoclef.AltoClefController;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
 
 public class AgentStatus extends ObjectStatus {
    public static AgentStatus fromMod(AltoClefController mod) {

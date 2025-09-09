@@ -15,15 +15,14 @@ import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Optional;
+import net.minecraft.block.AbstractFireBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 public class WorldSurvivalChain extends SingleTaskChain {
    private final TimerGame wasInLavaTimer = new TimerGame(1.0);
@@ -56,15 +55,15 @@ public class WorldSurvivalChain extends SingleTaskChain {
             if (mod.getModSettings().shouldExtinguishSelfWithWater()) {
                if ((!(this.mainTask instanceof EscapeFromLavaTask) || !this.isCurrentlyRunning(mod))
                   && mod.getPlayer().isOnFire()
-                  && !mod.getPlayer().hasEffect(MobEffects.FIRE_RESISTANCE)
-                  && !mod.getWorld().dimensionType().ultraWarm()) {
+                  && !mod.getPlayer().hasStatusEffect(StatusEffects.FIRE_RESISTANCE)
+                  && !mod.getWorld().getDimension().ultrawarm()) {
                   if (mod.getItemStorage().hasItem(Items.WATER_BUCKET)) {
-                     BlockPos targetWaterPos = mod.getPlayer().blockPosition();
-                     if (WorldHelper.isSolidBlock(this.controller, targetWaterPos.below()) && WorldHelper.canPlace(this.controller, targetWaterPos)) {
-                        Optional<Rotation> reach = LookHelper.getReach(this.controller, targetWaterPos.below(), Direction.UP);
+                     BlockPos targetWaterPos = mod.getPlayer().getBlockPos();
+                     if (WorldHelper.isSolidBlock(this.controller, targetWaterPos.down()) && WorldHelper.canPlace(this.controller, targetWaterPos)) {
+                        Optional<Rotation> reach = LookHelper.getReach(this.controller, targetWaterPos.down(), Direction.UP);
                         if (reach.isPresent()) {
                            mod.getBaritone().getLookBehavior().updateTarget(reach.get(), true);
-                           if (mod.getBaritone().getEntityContext().isLookingAt(targetWaterPos.below())
+                           if (mod.getBaritone().getEntityContext().isLookingAt(targetWaterPos.down())
                               && mod.getSlotHandler().forceEquipItem(Items.WATER_BUCKET)) {
                               this.extinguishWaterPosition = targetWaterPos;
                               mod.getInputControls().tryPress(Input.CLICK_RIGHT);
@@ -82,7 +81,7 @@ public class WorldSurvivalChain extends SingleTaskChain {
                if (mod.getItemStorage().hasItem(Items.BUCKET)
                   && this.extinguishWaterPosition != null
                   && mod.getBlockScanner().isBlockAtPosition(this.extinguishWaterPosition, Blocks.WATER)) {
-                  this.setTask(new InteractWithBlockTask(new ItemTarget(Items.BUCKET, 1), Direction.UP, this.extinguishWaterPosition.below(), true));
+                  this.setTask(new InteractWithBlockTask(new ItemTarget(Items.BUCKET, 1), Direction.UP, this.extinguishWaterPosition.down(), true));
                   return 60.0F;
                }
 
@@ -110,8 +109,8 @@ public class WorldSurvivalChain extends SingleTaskChain {
       boolean avoidedDrowning = false;
       if (mod.getModSettings().shouldAvoidDrowning()
          && !mod.getBaritone().getPathingBehavior().isPathing()
-         && mod.getPlayer().isInWater()
-         && mod.getPlayer().getAirSupply() < mod.getPlayer().getMaxAirSupply()) {
+         && mod.getPlayer().isTouchingWater()
+         && mod.getPlayer().getAir() < mod.getPlayer().getMaxAir()) {
          mod.getInputControls().hold(Input.JUMP);
          avoidedDrowning = true;
          this.wasAvoidingDrowning = true;
@@ -124,7 +123,7 @@ public class WorldSurvivalChain extends SingleTaskChain {
    }
 
    private boolean isInLavaOhShit(AltoClefController mod) {
-      if (mod.getPlayer().isInLava() && !mod.getPlayer().hasEffect(MobEffects.FIRE_RESISTANCE)) {
+      if (mod.getPlayer().isInLava() && !mod.getPlayer().hasStatusEffect(StatusEffects.FIRE_RESISTANCE)) {
          this.wasInLavaTimer.reset();
          return true;
       } else {
@@ -133,10 +132,10 @@ public class WorldSurvivalChain extends SingleTaskChain {
    }
 
    private boolean isInFire(AltoClefController mod) {
-      if (mod.getPlayer().isOnFire() && !mod.getPlayer().hasEffect(MobEffects.FIRE_RESISTANCE)) {
+      if (mod.getPlayer().isOnFire() && !mod.getPlayer().hasStatusEffect(StatusEffects.FIRE_RESISTANCE)) {
          for (BlockPos pos : WorldHelper.getBlocksTouchingPlayer(this.controller.getPlayer())) {
             Block b = mod.getWorld().getBlockState(pos).getBlock();
-            if (b instanceof BaseFireBlock) {
+            if (b instanceof AbstractFireBlock) {
                return true;
             }
          }

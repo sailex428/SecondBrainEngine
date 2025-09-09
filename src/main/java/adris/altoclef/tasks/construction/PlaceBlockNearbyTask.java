@@ -18,19 +18,19 @@ import baritone.api.entity.IInteractionManagerProvider;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.input.Input;
 import baritone.pathing.movement.MovementHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.HitResult.Type;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
+import net.minecraft.block.Block;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.hit.HitResult.Type;
+import net.minecraft.util.math.BlockPos;
 
 public class PlaceBlockNearbyTask extends Task {
    private final Block[] toPlace;
@@ -138,11 +138,11 @@ public class PlaceBlockNearbyTask extends Task {
    }
 
    private BlockPos getCurrentlyLookingBlockPlace(AltoClefController mod) {
-      if (Minecraft.getInstance().hitResult instanceof BlockHitResult bhit) {
+      if (MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult bhit) {
          BlockPos bpos = bhit.getBlockPos();
          IEntityContext ctx = mod.getBaritone().getEntityContext();
          if (MovementHelper.canPlaceAgainst(ctx, bpos)) {
-            BlockPos placePos = bhit.getBlockPos().offset(bhit.getDirection().getNormal());
+            BlockPos placePos = bhit.getBlockPos().add(bhit.getSide().getVector());
             if (WorldHelper.isInsidePlayer(this.controller, placePos)) {
                return null;
             }
@@ -163,15 +163,15 @@ public class PlaceBlockNearbyTask extends Task {
    private boolean place(AltoClefController mod, BlockPos targetPlace) {
       if (!mod.getExtraBaritoneSettings().isInteractionPaused() && this.blockEquipped()) {
          mod.getInputControls().hold(Input.SNEAK);
-         HitResult mouseOver = Minecraft.getInstance().hitResult;
+         HitResult mouseOver = MinecraftClient.getInstance().crosshairTarget;
          if (mouseOver != null && mouseOver.getType() == Type.BLOCK) {
-            InteractionHand hand = InteractionHand.MAIN_HAND;
+            Hand hand = Hand.MAIN_HAND;
             if (((IInteractionManagerProvider)mod.getEntity())
                      .getInteractionManager()
-                     .interactBlock(mod.getPlayer(), mod.getWorld(), mod.getPlayer().getMainHandItem(), hand, (BlockHitResult)mouseOver)
-                  == InteractionResult.SUCCESS
-               && mod.getPlayer().isShiftKeyDown()) {
-               mod.getPlayer().swing(hand);
+                     .interactBlock(mod.getPlayer(), mod.getWorld(), mod.getPlayer().getMainHandStack(), hand, (BlockHitResult)mouseOver)
+                  == ActionResult.SUCCESS
+               && mod.getPlayer().isSneaking()) {
+               mod.getPlayer().swingHand(hand);
                this.justPlaced = targetPlace;
                Debug.logMessage("PRESSED");
                return true;
@@ -195,8 +195,8 @@ public class PlaceBlockNearbyTask extends Task {
       int range = 7;
       BlockPos best = null;
       double smallestScore = Double.POSITIVE_INFINITY;
-      BlockPos start = mod.getPlayer().blockPosition().offset(-range, -range, -range);
-      BlockPos end = mod.getPlayer().blockPosition().offset(range, range, range);
+      BlockPos start = mod.getPlayer().getBlockPos().add(-range, -range, -range);
+      BlockPos end = mod.getPlayer().getBlockPos().add(range, range, range);
 
       for (BlockPos blockPos : WorldHelper.scanRegion(start, end)) {
          boolean solid = WorldHelper.isSolidBlock(this.controller, blockPos);
@@ -205,8 +205,8 @@ public class PlaceBlockNearbyTask extends Task {
             && this.canPlaceHere.test(blockPos)
             && WorldHelper.canReach(this.controller, blockPos)
             && WorldHelper.canPlace(this.controller, blockPos)) {
-            boolean hasBelow = WorldHelper.isSolidBlock(this.controller, blockPos.below());
-            double distSq = BlockPosVer.getSquaredDistance(blockPos, mod.getPlayer().position());
+            boolean hasBelow = WorldHelper.isSolidBlock(this.controller, blockPos.down());
+            double distSq = BlockPosVer.getSquaredDistance(blockPos, mod.getPlayer().getPos());
             double score = distSq + (solid ? 4 : 0) + (hasBelow ? 0 : 10) + (inside ? 3 : 0);
             if (score < smallestScore) {
                best = blockPos;

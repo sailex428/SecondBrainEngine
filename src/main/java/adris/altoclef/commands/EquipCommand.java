@@ -5,8 +5,8 @@ import adris.altoclef.commandsystem.*;
 import adris.altoclef.tasks.misc.EquipArmorTask;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ItemHelper;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.Item;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.Item;
 
 public class EquipCommand extends Command {
    public EquipCommand() throws CommandException {

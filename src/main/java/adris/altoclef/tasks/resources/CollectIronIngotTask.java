@@ -6,7 +6,7 @@ import adris.altoclef.tasks.container.SmeltInFurnaceTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.SmeltTarget;
-import net.minecraft.world.item.Items;
+import net.minecraft.item.Items;
 
 public class CollectIronIngotTask extends ResourceTask {
    private final int count;

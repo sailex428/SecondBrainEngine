@@ -11,15 +11,14 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ConfigHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-
 import java.util.Optional;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Pair;
+import net.minecraft.util.math.BlockPos;
 
 public class FoodChain extends SingleTaskChain {
    private static FoodChainConfig config;
@@ -85,9 +84,9 @@ public class FoodChain extends SingleTaskChain {
 
          if (this.controller.getModSettings().isAutoEat() && !this.controller.getEntity().isInLava() && !this.shouldStop) {
             if (this.controller.getMLGBucketChain().doneMLG() && !this.controller.getMLGBucketChain().isFalling(this.controller)) {
-               Tuple<Integer, Optional<Item>> calculation = this.calculateFood(this.controller);
-               int foodScore = (Integer)calculation.getA();
-               this.cachedPerfectFood = (Optional<Item>)calculation.getB();
+               Pair<Integer, Optional<Item>> calculation = this.calculateFood(this.controller);
+               int foodScore = (Integer)calculation.getLeft();
+               this.cachedPerfectFood = (Optional<Item>)calculation.getRight();
                hasFood = foodScore > 0;
                if (this.requestFillup && this.controller.getBaritone().getEntityContext().hungerManager().getFoodLevel() >= 20) {
                   this.requestFillup = false;
@@ -147,7 +146,7 @@ public class FoodChain extends SingleTaskChain {
             return false;
          } else if (health <= 10.0F) {
             return true;
-         } else if (player.isOnFire() || player.hasEffect(MobEffects.WITHER) || health < config.alwaysEatWhenWitherOrFireAndHealthBelow) {
+         } else if (player.isOnFire() || player.hasStatusEffect(StatusEffects.WITHER) || health < config.alwaysEatWhenWitherOrFireAndHealthBelow) {
             return true;
          } else if (foodLevel <= config.alwaysEatWhenBelowHunger) {
             return true;
@@ -166,7 +165,7 @@ public class FoodChain extends SingleTaskChain {
       }
    }
 
-   private Tuple<Integer, Optional<Item>> calculateFood(AltoClefController controller) {
+   private Pair<Integer, Optional<Item>> calculateFood(AltoClefController controller) {
       Item bestFood = null;
       double bestFoodScore = Double.NEGATIVE_INFINITY;
       int foodTotal = 0;
@@ -176,7 +175,7 @@ public class FoodChain extends SingleTaskChain {
       float saturation = controller.getBaritone().getEntityContext().hungerManager().getSaturationLevel();
 
       for (ItemStack stack : controller.getItemStorage().getItemStacksPlayerInventory(true)) {
-         if (ItemVer.isFood(stack) && !stack.is(Items.SPIDER_EYE)) {
+         if (ItemVer.isFood(stack) && !stack.isOf(Items.SPIDER_EYE)) {
             FoodComponentWrapper food = ItemVer.getFoodComponent(stack.getItem());
             if (food != null) {
                float hungerIfEaten = Math.min(hunger + food.getHunger(), 20.0F);
@@ -185,7 +184,7 @@ public class FoodChain extends SingleTaskChain {
                float gainedHunger = hungerIfEaten - hunger;
                float hungerWasted = food.getHunger() - gainedHunger;
                float score = gainedSaturation * 2.0F - hungerWasted;
-               if (stack.is(Items.ROTTEN_FLESH)) {
+               if (stack.isOf(Items.ROTTEN_FLESH)) {
                   score -= 100.0F;
                }
 
@@ -199,7 +198,7 @@ public class FoodChain extends SingleTaskChain {
          }
       }
 
-      return new Tuple(foodTotal, Optional.ofNullable(bestFood));
+      return new Pair(foodTotal, Optional.ofNullable(bestFood));
    }
 
    public boolean hasFood() {

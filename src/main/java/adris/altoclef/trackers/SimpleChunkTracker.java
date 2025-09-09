@@ -5,10 +5,9 @@ import adris.altoclef.Debug;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents.Load;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents.Unload;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.EmptyLevelChunk;
-
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.chunk.EmptyChunk;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +35,7 @@ public class SimpleChunkTracker {
    }
 
    public boolean isChunkLoaded(ChunkPos pos) {
-      return !(this.mod.getWorld().getChunk(pos.x, pos.z) instanceof EmptyLevelChunk);
+      return !(this.mod.getWorld().getChunk(pos.x, pos.z) instanceof EmptyChunk);
    }
 
    public boolean isChunkLoaded(BlockPos pos) {
@@ -52,12 +51,12 @@ public class SimpleChunkTracker {
       if (!this.isChunkLoaded(chunk)) {
          return false;
       } else {
-         int bottomY = this.mod.getWorld().getMinBuildHeight();
-         int topY = this.mod.getWorld().getMaxBuildHeight();
+         int bottomY = this.mod.getWorld().getBottomY();
+         int topY = this.mod.getWorld().getTopY();
 
-         for (int xx = chunk.getMinBlockX(); xx <= chunk.getMaxBlockX(); xx++) {
+         for (int xx = chunk.getStartX(); xx <= chunk.getEndX(); xx++) {
             for (int yy = bottomY; yy <= topY; yy++) {
-               for (int zz = chunk.getMinBlockZ(); zz <= chunk.getMaxBlockZ(); zz++) {
+               for (int zz = chunk.getStartZ(); zz <= chunk.getEndZ(); zz++) {
                   if (onBlockStop.test(new BlockPos(xx, yy, zz))) {
                      return true;
                   }

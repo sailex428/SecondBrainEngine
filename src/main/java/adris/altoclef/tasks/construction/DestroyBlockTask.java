@@ -3,9 +3,8 @@ package adris.altoclef.tasks.construction;
 import adris.altoclef.tasksystem.ITaskRequiresGrounded;
 import adris.altoclef.tasksystem.Task;
 import baritone.api.process.IBuilderProcess;
-import net.minecraft.core.BlockPos;
-
 import java.util.Objects;
+import net.minecraft.util.math.BlockPos;
 
 public class DestroyBlockTask extends Task implements ITaskRequiresGrounded {
    private final BlockPos pos;
@@ -44,7 +43,7 @@ public class DestroyBlockTask extends Task implements ITaskRequiresGrounded {
 
    @Override
    public boolean isFinished() {
-      return this.isClear || this.controller.getWorld().isEmptyBlock(this.pos);
+      return this.isClear || this.controller.getWorld().isAir(this.pos);
    }
 
    @Override

@@ -1,11 +1,10 @@
 package adris.altoclef.util.serialization;
 
 import com.fasterxml.jackson.core.JsonToken;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.List;
+import net.minecraft.util.math.Vec3d;
 
-public class Vec3dDeserializer extends AbstractVectorDeserializer<Vec3, Double> {
+public class Vec3dDeserializer extends AbstractVectorDeserializer<Vec3d, Double> {
    @Override
    protected String getTypeName() {
       return "Vec3d";
@@ -20,8 +19,8 @@ public class Vec3dDeserializer extends AbstractVectorDeserializer<Vec3, Double> 
       return Double.parseDouble(unit);
    }
 
-   protected Vec3 deserializeFromUnits(List<Double> units) {
-      return new Vec3(units.get(0), units.get(1), units.get(2));
+   protected Vec3d deserializeFromUnits(List<Double> units) {
+      return new Vec3d(units.get(0), units.get(1), units.get(2));
    }
 
    @Override

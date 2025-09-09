@@ -13,11 +13,16 @@ import adris.altoclef.util.helpers.StlHelper;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.block.FenceBlock;
+import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.FlowerBlock;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.Item;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -72,14 +77,14 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
 
    private static BlockPos[] generateSides(BlockPos pos) {
       return new BlockPos[]{
-         pos.offset(1, 0, 0),
-         pos.offset(-1, 0, 0),
-         pos.offset(0, 0, 1),
-         pos.offset(0, 0, -1),
-         pos.offset(1, 0, -1),
-         pos.offset(1, 0, 1),
-         pos.offset(-1, 0, -1),
-         pos.offset(-1, 0, 1)
+         pos.add(1, 0, 0),
+         pos.add(-1, 0, 0),
+         pos.add(0, 0, 1),
+         pos.add(0, 0, -1),
+         pos.add(1, 0, -1),
+         pos.add(1, 0, 1),
+         pos.add(-1, 0, -1),
+         pos.add(-1, 0, 1)
       };
    }
 
@@ -106,11 +111,11 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
    }
 
    private BlockPos stuckInBlock(AltoClefController mod) {
-      BlockPos p = mod.getPlayer().blockPosition();
+      BlockPos p = mod.getPlayer().getBlockPos();
       if (this.isAnnoying(mod, p)) {
          return p;
-      } else if (this.isAnnoying(mod, p.above())) {
-         return p.above();
+      } else if (this.isAnnoying(mod, p.up())) {
+         return p.up();
       } else {
          BlockPos[] toCheck = generateSides(p);
 
@@ -120,7 +125,7 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
             }
          }
 
-         BlockPos[] toCheckHigh = generateSides(p.above());
+         BlockPos[] toCheckHigh = generateSides(p.up());
 
          for (BlockPos checkx : toCheckHigh) {
             if (this.isAnnoying(mod, checkx)) {
@@ -194,7 +199,7 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
                this.collectingPickaxeForThisResource = false;
                if (!this.progressChecker.check(mod)) {
                   mod.getBaritone().getPathingBehavior().forceCancel();
-                  if (this.currentDrop != null && !this.currentDrop.getItem().isEmpty()) {
+                  if (this.currentDrop != null && !this.currentDrop.getStack().isEmpty()) {
                      if (!isGettingPickaxeFirstFlag
                         && mod.getModSettings().shouldCollectPickaxeFirst()
                         && !StorageHelper.miningRequirementMetInventory(this.controller, MiningRequirement.STONE)) {
@@ -205,7 +210,7 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
                      }
 
                      Debug.logMessage(
-                        StlHelper.toString(this.blacklist, element -> element == null ? "(null)" : element.getItem().getItem().getDescriptionId())
+                        StlHelper.toString(this.blacklist, element -> element == null ? "(null)" : element.getStack().getItem().getTranslationKey())
                      );
                      Debug.logMessage("Failed to pick up drop, suggesting it's unreachable.");
                      this.blacklist.add(this.currentDrop);
@@ -244,23 +249,23 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
       return result.toString();
    }
 
-   protected Vec3 getPos(AltoClefController mod, ItemEntity obj) {
-      if (!obj.onGround() && !obj.isInWater()) {
-         BlockPos p = obj.blockPosition();
-         return !WorldHelper.isSolidBlock(this.controller, p.below(3)) ? obj.position().subtract(0.0, 2.0, 0.0) : obj.position().subtract(0.0, 1.0, 0.0);
+   protected Vec3d getPos(AltoClefController mod, ItemEntity obj) {
+      if (!obj.isOnGround() && !obj.isTouchingWater()) {
+         BlockPos p = obj.getBlockPos();
+         return !WorldHelper.isSolidBlock(this.controller, p.down(3)) ? obj.getPos().subtract(0.0, 2.0, 0.0) : obj.getPos().subtract(0.0, 1.0, 0.0);
       } else {
-         return obj.position();
+         return obj.getPos();
       }
    }
 
    @Override
-   protected Optional<ItemEntity> getClosestTo(AltoClefController mod, Vec3 pos) {
+   protected Optional<ItemEntity> getClosestTo(AltoClefController mod, Vec3d pos) {
       return mod.getEntityTracker().getClosestItemDrop(pos, this.itemTargets);
    }
 
    @Override
-   protected Vec3 getOriginPos(AltoClefController mod) {
-      return mod.getPlayer().position();
+   protected Vec3d getOriginPos(AltoClefController mod) {
+      return mod.getPlayer().getPos();
    }
 
    protected Task getGoalTask(ItemEntity itemEntity) {
@@ -277,7 +282,7 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
       boolean touching = this.mod.getEntityTracker().isCollidingWithPlayer(itemEntity);
       return (Task)(touching
             && this.freeInventoryIfFull
-            && this.mod.getItemStorage().getSlotsThatCanFitInPlayerInventory(itemEntity.getItem(), false).isEmpty()
+            && this.mod.getItemStorage().getSlotsThatCanFitInPlayerInventory(itemEntity.getStack(), false).isEmpty()
          ? new EnsureFreeInventorySlotTask()
          : new GetToEntityTask(itemEntity));
    }

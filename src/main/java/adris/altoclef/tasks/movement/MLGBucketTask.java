@@ -15,27 +15,26 @@ import baritone.api.utils.RotationUtils;
 import baritone.api.utils.input.Input;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockPos.MutableBlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.ClipContext.Fluid;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult.Type;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult.Type;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.Mutable;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
+import net.minecraft.world.RaycastContext.FluidHandling;
+import net.minecraft.world.World;
 
 public class MLGBucketTask extends Task {
    private static MLGClutchConfig config;
@@ -55,7 +54,7 @@ public class MLGBucketTask extends Task {
       if (state.getBlock() != Blocks.LAVA) {
          return false;
       } else {
-         int level = state.getFluidState().getAmount();
+         int level = state.getFluidState().getLevel();
          return level == 0 || level >= config.lavaLevelOrGreaterWillCancelFallDamage;
       }
    }
@@ -71,13 +70,13 @@ public class MLGBucketTask extends Task {
 
       assert clientPlayerEntity != null;
 
-      double verticalDist = clientPlayerEntity.position().y() - pos.getY() - 1.0;
-      double verticalVelocity = -1.0 * clientPlayerEntity.getDeltaMovement().y;
+      double verticalDist = clientPlayerEntity.getPos().getY() - pos.getY() - 1.0;
+      double verticalVelocity = -1.0 * clientPlayerEntity.getVelocity().y;
       double grav = 0.08;
       double movementSpeedPerTick = config.averageHorizontalMovementSpeedPerTick;
       double ticksToTravelSq = (-verticalVelocity + Math.sqrt(verticalVelocity * verticalVelocity + 2.0 * grav * verticalDist)) / grav;
       double maxMoveDistanceSq = movementSpeedPerTick * movementSpeedPerTick * ticksToTravelSq * ticksToTravelSq;
-      double horizontalDistance = WorldHelper.distanceXZ(clientPlayerEntity.position(), WorldHelper.toVec3d(pos)) - 0.8;
+      double horizontalDistance = WorldHelper.distanceXZ(clientPlayerEntity.getPos(), WorldHelper.toVec3d(pos)) - 0.8;
       if (horizontalDistance < 0.0) {
          horizontalDistance = 0.0;
       }
@@ -103,13 +102,13 @@ public class MLGBucketTask extends Task {
    }
 
    private static double calculateFallDamageToLandOn(AltoClefController controller, BlockPos pos) {
-      Level world = controller.getWorld();
+      World world = controller.getWorld();
       LivingEntity clientPlayerEntity = controller.getPlayer();
 
       assert clientPlayerEntity != null;
 
       double totalFallDistance = clientPlayerEntity.fallDistance + clientPlayerEntity.getY() - pos.getY() - 1.0;
-      double baseFallDamage = Mth.ceil(totalFallDistance - 3.0);
+      double baseFallDamage = MathHelper.ceil(totalFallDistance - 3.0);
 
       assert world != null;
 
@@ -148,7 +147,7 @@ public class MLGBucketTask extends Task {
       Optional<BlockPos> willLandOn = this.getBlockWeWillLandOn(mod);
       Optional<BlockPos> bestClutchPos = this.getBestConeClutchBlock(mod, oldMovingTorwards);
       if (bestClutchPos.isPresent()) {
-         this.movingTorwards = bestClutchPos.get().mutable();
+         this.movingTorwards = bestClutchPos.get().mutableCopy();
          if (!this.movingTorwards.equals(oldMovingTorwards)) {
             if (oldMovingTorwards == null) {
                Debug.logMessage("(NEW clutch target: " + this.movingTorwards + ")");
@@ -176,10 +175,10 @@ public class MLGBucketTask extends Task {
          return null;
       } else {
          if (!WorldHelper.isSolidBlock(this.controller, toPlaceOn)) {
-            toPlaceOn = toPlaceOn.below();
+            toPlaceOn = toPlaceOn.down();
          }
 
-         BlockPos willLandIn = toPlaceOn.above();
+         BlockPos willLandIn = toPlaceOn.up();
          BlockState willLandInState = mod.getWorld().getBlockState(willLandIn);
          if (willLandInState.getBlock() == Blocks.WATER) {
             this.setDebugState("Waiting to fall into water");
@@ -191,7 +190,7 @@ public class MLGBucketTask extends Task {
             if (reachable.isPresent()) {
                this.setDebugState("Performing MLG");
                LookHelper.lookAt(this.controller, reachable.get());
-               boolean hasClutch = !mod.getWorld().dimensionType().ultraWarm() && mod.getSlotHandler().forceEquipItem(Items.WATER_BUCKET);
+               boolean hasClutch = !mod.getWorld().getDimension().ultrawarm() && mod.getSlotHandler().forceEquipItem(Items.WATER_BUCKET);
                if (!hasClutch && !config.clutchItems.isEmpty()) {
                   for (Item tryEquip : config.clutchItems) {
                      if (mod.getSlotHandler().forceEquipItem(tryEquip)) {
@@ -201,7 +200,7 @@ public class MLGBucketTask extends Task {
                   }
                }
 
-               BlockPos[] toCheckLook = new BlockPos[]{toPlaceOn, toPlaceOn.above(), toPlaceOn.above(2)};
+               BlockPos[] toCheckLook = new BlockPos[]{toPlaceOn, toPlaceOn.up(), toPlaceOn.up(2)};
                if (hasClutch && Arrays.stream(toCheckLook).anyMatch(check -> mod.getBaritone().getEntityContext().isLookingAt(check))) {
                   Debug.logMessage("HIT: " + willLandIn);
                   this.placedPos = willLandIn;
@@ -222,7 +221,7 @@ public class MLGBucketTask extends Task {
    protected Task onTick() {
       AltoClefController mod = this.controller;
       mod.getInputControls().hold(Input.SPRINT);
-      MutableBlockPos mutable = this.movingTorwards != null ? this.movingTorwards.mutable() : null;
+      Mutable mutable = this.movingTorwards != null ? this.movingTorwards.mutableCopy() : null;
       this.movingTorwards = null;
       Task result = this.onTickInternal(mod, mutable);
       this.handleForwardVelocity(mod, !Objects.equals(mutable, this.movingTorwards));
@@ -231,14 +230,14 @@ public class MLGBucketTask extends Task {
    }
 
    private void handleForwardVelocity(AltoClefController mod, boolean newForwardTarget) {
-      if (!mod.getPlayer().onGround() && this.movingTorwards != null && !WorldHelper.inRangeXZ(mod.getPlayer(), this.movingTorwards, 0.05F)) {
+      if (!mod.getPlayer().isOnGround() && this.movingTorwards != null && !WorldHelper.inRangeXZ(mod.getPlayer(), this.movingTorwards, 0.05F)) {
          Rotation look = LookHelper.getLookRotation(this.controller);
          look = new Rotation(look.getYaw(), 0.0F);
-         Vec3 forwardFacing = LookHelper.toVec3d(look).multiply(1.0, 0.0, 1.0).normalize();
-         Vec3 delta = WorldHelper.toVec3d(this.movingTorwards).subtract(mod.getPlayer().position()).multiply(1.0, 0.0, 1.0);
-         Vec3 velocity = mod.getPlayer().getDeltaMovement().multiply(1.0, 0.0, 1.0);
-         Vec3 pd = delta.subtract(velocity.scale(3.0));
-         double forwardStrength = pd.dot(forwardFacing);
+         Vec3d forwardFacing = LookHelper.toVec3d(look).multiply(1.0, 0.0, 1.0).normalize();
+         Vec3d delta = WorldHelper.toVec3d(this.movingTorwards).subtract(mod.getPlayer().getPos()).multiply(1.0, 0.0, 1.0);
+         Vec3d velocity = mod.getPlayer().getVelocity().multiply(1.0, 0.0, 1.0);
+         Vec3d pd = delta.subtract(velocity.multiply(3.0));
+         double forwardStrength = pd.dotProduct(forwardFacing);
          if (newForwardTarget) {
             LookHelper.lookAt(mod, this.movingTorwards);
          }
@@ -254,20 +253,20 @@ public class MLGBucketTask extends Task {
    protected void onStart() {
       this.controller.getBaritone().getPathingBehavior().forceCancel();
       this.placedPos = null;
-      this.controller.getPlayer().setXRot(90.0F);
+      this.controller.getPlayer().setPitch(90.0F);
    }
 
    private void handleJumpForLand(AltoClefController mod, BlockPos willLandOn) {
-      BlockPos willLandIn = WorldHelper.isSolidBlock(this.controller, willLandOn) ? willLandOn.above() : willLandOn;
+      BlockPos willLandIn = WorldHelper.isSolidBlock(this.controller, willLandOn) ? willLandOn.up() : willLandOn;
       BlockState s = mod.getWorld().getBlockState(willLandIn);
       if (s.getBlock() == Blocks.LAVA) {
          mod.getInputControls().hold(Input.JUMP);
       } else {
-         AABB blockBounds;
+         Box blockBounds;
          try {
-            blockBounds = s.getCollisionShape(mod.getWorld(), willLandIn).bounds();
+            blockBounds = s.getCollisionShape(mod.getWorld(), willLandIn).getBoundingBox();
          } catch (UnsupportedOperationException var7) {
-            blockBounds = AABB.ofSize(WorldHelper.toVec3d(willLandIn), 1.0, 1.0, 1.0);
+            blockBounds = Box.of(WorldHelper.toVec3d(willLandIn), 1.0, 1.0, 1.0);
          }
 
          boolean inside = mod.getPlayer().getBoundingBox().intersects(blockBounds);
@@ -280,19 +279,19 @@ public class MLGBucketTask extends Task {
    }
 
    private Optional<BlockPos> getBlockWeWillLandOn(AltoClefController mod) {
-      Vec3 velCheck = mod.getPlayer().getDeltaMovement();
+      Vec3d velCheck = mod.getPlayer().getVelocity();
       velCheck.multiply(10.0, 0.0, 10.0);
-      AABB b = mod.getPlayer().getBoundingBox().move(velCheck);
-      Vec3 c = b.getCenter();
-      Vec3[] coords = new Vec3[]{c, new Vec3(b.minX, c.y, b.minZ), new Vec3(b.maxX, c.y, b.minZ), new Vec3(b.minX, c.y, b.maxZ), new Vec3(b.maxX, c.y, b.maxZ)};
+      Box b = mod.getPlayer().getBoundingBox().offset(velCheck);
+      Vec3d c = b.getCenter();
+      Vec3d[] coords = new Vec3d[]{c, new Vec3d(b.minX, c.y, b.minZ), new Vec3d(b.maxX, c.y, b.minZ), new Vec3d(b.minX, c.y, b.maxZ), new Vec3d(b.maxX, c.y, b.maxZ)};
       BlockHitResult result = null;
       double bestSqDist = Double.POSITIVE_INFINITY;
 
-      for (Vec3 rayOrigin : coords) {
-         ClipContext rctx = this.castDown(rayOrigin);
-         BlockHitResult hit = mod.getWorld().clip(rctx);
+      for (Vec3d rayOrigin : coords) {
+         RaycastContext rctx = this.castDown(rayOrigin);
+         BlockHitResult hit = mod.getWorld().raycast(rctx);
          if (hit.getType() == Type.BLOCK) {
-            double curDis = hit.getLocation().distanceToSqr(rayOrigin);
+            double curDis = hit.getPos().squaredDistanceTo(rayOrigin);
             if (curDis < bestSqDist) {
                result = hit;
                bestSqDist = curDis;
@@ -307,15 +306,15 @@ public class MLGBucketTask extends Task {
       if (this.movingTorwards == null) {
          moveLeftRight(mod, 0);
       } else {
-         Vec3 velocity = mod.getPlayer().getDeltaMovement();
-         Vec3 deltaTarget = WorldHelper.toVec3d(this.movingTorwards).subtract(mod.getPlayer().position());
+         Vec3d velocity = mod.getPlayer().getVelocity();
+         Vec3d deltaTarget = WorldHelper.toVec3d(this.movingTorwards).subtract(mod.getPlayer().getPos());
          Rotation look = LookHelper.getLookRotation(this.controller);
-         Vec3 forwardFacing = LookHelper.toVec3d(look).multiply(1.0, 0.0, 1.0).normalize();
-         Vec3 rightVelocity = MathsHelper.projectOntoPlane(velocity, forwardFacing).multiply(1.0, 0.0, 1.0);
-         Vec3 rightDelta = MathsHelper.projectOntoPlane(deltaTarget, forwardFacing).multiply(1.0, 0.0, 1.0);
-         Vec3 pd = rightDelta.subtract(rightVelocity.scale(2.0));
-         Vec3 faceRight = forwardFacing.cross(new Vec3(0.0, 1.0, 0.0));
-         boolean moveRight = pd.dot(faceRight) > 0.0;
+         Vec3d forwardFacing = LookHelper.toVec3d(look).multiply(1.0, 0.0, 1.0).normalize();
+         Vec3d rightVelocity = MathsHelper.projectOntoPlane(velocity, forwardFacing).multiply(1.0, 0.0, 1.0);
+         Vec3d rightDelta = MathsHelper.projectOntoPlane(deltaTarget, forwardFacing).multiply(1.0, 0.0, 1.0);
+         Vec3d pd = rightDelta.subtract(rightVelocity.multiply(2.0));
+         Vec3d faceRight = forwardFacing.crossProduct(new Vec3d(0.0, 1.0, 0.0));
+         boolean moveRight = pd.dotProduct(faceRight) > 0.0;
          if (moveRight) {
             moveLeftRight(mod, 1);
          } else {
@@ -338,16 +337,16 @@ public class MLGBucketTask extends Task {
             + pitchProgress * (config.epicClutchConeYawDivisionEnd - config.epicClutchConeYawDivisionStart);
 
          for (double yaw = 0.0; yaw < 360.0; yaw += 360.0 / yawResolution) {
-            ClipContext rctx = this.castCone(yaw, pitch);
+            RaycastContext rctx = this.castCone(yaw, pitch);
             cctx.checkRay(mod, rctx);
          }
       }
 
-      Vec3 center = mod.getPlayer().position();
+      Vec3d center = mod.getPlayer().getPos();
 
       for (int dx = -2; dx <= 2; dx++) {
          for (int dz = -2; dz <= 2; dz++) {
-            ClipContext ctx = this.castDown(center.add(dx, 0.0, dz));
+            RaycastContext ctx = this.castDown(center.add(dx, 0.0, dz));
             cctx.checkRay(mod, ctx);
          }
       }
@@ -355,29 +354,29 @@ public class MLGBucketTask extends Task {
       return Optional.ofNullable(cctx.bestBlock);
    }
 
-   private ClipContext castDown(Vec3 origin) {
+   private RaycastContext castDown(Vec3d origin) {
       LivingEntity clientPlayerEntity = this.controller.getPlayer();
 
       assert clientPlayerEntity != null;
 
-      return new ClipContext(
-         origin, origin.add(0.0, -1.0 * config.castDownDistance, 0.0), net.minecraft.world.level.ClipContext.Block.COLLIDER, Fluid.ANY, clientPlayerEntity
+      return new RaycastContext(
+         origin, origin.add(0.0, -1.0 * config.castDownDistance, 0.0), net.minecraft.world.RaycastContext.ShapeType.COLLIDER, FluidHandling.ANY, clientPlayerEntity
       );
    }
 
-   private ClipContext castCone(double yaw, double pitch) {
+   private RaycastContext castCone(double yaw, double pitch) {
       LivingEntity clientPlayerEntity = this.controller.getPlayer();
 
       assert clientPlayerEntity != null;
 
-      Vec3 origin = clientPlayerEntity.position();
+      Vec3d origin = clientPlayerEntity.getPos();
       double dy = config.epicClutchConeCastHeight;
       double dH = dy * Math.sin(Math.toRadians(pitch));
       double yawRad = Math.toRadians(yaw);
       double dx = dH * Math.cos(yawRad);
       double dz = dH * Math.sin(yawRad);
-      Vec3 end = origin.add(dx, -1.0 * dy, dz);
-      return new ClipContext(origin, end, net.minecraft.world.level.ClipContext.Block.COLLIDER, Fluid.ANY, clientPlayerEntity);
+      Vec3d end = origin.add(dx, -1.0 * dy, dz);
+      return new RaycastContext(origin, end, net.minecraft.world.RaycastContext.ShapeType.COLLIDER, FluidHandling.ANY, clientPlayerEntity);
    }
 
    @Override
@@ -394,7 +393,7 @@ public class MLGBucketTask extends Task {
    }
 
    private boolean hasClutchItem(AltoClefController mod) {
-      return !mod.getWorld().dimensionType().ultraWarm() && mod.getItemStorage().hasItem(Items.WATER_BUCKET)
+      return !mod.getWorld().getDimension().ultrawarm() && mod.getItemStorage().hasItem(Items.WATER_BUCKET)
          ? true
          : config.clutchItems.stream().anyMatch(item -> mod.getItemStorage().hasItem(item));
    }
@@ -402,7 +401,7 @@ public class MLGBucketTask extends Task {
    @Override
    public boolean isFinished() {
       LivingEntity player = this.controller.getPlayer();
-      return player.isSwimming() || player.isInWater() || player.onGround() || player.onClimbable();
+      return player.isSwimming() || player.isTouchingWater() || player.isOnGround() || player.isClimbing();
    }
 
    @Override
@@ -454,7 +453,7 @@ public class MLGBucketTask extends Task {
                boolean isDeadlyFall = !this.hasClutchItem && MLGBucketTask.isFallDeadly(MLGBucketTask.this.controller, check);
                if (!this.bestBlockIsSafe || water) {
                   double height = check.getY();
-                  double distSqXZ = WorldHelper.distanceXZSquared(WorldHelper.toVec3d(check), mod.getPlayer().position());
+                  double distSqXZ = WorldHelper.distanceXZSquared(WorldHelper.toVec3d(check), mod.getPlayer().getPos());
                   boolean highestSoFar = height > this.highestY;
                   boolean closestSoFar = distSqXZ < this.closestXZ;
                   if ((
@@ -463,7 +462,7 @@ public class MLGBucketTask extends Task {
                            || lava && lavaWillProtect && this.bestBlockIsDeadlyFall && !this.hasClutchItem
                            || !lava && !isDeadlyFall && (closestSoFar && this.hasClutchItem && highestSoFar || this.bestBlockIsLava)
                      )
-                     && MLGBucketTask.canTravelToInAir(MLGBucketTask.this.controller, !lava && !water ? check : check.below())) {
+                     && MLGBucketTask.canTravelToInAir(MLGBucketTask.this.controller, !lava && !water ? check : check.down())) {
                      if (highestSoFar) {
                         this.highestY = height;
                      }
@@ -482,11 +481,11 @@ public class MLGBucketTask extends Task {
          }
       }
 
-      public void checkRay(AltoClefController mod, ClipContext rctx) {
-         BlockHitResult hit = mod.getWorld().clip(rctx);
+      public void checkRay(AltoClefController mod, RaycastContext rctx) {
+         BlockHitResult hit = mod.getWorld().raycast(rctx);
          if (hit.getType() == Type.BLOCK) {
             BlockPos check = hit.getBlockPos();
-            if (hit.getDirection().getStepY() <= 0) {
+            if (hit.getSide().getOffsetY() <= 0) {
                return;
             }
 

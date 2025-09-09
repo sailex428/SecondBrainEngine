@@ -7,14 +7,13 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.MiningRequirement;
 import adris.altoclef.util.helpers.ItemHelper;
-import net.minecraft.world.entity.animal.Sheep;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-
 import java.util.Arrays;
 import java.util.HashSet;
+import net.minecraft.block.Block;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.DyeColor;
 
 public class CollectWoolTask extends ResourceTask {
    private final int count;
@@ -60,14 +59,14 @@ public class CollectWoolTask extends ResourceTask {
       Block[] woolBlocks = ItemHelper.itemsToBlocks(this.wools);
       if (mod.getBlockScanner().anyFound(woolBlocks)) {
          return new MineAndCollectTask(new ItemTarget(this.wools), woolBlocks, MiningRequirement.HAND);
-      } else if (this.isInWrongDimension(mod) && !mod.getEntityTracker().entityFound(Sheep.class)) {
+      } else if (this.isInWrongDimension(mod) && !mod.getEntityTracker().entityFound(SheepEntity.class)) {
          return this.getToCorrectDimensionTask(mod);
       } else {
          return (Task)(mod.getItemStorage().hasItem(Items.SHEARS)
             ? new ShearSheepTask()
             : new KillAndLootTask(
-               Sheep.class,
-               entity -> !(entity instanceof Sheep sheep) ? false : this.colors.contains(sheep.getColor()) && !sheep.isSheared(),
+               SheepEntity.class,
+               entity -> !(entity instanceof SheepEntity sheep) ? false : this.colors.contains(sheep.getColor()) && !sheep.isSheared(),
                new ItemTarget(this.wools, this.count)
             ));
       }

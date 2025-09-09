@@ -1,6 +1,6 @@
 package adris.altoclef.tasksystem;
 
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
 
 public interface ITaskRequiresGrounded extends ITaskCanForce {
    @Override
@@ -9,7 +9,7 @@ public interface ITaskRequiresGrounded extends ITaskCanForce {
          return false;
       } else {
          LivingEntity player = ((Task)this).controller.getPlayer();
-         return !player.onGround() && !player.isSwimming() && !player.isInWater() && !player.onClimbable();
+         return !player.isOnGround() && !player.isSwimming() && !player.isTouchingWater() && !player.isClimbing();
       }
    }
 }

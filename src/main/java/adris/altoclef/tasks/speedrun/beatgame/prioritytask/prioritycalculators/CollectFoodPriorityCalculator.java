@@ -6,15 +6,20 @@ import adris.altoclef.tasks.resources.CollectFoodTask;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.slots.Slot;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.block.BeetrootsBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CarrotsBlock;
+import net.minecraft.block.CropBlock;
+import net.minecraft.block.PotatoesBlock;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -38,7 +43,7 @@ public class CollectFoodPriorityCalculator extends ItemPriorityCalculator {
          return 0.1;
       } else {
          Optional<BlockPos> hay = this.mod.getBlockScanner().getNearestBlock(Blocks.HAY_BLOCK);
-         if (hay.isPresent() && WorldHelper.inRangeXZ(hay.get(), this.mod.getPlayer().blockPosition(), 75.0)
+         if (hay.isPresent() && WorldHelper.inRangeXZ(hay.get(), this.mod.getPlayer().getBlockPos(), 75.0)
             || this.mod.getEntityTracker().itemDropped(Items.HAY_BLOCK)) {
             multiplier = 50.0;
          }
@@ -89,14 +94,14 @@ public class CollectFoodPriorityCalculator extends ItemPriorityCalculator {
                BlockState s = mod.getWorld().getBlockState(blockPos);
                Block b = s.getBlock();
                if (b instanceof CropBlock) {
-                  boolean isWheat = !(b instanceof PotatoBlock) && !(b instanceof CarrotBlock) && !(b instanceof BeetrootBlock);
+                  boolean isWheat = !(b instanceof PotatoesBlock) && !(b instanceof CarrotsBlock) && !(b instanceof BeetrootsBlock);
                   if (isWheat) {
                      if (!mod.getChunkTracker().isChunkLoaded(blockPos)) {
                         return false;
                      }
 
                      CropBlock crop = (CropBlock)b;
-                     return crop.isMaxAge(s);
+                     return crop.isMature(s);
                   }
                }
 
@@ -118,10 +123,10 @@ public class CollectFoodPriorityCalculator extends ItemPriorityCalculator {
 
          for (CollectFoodTask.CookableFoodTarget cookable : CollectFoodTask.COOKABLE_FOODS) {
             if (mod.getEntityTracker().entityFound(cookable.mobToKill)) {
-               Optional<Entity> nearest = mod.getEntityTracker().getClosestEntity(mod.getPlayer().position(), notBaby, cookable.mobToKill);
+               Optional<Entity> nearest = mod.getEntityTracker().getClosestEntity(mod.getPlayer().getPos(), notBaby, cookable.mobToKill);
                if (!nearest.isEmpty()) {
                   int hungerPerformance = cookable.getCookedUnits();
-                  double sqDistance = nearest.get().distanceToSqr(mod.getPlayer());
+                  double sqDistance = nearest.get().squaredDistanceTo(mod.getPlayer());
                   double score = 100.0 * hungerPerformance / sqDistance;
                   if (score > bestScore) {
                      bestScore = score;
@@ -146,20 +151,20 @@ public class CollectFoodPriorityCalculator extends ItemPriorityCalculator {
 
    private double pickupBlockTaskOrNull(AltoClefController mod, Block blockToCheck, Item itemToGrab, Predicate<BlockPos> accept, double maxRange) {
       Predicate<BlockPos> acceptPlus = blockPos -> !WorldHelper.canBreak(mod, blockPos) ? false : accept.test(blockPos);
-      Optional<BlockPos> nearestBlock = mod.getBlockScanner().getNearestBlock(mod.getPlayer().position(), acceptPlus, blockToCheck);
-      if (nearestBlock.isPresent() && !nearestBlock.get().closerToCenterThan(mod.getPlayer().position(), maxRange)) {
+      Optional<BlockPos> nearestBlock = mod.getBlockScanner().getNearestBlock(mod.getPlayer().getPos(), acceptPlus, blockToCheck);
+      if (nearestBlock.isPresent() && !nearestBlock.get().isWithinDistance(mod.getPlayer().getPos(), maxRange)) {
          nearestBlock = Optional.empty();
       }
 
       Optional<ItemEntity> nearestDrop = Optional.empty();
       if (mod.getEntityTracker().itemDropped(itemToGrab)) {
-         nearestDrop = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().position(), itemToGrab);
+         nearestDrop = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().getPos(), itemToGrab);
       }
 
       if (nearestDrop.isPresent()) {
          return nearestDrop.get().distanceTo(mod.getPlayer());
       } else {
-         return nearestBlock.isPresent() ? Math.sqrt(mod.getPlayer().distanceToSqr(WorldHelper.toVec3d(nearestBlock.get()))) : Double.NEGATIVE_INFINITY;
+         return nearestBlock.isPresent() ? Math.sqrt(mod.getPlayer().squaredDistanceTo(WorldHelper.toVec3d(nearestBlock.get()))) : Double.NEGATIVE_INFINITY;
       }
    }
 
@@ -170,11 +175,11 @@ public class CollectFoodPriorityCalculator extends ItemPriorityCalculator {
    private double pickupTaskOrNull(AltoClefController mod, Item itemToGrab, double maxRange) {
       Optional<ItemEntity> nearestDrop = Optional.empty();
       if (mod.getEntityTracker().itemDropped(itemToGrab)) {
-         nearestDrop = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().position(), itemToGrab);
+         nearestDrop = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().getPos(), itemToGrab);
       }
 
-      if (nearestDrop.isPresent() && nearestDrop.get().closerThan(mod.getPlayer(), maxRange)) {
-         if (mod.getItemStorage().getSlotsThatCanFitInPlayerInventory(nearestDrop.get().getItem(), false).isEmpty()) {
+      if (nearestDrop.isPresent() && nearestDrop.get().isInRange(mod.getPlayer(), maxRange)) {
+         if (mod.getItemStorage().getSlotsThatCanFitInPlayerInventory(nearestDrop.get().getStack(), false).isEmpty()) {
             Optional<Slot> slot = StorageHelper.getGarbageSlot(mod);
             if (slot.isPresent()) {
                ItemStack stack = StorageHelper.getItemStackInSlot(slot.get());
@@ -189,7 +194,7 @@ public class CollectFoodPriorityCalculator extends ItemPriorityCalculator {
                      mod.log("unknown food item: " + itemToGrab);
                   }
 
-                  int groundCost = (int)(hunger * nearestDrop.get().getItem().getCount());
+                  int groundCost = (int)(hunger * nearestDrop.get().getStack().getCount());
                   if (inventoryCost > groundCost) {
                      return Double.NEGATIVE_INFINITY;
                   }

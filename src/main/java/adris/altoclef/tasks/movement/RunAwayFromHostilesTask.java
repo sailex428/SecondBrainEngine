@@ -5,13 +5,12 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.baritone.GoalRunAwayFromEntities;
 import adris.altoclef.util.helpers.BaritoneHelper;
 import baritone.api.pathing.goals.Goal;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Skeleton;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.SkeletonEntity;
 
 public class RunAwayFromHostilesTask extends CustomBaritoneGoalTask {
    private final double distanceToRun;
@@ -52,7 +51,7 @@ public class RunAwayFromHostilesTask extends CustomBaritoneGoalTask {
          Stream<LivingEntity> stream = mod.getEntityTracker().getHostiles().stream();
          synchronized (BaritoneHelper.MINECRAFT_LOCK) {
             if (!RunAwayFromHostilesTask.this.includeSkeletons) {
-               stream = stream.filter(hostile -> !(hostile instanceof Skeleton));
+               stream = stream.filter(hostile -> !(hostile instanceof SkeletonEntity));
             }
 
             return stream.collect(Collectors.toList());

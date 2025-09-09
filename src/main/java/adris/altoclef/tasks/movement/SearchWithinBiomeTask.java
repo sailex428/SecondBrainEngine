@@ -3,20 +3,20 @@ package adris.altoclef.tasks.movement;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.multiversion.world.WorldVer;
 import adris.altoclef.tasksystem.Task;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.biome.Biome;
 
 public class SearchWithinBiomeTask extends SearchChunksExploreTask {
-   private final ResourceKey<Biome> toSearch;
+   private final RegistryKey<Biome> toSearch;
 
-   public SearchWithinBiomeTask(ResourceKey<Biome> toSearch) {
+   public SearchWithinBiomeTask(RegistryKey<Biome> toSearch) {
       this.toSearch = toSearch;
    }
 
    @Override
    protected boolean isChunkWithinSearchSpace(AltoClefController mod, ChunkPos pos) {
-      return WorldVer.isBiomeAtPos(mod.getWorld(), this.toSearch, pos.getWorldPosition().offset(1, 1, 1));
+      return WorldVer.isBiomeAtPos(mod.getWorld(), this.toSearch, pos.getStartPos().add(1, 1, 1));
    }
 
    @Override

@@ -10,15 +10,14 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.EntityHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.utils.Debug;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.hoglin.Hoglin;
-import net.minecraft.world.entity.monster.piglin.Piglin;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-
 import java.util.HashSet;
 import java.util.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.HoglinEntity;
+import net.minecraft.entity.mob.PiglinEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 
 public class TradeWithPiglinsTask extends ResourceTask {
    private static final boolean AVOID_HOGLINS = true;
@@ -63,7 +62,7 @@ public class TradeWithPiglinsTask extends ResourceTask {
          }
 
          return this.goldTask;
-      } else if (!mod.getEntityTracker().entityFound(Piglin.class)) {
+      } else if (!mod.getEntityTracker().entityFound(PiglinEntity.class)) {
          this.setDebugState("Wandering");
          return new TimeoutWanderTask(false);
       } else {
@@ -103,7 +102,7 @@ public class TradeWithPiglinsTask extends ResourceTask {
          AltoClefController mod = this.controller;
          mod.getBehaviour().push();
          mod.getBehaviour().addProtectedItems(Items.GOLD_INGOT);
-         mod.getBehaviour().addForceFieldExclusion(entity -> entity instanceof Piglin ? !this.blacklisted.contains(entity) : false);
+         mod.getBehaviour().addForceFieldExclusion(entity -> entity instanceof PiglinEntity ? !this.blacklisted.contains(entity) : false);
       }
 
       @Override
@@ -141,8 +140,8 @@ public class TradeWithPiglinsTask extends ResourceTask {
             return null;
          } else {
             if (this.currentlyBartering != null && !EntityHelper.isTradingPiglin(this.currentlyBartering)) {
-               Optional<Entity> closestHoglin = mod.getEntityTracker().getClosestEntity(this.currentlyBartering.position(), Hoglin.class);
-               if (closestHoglin.isPresent() && closestHoglin.get().closerThan(entity, 64.0)) {
+               Optional<Entity> closestHoglin = mod.getEntityTracker().getClosestEntity(this.currentlyBartering.getPos(), HoglinEntity.class);
+               if (closestHoglin.isPresent() && closestHoglin.get().isInRange(entity, 64.0)) {
                   Debug.logMessage("Aborting further trading because a hoglin showed up");
                   this.blacklisted.add(this.currentlyBartering);
                   this.barterTimeout.reset();
@@ -164,19 +163,19 @@ public class TradeWithPiglinsTask extends ResourceTask {
       protected Optional<Entity> getEntityTarget(AltoClefController mod) {
          Optional<Entity> found = mod.getEntityTracker()
             .getClosestEntity(
-               mod.getPlayer().position(),
+               mod.getPlayer().getPos(),
                entity -> {
                   if (!this.blacklisted.contains(entity)
                      && !EntityHelper.isTradingPiglin(entity)
                      && (!(entity instanceof LivingEntity) || !((LivingEntity)entity).isBaby())
-                     && (this.currentlyBartering == null || entity.closerThan(this.currentlyBartering, 10.0))) {
-                     Optional<Entity> closestHoglin = mod.getEntityTracker().getClosestEntity(entity.position(), Hoglin.class);
-                     return closestHoglin.isEmpty() || !closestHoglin.get().closerThan(entity, 64.0);
+                     && (this.currentlyBartering == null || entity.isInRange(this.currentlyBartering, 10.0))) {
+                     Optional<Entity> closestHoglin = mod.getEntityTracker().getClosestEntity(entity.getPos(), HoglinEntity.class);
+                     return closestHoglin.isEmpty() || !closestHoglin.get().isInRange(entity, 64.0);
                   } else {
                      return false;
                   }
                },
-               Piglin.class
+               PiglinEntity.class
             );
          if (found.isEmpty()) {
             if (this.currentlyBartering != null && (this.blacklisted.contains(this.currentlyBartering) || !this.currentlyBartering.isAlive())) {

@@ -11,14 +11,13 @@ import adris.altoclef.util.Dimension;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Optional;
 import java.util.function.Predicate;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.mob.EndermanEntity;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 
 public class KillEndermanTask extends ResourceTask {
    private final int count;
@@ -41,14 +40,14 @@ public class KillEndermanTask extends ResourceTask {
 
    @Override
    protected Task onResourceTick(AltoClefController mod) {
-      if (!mod.getEntityTracker().entityFound(EnderMan.class)) {
+      if (!mod.getEntityTracker().entityFound(EndermanEntity.class)) {
          if (WorldHelper.getCurrentDimension(mod) != Dimension.NETHER) {
             return this.getToCorrectDimensionTask(mod);
          } else {
             Optional<BlockPos> nearest = mod.getBlockScanner()
                .getNearestBlock(Blocks.TWISTING_VINES, Blocks.TWISTING_VINES_PLANT, Blocks.WARPED_HYPHAE, Blocks.WARPED_NYLIUM);
             if (nearest.isPresent()) {
-               if (WorldHelper.inRangeXZ(nearest.get(), mod.getPlayer().blockPosition(), 40.0)) {
+               if (WorldHelper.inRangeXZ(nearest.get(), mod.getPlayer().getBlockPos(), 40.0)) {
                   this.setDebugState("Waiting for endermen to spawn...");
                   return null;
                } else {
@@ -64,15 +63,15 @@ public class KillEndermanTask extends ResourceTask {
          Predicate<Entity> belowNetherRoof = entityx -> WorldHelper.getCurrentDimension(mod) != Dimension.NETHER || entityx.getY() < 125.0;
          int TOO_FAR_AWAY = WorldHelper.getCurrentDimension(mod) == Dimension.NETHER ? 10 : 256;
 
-         for (EnderMan entity : mod.getEntityTracker().getTrackedEntities(EnderMan.class)) {
-            if (entity.isAlive() && belowNetherRoof.test(entity) && entity.isCreepy() && entity.position().closerThan(mod.getPlayer().position(), TOO_FAR_AWAY)
+         for (EndermanEntity entity : mod.getEntityTracker().getTrackedEntities(EndermanEntity.class)) {
+            if (entity.isAlive() && belowNetherRoof.test(entity) && entity.isAngry() && entity.getPos().isInRange(mod.getPlayer().getPos(), TOO_FAR_AWAY)
                )
              {
                return new KillEntityTask(entity);
             }
          }
 
-         return new KillEntitiesTask(belowNetherRoof, EnderMan.class);
+         return new KillEntitiesTask(belowNetherRoof, EndermanEntity.class);
       }
    }
 

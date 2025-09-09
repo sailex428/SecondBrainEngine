@@ -3,17 +3,17 @@ package adris.altoclef.util.time;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.Debug;
 import adris.altoclef.mixins.ClientConnectionAccessor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.Connection;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.ClientConnection;
 
 public class TimerGame extends BaseTimer {
-   private Connection lastConnection;
+   private ClientConnection lastConnection;
 
    public TimerGame(double intervalSeconds) {
       super(intervalSeconds);
    }
 
-   private static double getTime(Connection connection) {
+   private static double getTime(ClientConnection connection) {
       return connection == null ? 0.0 : ((ClientConnectionAccessor)connection).getTicks() / 20.0;
    }
 
@@ -23,9 +23,9 @@ public class TimerGame extends BaseTimer {
          Debug.logError("Running game timer while not in game.");
          return 0.0;
       } else {
-         Connection currentConnection = null;
-         if (Minecraft.getInstance().getConnection() != null) {
-            currentConnection = Minecraft.getInstance().getConnection().getConnection();
+         ClientConnection currentConnection = null;
+         if (MinecraftClient.getInstance().getNetworkHandler() != null) {
+            currentConnection = MinecraftClient.getInstance().getNetworkHandler().getConnection();
          }
 
          if (currentConnection != this.lastConnection) {

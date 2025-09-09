@@ -1,7 +1,7 @@
 package adris.altoclef.multiversion.recipemanager;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.util.Identifier;
 
-public record WrappedRecipeEntry(ResourceLocation id, Recipe<?> value) {
+public record WrappedRecipeEntry(Identifier id, Recipe<?> value) {
 }

@@ -1,9 +1,9 @@
 package adris.altoclef.util;
 
 import adris.altoclef.Debug;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 
 public enum MiningRequirement implements Comparable<MiningRequirement> {
    HAND(Items.AIR),
@@ -19,11 +19,11 @@ public enum MiningRequirement implements Comparable<MiningRequirement> {
    }
 
    public static MiningRequirement getMinimumRequirementForBlock(Block block) {
-      if (block.defaultBlockState().requiresCorrectToolForDrops()) {
+      if (block.getDefaultState().isToolRequired()) {
          for (MiningRequirement req : values()) {
             if (req != HAND) {
                Item pick = req.getMinimumPickaxe();
-               if (pick.isCorrectToolForDrops(block.defaultBlockState())) {
+               if (pick.isSuitableFor(block.getDefaultState())) {
                   return req;
                }
             }

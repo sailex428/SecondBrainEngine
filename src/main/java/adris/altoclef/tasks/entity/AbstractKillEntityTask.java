@@ -7,14 +7,13 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.slots.PlayerSlot;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
-
 import java.util.List;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolItem;
+import net.minecraft.util.math.MathHelper;
 
 public abstract class AbstractKillEntityTask extends AbstractDoToEntityTask {
    private static final double OTHER_FORCE_FIELD_RANGE = 2.0;
@@ -33,21 +32,21 @@ public abstract class AbstractKillEntityTask extends AbstractDoToEntityTask {
    }
 
    public static Item bestWeapon(AltoClefController mod) {
-      TieredItem toolItem1 = null;
+      ToolItem toolItem1 = null;
       List<ItemStack> invStacks = mod.getItemStorage().getItemStacksPlayerInventory(true);
-      TieredItem toolItem2 = MobDefenseChain.getBestWeapon(mod);
+      ToolItem toolItem2 = MobDefenseChain.getBestWeapon(mod);
       if (toolItem2 != null) {
          return toolItem2;
       } else {
          Item item = StorageHelper.getItemStackInSlot(PlayerSlot.getEquipSlot(mod.getInventory())).getItem();
          float bestDamage = Float.NEGATIVE_INFINITY;
-         if (item instanceof TieredItem handToolItem) {
-            bestDamage = handToolItem.getTier().getAttackDamageBonus();
+         if (item instanceof ToolItem handToolItem) {
+            bestDamage = handToolItem.getMaterial().getAttackDamage();
          }
 
          for (ItemStack invStack : invStacks) {
-            if (invStack.getItem() instanceof TieredItem toolItem) {
-               float itemDamage = toolItem.getTier().getAttackDamageBonus();
+            if (invStack.getItem() instanceof ToolItem toolItem) {
+               float itemDamage = toolItem.getMaterial().getAttackDamage();
                if (itemDamage > bestDamage) {
                   toolItem1 = toolItem;
                   bestDamage = itemDamage;
@@ -74,8 +73,8 @@ public abstract class AbstractKillEntityTask extends AbstractDoToEntityTask {
    protected Task onEntityInteract(AltoClefController mod, Entity entity) {
       if (!equipWeapon(mod)) {
          float hitProg = this.getAttackCooldownProgress(mod.getPlayer(), 0.0F);
-         if (hitProg >= 1.0F && (mod.getPlayer().onGround() || mod.getPlayer().getDeltaMovement().y() < 0.0 || mod.getPlayer().isInWater())) {
-            LookHelper.lookAt(mod, entity.getEyePosition());
+         if (hitProg >= 1.0F && (mod.getPlayer().isOnGround() || mod.getPlayer().getVelocity().getY() < 0.0 || mod.getPlayer().isTouchingWater())) {
+            LookHelper.lookAt(mod, entity.getEyePos());
             mod.getControllerExtras().attack(entity);
          }
       }
@@ -88,6 +87,6 @@ public abstract class AbstractKillEntityTask extends AbstractDoToEntityTask {
    }
 
    public float getAttackCooldownProgress(LivingEntity entity, float baseTime) {
-      return Mth.clamp((((LivingEntityMixin)entity).getLastAttackedTicks() + baseTime) / this.getAttackCooldownProgressPerTick(entity), 0.0F, 1.0F);
+      return MathHelper.clamp((((LivingEntityMixin)entity).getLastAttackedTicks() + baseTime) / this.getAttackCooldownProgressPerTick(entity), 0.0F, 1.0F);
    }
 }

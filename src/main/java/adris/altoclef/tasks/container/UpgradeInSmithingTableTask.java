@@ -12,13 +12,12 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.StorageHelper;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Optional;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class UpgradeInSmithingTableTask extends ResourceTask {
    private final ItemTarget tool;
@@ -65,7 +64,7 @@ public class UpgradeInSmithingTableTask extends ResourceTask {
             this.setDebugState("Unequipping armor before upgrading.");
             return new EquipArmorTask(new ItemTarget[0]);
          } else {
-            if (this.tablePos == null || !controller.getWorld().getBlockState(this.tablePos).is(Blocks.SMITHING_TABLE)) {
+            if (this.tablePos == null || !controller.getWorld().getBlockState(this.tablePos).isOf(Blocks.SMITHING_TABLE)) {
                Optional<BlockPos> nearestTable = controller.getBlockScanner().getNearestBlock(Blocks.SMITHING_TABLE);
                if (!nearestTable.isPresent()) {
                   if (controller.getItemStorage().hasItem(Items.SMITHING_TABLE)) {
@@ -81,8 +80,8 @@ public class UpgradeInSmithingTableTask extends ResourceTask {
             }
 
             if (!this.tablePos
-               .closerThan(
-                  new Vec3i((int)controller.getEntity().position().x, (int)controller.getEntity().position().y, (int)controller.getEntity().position().z), 4.5
+               .isWithinDistance(
+                  new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z), 4.5
                )) {
                this.setDebugState("Going to smithing table.");
                return new GetToBlockTask(this.tablePos);

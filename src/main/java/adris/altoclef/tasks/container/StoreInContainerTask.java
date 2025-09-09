@@ -8,17 +8,16 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ItemHelper;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.Container;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
-
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.LootableContainerBlockEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class StoreInContainerTask extends Task {
    public static final Block[] CONTAINER_BLOCKS = Stream.concat(
@@ -58,19 +57,19 @@ public class StoreInContainerTask extends Task {
          }
 
          if (!this.containerPos
-            .closerThan(
+            .isWithinDistance(
                new Vec3i(
-                  (int)this.controller.getEntity().position().x, (int)this.controller.getEntity().position().y, (int)this.controller.getEntity().position().z
+                  (int)this.controller.getEntity().getPos().x, (int)this.controller.getEntity().getPos().y, (int)this.controller.getEntity().getPos().z
                ),
                4.5
             )) {
             this.setDebugState("Going to container");
             return new GetToBlockTask(this.containerPos);
-         } else if (!(this.controller.getWorld().getBlockEntity(this.containerPos) instanceof RandomizableContainerBlockEntity container)) {
+         } else if (!(this.controller.getWorld().getBlockEntity(this.containerPos) instanceof LootableContainerBlockEntity container)) {
             Debug.logWarning("Block at " + this.containerPos + " is not a lootable container. Stopping.");
             return null;
          } else {
-            RandomizableContainerBlockEntity var19 = container;
+            LootableContainerBlockEntity var19 = container;
             LivingEntityInventory var20 = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
             this.controller.getItemStorage().containers.WritableCache(this.controller, this.containerPos);
             this.setDebugState("Storing items");
@@ -90,9 +89,9 @@ public class StoreInContainerTask extends Task {
                            ItemStack remainder = this.insertStack(var19, toInsert, false);
                            int moved = toMove - remainder.getCount();
                            if (moved > 0) {
-                              playerStack.shrink(moved);
+                              playerStack.decrement(moved);
                               var20.setItem(i, playerStack);
-                              container.setChanged();
+                              container.markDirty();
                               this.controller.getItemStorage().registerSlotAction();
                               return null;
                            }
@@ -109,7 +108,7 @@ public class StoreInContainerTask extends Task {
 
    @Override
    public boolean isFinished() {
-      return this.controller.getWorld().getBlockEntity(this.containerPos) instanceof Container containerInv
+      return this.controller.getWorld().getBlockEntity(this.containerPos) instanceof Inventory containerInv
          ? Arrays.stream(this.toStore).allMatch(target -> this.countItem(containerInv, target) >= target.getTargetCount())
          : Arrays.stream(this.toStore).allMatch(target -> this.controller.getItemStorage().getItemCount(target) == 0);
    }
@@ -133,11 +132,11 @@ public class StoreInContainerTask extends Task {
       return "Storing in container[" + this.containerPos.toShortString() + "] " + Arrays.toString((Object[])this.toStore);
    }
 
-   private int countItem(Container inventory, ItemTarget target) {
+   private int countItem(Inventory inventory, ItemTarget target) {
       int count = 0;
 
-      for (int i = 0; i < inventory.getContainerSize(); i++) {
-         ItemStack stack = inventory.getItem(i);
+      for (int i = 0; i < inventory.size(); i++) {
+         ItemStack stack = inventory.getStack(i);
          if (target.matches(stack.getItem())) {
             count += stack.getCount();
          }
@@ -146,30 +145,30 @@ public class StoreInContainerTask extends Task {
       return count;
    }
 
-   private ItemStack insertStack(Container inventory, ItemStack stack, boolean simulate) {
+   private ItemStack insertStack(Inventory inventory, ItemStack stack, boolean simulate) {
       if (simulate) {
          stack = stack.copy();
       }
 
-      for (int i = 0; i < inventory.getContainerSize() && !stack.isEmpty(); i++) {
-         ItemStack slotStack = inventory.getItem(i);
-         if (ItemStack.isSameItemSameTags(stack, slotStack)) {
-            int space = slotStack.getMaxStackSize() - slotStack.getCount();
+      for (int i = 0; i < inventory.size() && !stack.isEmpty(); i++) {
+         ItemStack slotStack = inventory.getStack(i);
+         if (ItemStack.canCombine(stack, slotStack)) {
+            int space = slotStack.getMaxCount() - slotStack.getCount();
             int toTransfer = Math.min(stack.getCount(), space);
             if (toTransfer > 0) {
-               slotStack.grow(toTransfer);
-               stack.shrink(toTransfer);
+               slotStack.increment(toTransfer);
+               stack.decrement(toTransfer);
                if (!simulate) {
-                  inventory.setItem(i, slotStack);
+                  inventory.setStack(i, slotStack);
                }
             }
          }
       }
 
-      for (int ix = 0; ix < inventory.getContainerSize() && !stack.isEmpty(); ix++) {
-         if (inventory.getItem(ix).isEmpty()) {
+      for (int ix = 0; ix < inventory.size() && !stack.isEmpty(); ix++) {
+         if (inventory.getStack(ix).isEmpty()) {
             if (!simulate) {
-               inventory.setItem(ix, stack.copy());
+               inventory.setStack(ix, stack.copy());
             }
 
             stack.setCount(0);

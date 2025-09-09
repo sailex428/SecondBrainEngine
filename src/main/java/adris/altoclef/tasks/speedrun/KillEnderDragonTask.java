@@ -22,26 +22,25 @@ import baritone.api.pathing.goals.GoalGetToBlock;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.RotationUtils;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.boss.EnderDragonPart;
-import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
-import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
-import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
+import net.minecraft.entity.boss.dragon.phase.Phase;
+import net.minecraft.entity.boss.dragon.phase.PhaseType;
+import net.minecraft.entity.decoration.EndCrystalEntity;
+import net.minecraft.entity.mob.EndermanEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 public class KillEnderDragonTask extends Task {
    private static final String[] DIAMOND_ARMORS = new String[]{"diamond_chestplate", "diamond_leggings", "diamond_helmet", "diamond_boots"};
@@ -64,7 +63,7 @@ public class KillEnderDragonTask extends Task {
    protected void onStart() {
       AltoClefController mod = this.controller;
       mod.getBehaviour().push();
-      mod.getBehaviour().addForceFieldExclusion(entity -> entity instanceof EnderMan || entity instanceof EnderDragon || entity instanceof EnderDragonPart);
+      mod.getBehaviour().addForceFieldExclusion(entity -> entity instanceof EndermanEntity || entity instanceof EnderDragonEntity || entity instanceof EnderDragonPart);
       mod.getBehaviour().setPreferredStairs(true);
    }
 
@@ -99,17 +98,17 @@ public class KillEnderDragonTask extends Task {
             }
          }
 
-         if (!this.isRailingOnDragon() && this.lookDownTimer.elapsed() && !mod.getControllerExtras().isBreakingBlock() && mod.getPlayer().onGround()) {
+         if (!this.isRailingOnDragon() && this.lookDownTimer.elapsed() && !mod.getControllerExtras().isBreakingBlock() && mod.getPlayer().isOnGround()) {
             this.lookDownTimer.reset();
             mod.getBaritone().getLookBehavior().updateTarget(new Rotation(0.0F, 90.0F), true);
          }
 
          if (mod.getBlockScanner().anyFound(Blocks.END_PORTAL)) {
             this.setDebugState("Entering portal to beat the game.");
-            return new DoToClosestBlockTask(blockPos -> new GetToBlockTask(blockPos.above(), false), Blocks.END_PORTAL);
+            return new DoToClosestBlockTask(blockPos -> new GetToBlockTask(blockPos.up(), false), Blocks.END_PORTAL);
          } else {
             int MINIMUM_BUILDING_BLOCKS = 1;
-            if (mod.getEntityTracker().entityFound(EndCrystal.class)
+            if (mod.getEntityTracker().entityFound(EndCrystalEntity.class)
                   && mod.getItemStorage().getItemCount(Items.DIRT, Items.COBBLESTONE, Items.NETHERRACK, Items.END_STONE) < MINIMUM_BUILDING_BLOCKS
                || this.collectBuildMaterialsTask.isActive() && !this.collectBuildMaterialsTask.isFinished()) {
                if (StorageHelper.miningRequirementMetInventory(this.controller, MiningRequirement.WOOD)) {
@@ -121,16 +120,16 @@ public class KillEnderDragonTask extends Task {
                mod.getBehaviour().removeProtectedItems(Items.END_STONE);
             }
 
-            if (mod.getEntityTracker().entityFound(EndCrystal.class)) {
+            if (mod.getEntityTracker().entityFound(EndCrystalEntity.class)) {
                this.setDebugState("Kamakazeeing crystals");
                return new DoToClosestEntityTask(toDestroy -> {
-                  if (toDestroy.closerThan(mod.getPlayer(), 7.0)) {
+                  if (toDestroy.isInRange(mod.getPlayer(), 7.0)) {
                      mod.getControllerExtras().attack(toDestroy);
                   }
 
-                  return new GetToBlockTask(toDestroy.blockPosition().offset(1, 0, 0), false);
-               }, EndCrystal.class);
-            } else if (mod.getEntityTracker().entityFound(EnderDragon.class)) {
+                  return new GetToBlockTask(toDestroy.getBlockPos().add(1, 0, 0), false);
+               }, EndCrystalEntity.class);
+            } else if (mod.getEntityTracker().entityFound(EnderDragonEntity.class)) {
                this.setDebugState("Punking dragon");
                return this.punkTask;
             } else {
@@ -212,11 +211,11 @@ public class KillEnderDragonTask extends Task {
       }
 
       public float getAttackCooldownProgressPerTick(LivingEntity entity) {
-         return (float)(1.0 / entity.getAttributeValue(Attributes.ATTACK_SPEED) * 20.0);
+         return (float)(1.0 / entity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED) * 20.0);
       }
 
       public float getAttackCooldownProgress(LivingEntity entity, float baseTime) {
-         return Mth.clamp((((LivingEntityMixin)entity).getLastAttackedTicks() + baseTime) / this.getAttackCooldownProgressPerTick(entity), 0.0F, 1.0F);
+         return MathHelper.clamp((((LivingEntityMixin)entity).getLastAttackedTicks() + baseTime) / this.getAttackCooldownProgressPerTick(entity), 0.0F, 1.0F);
       }
 
       private void stopHitting(AltoClefController mod) {
@@ -238,15 +237,15 @@ public class KillEnderDragonTask extends Task {
       @Override
       protected Task onTick() {
          AltoClefController mod = this.controller;
-         if (!mod.getEntityTracker().entityFound(EnderDragon.class)) {
+         if (!mod.getEntityTracker().entityFound(EnderDragonEntity.class)) {
             this.setDebugState("No dragon found.");
             return null;
          } else {
-            List<EnderDragon> dragons = mod.getEntityTracker().getTrackedEntities(EnderDragon.class);
+            List<EnderDragonEntity> dragons = mod.getEntityTracker().getTrackedEntities(EnderDragonEntity.class);
             if (!dragons.isEmpty()) {
-               for (EnderDragon dragon : dragons) {
-                  DragonPhaseInstance dragonPhase = dragon.getPhaseManager().getCurrentPhase();
-                  boolean perchingOrGettingReady = dragonPhase.getPhase() == EnderDragonPhase.LANDING || dragonPhase.isSitting();
+               for (EnderDragonEntity dragon : dragons) {
+                  Phase dragonPhase = dragon.getPhaseManager().getCurrent();
+                  boolean perchingOrGettingReady = dragonPhase.getType() == PhaseType.LANDING || dragonPhase.isSittingOrHovering();
                   switch (this.mode) {
                      case RAILING:
                         if (!perchingOrGettingReady) {
@@ -257,9 +256,9 @@ public class KillEnderDragonTask extends Task {
                         }
 
                         Entity head = dragon.head;
-                        if (head.closerThan(mod.getPlayer(), 7.5) && dragon.dragonDeathTime <= 1) {
+                        if (head.isInRange(mod.getPlayer(), 7.5) && dragon.ticksSinceDeath <= 1) {
                            AbstractKillEntityTask.equipWeapon(mod);
-                           Vec3 targetLookPos = head.position().add(0.0, 3.0, 0.0);
+                           Vec3d targetLookPos = head.getPos().add(0.0, 3.0, 0.0);
                            Rotation targetRotation = RotationUtils.calcRotationFromVec3d(
                               mod.getBaritone().getEntityContext().headPos(), targetLookPos, mod.getBaritone().getEntityContext().entityRotations()
                            );
@@ -278,8 +277,8 @@ public class KillEnderDragonTask extends Task {
                            for (int dx = -2; dx <= 2; dx++) {
                               for (int dz = -2; dz <= 2; dz++) {
                                  if (Math.abs(dx) != 2 || Math.abs(dz) != 2) {
-                                    BlockPos toCheck = KillEnderDragonTask.this.exitPortalTop.offset(dx, bottomYDelta, dz);
-                                    double distSq = BlockPosVer.getSquaredDistance(toCheck, head.position());
+                                    BlockPos toCheck = KillEnderDragonTask.this.exitPortalTop.add(dx, bottomYDelta, dz);
+                                    double distSq = BlockPosVer.getSquaredDistance(toCheck, head.getPos());
                                     if (distSq < closestDist) {
                                        closest = toCheck;
                                        closestDist = distSq;
@@ -369,7 +368,7 @@ public class KillEnderDragonTask extends Task {
             if (y != -1) {
                BlockPos check = new BlockPos(x, y, z);
                if (mod.getWorld().getBlockState(check).getBlock() == Blocks.END_STONE) {
-                  pos = check.above();
+                  pos = check.up();
                }
             }
          }

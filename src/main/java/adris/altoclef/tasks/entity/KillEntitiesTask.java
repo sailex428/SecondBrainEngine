@@ -1,8 +1,7 @@
 package adris.altoclef.tasks.entity;
 
-import net.minecraft.world.entity.Entity;
-
 import java.util.function.Predicate;
+import net.minecraft.entity.Entity;
 
 public class KillEntitiesTask extends DoToClosestEntityTask {
    public KillEntitiesTask(Predicate<Entity> shouldKill) {

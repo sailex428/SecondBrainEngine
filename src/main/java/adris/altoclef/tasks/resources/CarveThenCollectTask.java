@@ -10,10 +10,9 @@ import adris.altoclef.tasks.construction.PlaceBlockNearbyTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.StorageHelper;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-
 import java.util.Arrays;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 
 public class CarveThenCollectTask extends ResourceTask {
    private final ItemTarget target;

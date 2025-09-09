@@ -34,7 +34,7 @@ public class EventQueueManager {
             // unused but need to keep this so subscribes to events
             // TODO: figure out what to do w. fabric here:
             ServerMessageEvents.CHAT_MESSAGE.register((ChatMessage) (evt, senderEntity, params) -> {
-                String message = evt.signedContent();
+                String message = evt.getSignedContent();
                 String sender = senderEntity.getName().getString();
                 EventQueueManager.onUserChatMessage(new UserMessage(message, sender));
             });
@@ -100,10 +100,10 @@ public class EventQueueManager {
 
     // ## Utils
     public static EventQueueData getOrCreateEventQueueData(AltoClefController mod) {
-        return queueData.computeIfAbsent(mod.getPlayer().getUUID(), k -> {
+        return queueData.computeIfAbsent(mod.getPlayer().getUuid(), k -> {
             LOGGER.info(
                     "EventQueueManager/getOrCreateEventQueueData: creating new queue data for entId={}",
-                    mod.getPlayer().getStringUUID());
+                    mod.getPlayer().getUuidAsString());
             return new EventQueueData(mod);
         });
     }

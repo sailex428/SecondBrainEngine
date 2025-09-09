@@ -4,9 +4,9 @@ package adris.altoclef.player2api;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.commandsystem.CommandExecutor;
 import adris.altoclef.tasks.LookAtOwnerTask;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +37,7 @@ public class AgentSideEffects {
         if (characterMessage.message() != null && !characterMessage.message().isBlank()) {
             EventQueueData sendingCharacterData = characterMessage.sendingCharacterData();
                         String message = String.format("<%s> %s", sendingCharacterData.getName(), characterMessage.message());
-            for(ServerPlayer player : server.getPlayerList().getPlayers()){
+            for(ServerPlayerEntity player : server.getPlayerManager().getPlayerList()){
                 // if you are an owner, or close, send to player.
                 // if(sendingCharacterData.isOwner(player.getUUID()) || isClose(sendingCharacterData, player)  ){
                     broadcastChatToPlayer(server, message, player);
@@ -98,8 +98,8 @@ public class AgentSideEffects {
         });
     }
 
-    private static void broadcastChatToPlayer(MinecraftServer server, String message, ServerPlayer player){
-        player.displayClientMessage(Component.literal(message), false);
+    private static void broadcastChatToPlayer(MinecraftServer server, String message, ServerPlayerEntity player){
+        player.sendMessage(Text.literal(message), false);
     }
 
 }

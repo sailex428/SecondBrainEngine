@@ -1,12 +1,11 @@
 package adris.altoclef.multiversion.recipemanager;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeManager;
+import net.minecraft.util.Identifier;
 
 public class RecipeManagerWrapper {
    private final RecipeManager recipeManager;
@@ -22,8 +21,8 @@ public class RecipeManagerWrapper {
    public Collection<WrappedRecipeEntry> values() {
       List<WrappedRecipeEntry> result = new ArrayList<>();
 
-      for (ResourceLocation id : this.recipeManager.getRecipeIds().toList()) {
-         result.add(new WrappedRecipeEntry(id, (Recipe<?>)this.recipeManager.byKey(id).get()));
+      for (Identifier id : this.recipeManager.keys().toList()) {
+         result.add(new WrappedRecipeEntry(id, (Recipe<?>)this.recipeManager.get(id).get()));
       }
 
       return result;

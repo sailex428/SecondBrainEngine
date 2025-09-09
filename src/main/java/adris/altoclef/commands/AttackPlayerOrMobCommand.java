@@ -13,12 +13,11 @@ import adris.altoclef.tasks.entity.KillEntitiesTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class AttackPlayerOrMobCommand extends Command {
    public AttackPlayerOrMobCommand() throws CommandException {
@@ -76,14 +75,14 @@ public class AttackPlayerOrMobCommand extends Command {
             if (this.mobsKilledCount >= this.mobKillTargetCount) {
                return false;
             } else {
-               if (entity instanceof Player) {
+               if (entity instanceof PlayerEntity) {
                   String playerName = entity.getName().getString();
                   if (playerName != null && playerName.equalsIgnoreCase(toKill)) {
                      return true;
                   }
                }
 
-               String name = entity.getType().toShortString();
+               String name = entity.getType().getUntranslatedName();
                return name != null && name.equals(toKill);
             }
          };
@@ -120,7 +119,7 @@ public class AttackPlayerOrMobCommand extends Command {
 
       @Override
       protected Task onResourceTick(AltoClefController mod) {
-         for (Entity entity : mod.getWorld().getAllEntities()) {
+         for (Entity entity : mod.getWorld().iterateEntities()) {
             if (!this.trackedDeadEntities.contains(entity) && this.shouldAttackPredicate.test(entity) && !entity.isAlive()) {
                this.markEntityDead(entity);
             }

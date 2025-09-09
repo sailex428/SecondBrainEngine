@@ -1,10 +1,10 @@
 package adris.altoclef.multiversion;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.world.World;
 
 public class DamageSourceVer {
-   public static DamageSource getFallDamageSource(Level world) {
-      return world.damageSources().fall();
+   public static DamageSource getFallDamageSource(World world) {
+      return world.getDamageSources().fall();
    }
 }

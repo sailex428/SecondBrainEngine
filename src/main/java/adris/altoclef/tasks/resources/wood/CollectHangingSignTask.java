@@ -5,7 +5,7 @@ import adris.altoclef.tasks.resources.CraftWithMatchingStrippedLogsTask;
 import adris.altoclef.util.CraftingRecipe;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ItemHelper;
-import net.minecraft.world.item.Item;
+import net.minecraft.item.Item;
 
 public class CollectHangingSignTask extends CraftWithMatchingStrippedLogsTask {
    public CollectHangingSignTask(Item[] targets, ItemTarget strippedLogs, int count) {

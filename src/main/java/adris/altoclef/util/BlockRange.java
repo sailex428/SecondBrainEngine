@@ -3,9 +3,8 @@ package adris.altoclef.util;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.util.helpers.WorldHelper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.minecraft.core.BlockPos;
-
 import java.util.Objects;
+import net.minecraft.util.math.BlockPos;
 
 public class BlockRange {
    public BlockPos start;
@@ -42,7 +41,7 @@ public class BlockRange {
 
    @JsonIgnore
    public BlockPos getCenter() {
-      BlockPos sum = this.start.offset(this.end);
+      BlockPos sum = this.start.add(this.end);
       return new BlockPos(sum.getX() / 2, sum.getY() / 2, sum.getZ() / 2);
    }
 

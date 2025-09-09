@@ -5,12 +5,11 @@ import adris.altoclef.tasks.CraftInInventoryTask;
 import adris.altoclef.tasks.ResourceTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.*;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
 import java.util.Optional;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
 
 public class CollectCoarseDirtTask extends ResourceTask {
    private static final float CLOSE_ENOUGH_COARSE_DIRT = 128.0F;
@@ -36,7 +35,7 @@ public class CollectCoarseDirtTask extends ResourceTask {
       Optional<BlockPos> closest = mod.getBlockScanner().getNearestBlock(Blocks.COARSE_DIRT);
       if ((mod.getItemStorage().getItemCount(Items.DIRT) < c || mod.getItemStorage().getItemCount(Items.GRAVEL) < c)
          && closest.isPresent()
-         && closest.get().closerToCenterThan(mod.getPlayer().position(), 128.0)) {
+         && closest.get().isWithinDistance(mod.getPlayer().getPos(), 128.0)) {
          return new MineAndCollectTask(new ItemTarget(Items.COARSE_DIRT), new Block[]{Blocks.COARSE_DIRT}, MiningRequirement.HAND)
             .forceDimension(Dimension.OVERWORLD);
       } else {

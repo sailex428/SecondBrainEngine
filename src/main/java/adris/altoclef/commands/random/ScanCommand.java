@@ -7,14 +7,13 @@ import adris.altoclef.commandsystem.ArgParser;
 import adris.altoclef.commandsystem.Command;
 import adris.altoclef.commandsystem.CommandException;
 import adris.altoclef.util.helpers.FuzzySearchHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.math.BlockPos;
 
 public class ScanCommand extends Command {
    public ScanCommand() throws CommandException {
@@ -51,7 +50,7 @@ public class ScanCommand extends Command {
          this.finish();
       } else {
          BlockScanner blockScanner = mod.getBlockScanner();
-         Optional<BlockPos> p = blockScanner.getNearestBlock(block, mod.getPlayer().position());
+         Optional<BlockPos> p = blockScanner.getNearestBlock(block, mod.getPlayer().getPos());
          if (p.isPresent()) {
             mod.log("Closest " + blockStr + ": " + p.get().toString());
          } else {

@@ -11,10 +11,15 @@ import adris.altoclef.util.slots.Slot;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
 import baritone.utils.ToolSet;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.ShieldItem;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -31,13 +36,13 @@ public class StorageHelper {
    public static boolean isArmorEquipped(AltoClefController controller, Item... any) {
       for (Item item : any) {
          if (item instanceof ArmorItem armor) {
-            ItemStack equippedStack = controller.getEntity().getItemBySlot(armor.getType().getSlot());
-            if (equippedStack.is(item)) {
+            ItemStack equippedStack = controller.getEntity().getEquippedStack(armor.getType().getEquipmentSlot());
+            if (equippedStack.isOf(item)) {
                return true;
             }
          } else if (item instanceof ShieldItem) {
-            ItemStack equippedStack = controller.getEntity().getItemBySlot(EquipmentSlot.OFFHAND);
-            if (equippedStack.is(item)) {
+            ItemStack equippedStack = controller.getEntity().getEquippedStack(EquipmentSlot.OFFHAND);
+            if (equippedStack.isOf(item)) {
                return true;
             }
          }
@@ -51,7 +56,7 @@ public class StorageHelper {
    }
 
    public static boolean isItemInOffhand(AltoClefController controller, Item item) {
-      return controller.getEntity().getItemBySlot(EquipmentSlot.OFFHAND).is(item);
+      return controller.getEntity().getEquippedStack(EquipmentSlot.OFFHAND).isOf(item);
    }
 
    public static boolean isEquipped(AltoClefController controller, Item... items) {
@@ -131,7 +136,7 @@ public class StorageHelper {
                score += 1000;
             }
 
-            if (stack.getCount() < stack.getMaxStackSize()) {
+            if (stack.getCount() < stack.getMaxCount()) {
                score += 100;
             }
 

@@ -2,13 +2,12 @@ package adris.altoclef.trackers;
 
 import adris.altoclef.util.helpers.BaritoneHelper;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.AABB;
-
 import java.util.HashSet;
 import java.util.Set;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 
 public class EntityStuckTracker extends Tracker {
    final float MOB_RANGE = 25.0F;
@@ -31,9 +30,9 @@ public class EntityStuckTracker extends Tracker {
          this.blockedSpots.clear();
          LivingEntity clientPlayerEntity = this.mod.getEntity();
 
-         for (Entity entity : this.mod.getWorld().getAllEntities()) {
-            if (entity != null && entity.isAlive() && !entity.equals(clientPlayerEntity) && clientPlayerEntity.closerThan(entity, 25.0)) {
-               AABB b = entity.getBoundingBox();
+         for (Entity entity : this.mod.getWorld().iterateEntities()) {
+            if (entity != null && entity.isAlive() && !entity.equals(clientPlayerEntity) && clientPlayerEntity.isInRange(entity, 25.0)) {
+               Box b = entity.getBoundingBox();
 
                for (BlockPos p : WorldHelper.getBlocksTouchingBox(b)) {
                   this.blockedSpots.add(p);

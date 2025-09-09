@@ -1,7 +1,7 @@
 package adris.altoclef.util.slots;
 
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.entity.EquipmentSlot;
 
 public final class PlayerSlot {
    public static final int ARMOR_BOOTS_SLOT_INDEX = 0;
@@ -32,7 +32,7 @@ public final class PlayerSlot {
 
             return getOffhandSlot(inventory);
          case ARMOR:
-            return getArmorSlot(inventory, equipSlot.getIndex());
+            return getArmorSlot(inventory, equipSlot.getEntitySlotId());
          default:
             return Slot.UNDEFINED;
       }

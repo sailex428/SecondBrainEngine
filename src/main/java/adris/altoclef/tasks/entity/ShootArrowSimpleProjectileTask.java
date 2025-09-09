@@ -7,15 +7,14 @@ import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.Arrays;
 import java.util.List;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 public class ShootArrowSimpleProjectileTask extends Task {
    private final Entity target;
@@ -33,17 +32,17 @@ public class ShootArrowSimpleProjectileTask extends Task {
    }
 
    private static Rotation calculateThrowLook(AltoClefController mod, Entity target) {
-      float velocity = (mod.getPlayer().getTicksUsingItem() - mod.getPlayer().getUseItemRemainingTicks()) / 20.0F;
+      float velocity = (mod.getPlayer().getItemUseTime() - mod.getPlayer().getItemUseTimeLeft()) / 20.0F;
       velocity = (velocity * velocity + velocity * 2.0F) / 3.0F;
       if (velocity > 1.0F) {
          velocity = 1.0F;
       }
 
-      Vec3 targetCenter = target.getBoundingBox().getCenter();
-      double posX = targetCenter.x();
-      double posY = targetCenter.y();
-      double posZ = targetCenter.z();
-      posY -= 1.9F - target.getBbHeight();
+      Vec3d targetCenter = target.getBoundingBox().getCenter();
+      double posX = targetCenter.getX();
+      double posY = targetCenter.getY();
+      double posZ = targetCenter.getZ();
+      posY -= 1.9F - target.getHeight();
       double relativeX = posX - mod.getPlayer().getX();
       double relativeY = posY - mod.getPlayer().getY();
       double relativeZ = posZ - mod.getPlayer().getZ();
@@ -56,13 +55,13 @@ public class ShootArrowSimpleProjectileTask extends Task {
             Math.atan((velocitySq - Math.sqrt(velocitySq * velocitySq - 0.006F * (0.006F * hDistanceSq + 2.0 * relativeY * velocitySq))) / 0.006F * hDistance)
          )
       );
-      return Float.isNaN(pitch) ? new Rotation(target.getYRot(), target.getXRot()) : new Rotation(Vec3dToYaw(mod, new Vec3(posX, posY, posZ)), pitch);
+      return Float.isNaN(pitch) ? new Rotation(target.getYaw(), target.getPitch()) : new Rotation(Vec3dToYaw(mod, new Vec3d(posX, posY, posZ)), pitch);
    }
 
-   private static float Vec3dToYaw(AltoClefController mod, Vec3 vec) {
-      return mod.getPlayer().getYRot()
-         + Mth.wrapDegrees(
-            (float)Math.toDegrees(Math.atan2(vec.z() - mod.getPlayer().getZ(), vec.x() - mod.getPlayer().getX())) - 90.0F - mod.getPlayer().getYRot()
+   private static float Vec3dToYaw(AltoClefController mod, Vec3d vec) {
+      return mod.getPlayer().getYaw()
+         + MathHelper.wrapDegrees(
+            (float)Math.toDegrees(Math.atan2(vec.getZ() - mod.getPlayer().getZ(), vec.getX() - mod.getPlayer().getX())) - 90.0F - mod.getPlayer().getYaw()
          );
    }
 
@@ -74,7 +73,7 @@ public class ShootArrowSimpleProjectileTask extends Task {
       if (mod.getItemStorage().hasItem(Items.BOW) && requiredArrows.stream().anyMatch(mod.getItemStorage()::hasItem)) {
          Rotation lookTarget = calculateThrowLook(mod, this.target);
          LookHelper.lookAt(this.controller, lookTarget);
-         boolean charged = mod.getPlayer().getTicksUsingItem() > 20 && mod.getPlayer().getUseItem().getItem() == Items.BOW;
+         boolean charged = mod.getPlayer().getItemUseTime() > 20 && mod.getPlayer().getActiveItem().getItem() == Items.BOW;
          mod.getSlotHandler().forceEquipItem(Items.BOW);
          if (LookHelper.isLookingAt(mod, lookTarget) && !this.shooting) {
             mod.getInputControls().hold(Input.CLICK_RIGHT);
@@ -83,11 +82,11 @@ public class ShootArrowSimpleProjectileTask extends Task {
          }
 
          if (this.shooting && charged) {
-            for (Arrow arrow : mod.getEntityTracker().getTrackedEntities(Arrow.class)) {
+            for (ArrowEntity arrow : mod.getEntityTracker().getTrackedEntities(ArrowEntity.class)) {
                if (arrow.getOwner() == mod.getPlayer()) {
-                  Vec3 velocity = arrow.getDeltaMovement();
-                  Vec3 delta = this.target.position().subtract(arrow.position());
-                  boolean isMovingTowardsTarget = velocity.dot(delta) > 0.0;
+                  Vec3d velocity = arrow.getVelocity();
+                  Vec3d delta = this.target.getPos().subtract(arrow.getPos());
+                  boolean isMovingTowardsTarget = velocity.dotProduct(delta) > 0.0;
                   if (isMovingTowardsTarget) {
                      return null;
                   }
@@ -122,6 +121,6 @@ public class ShootArrowSimpleProjectileTask extends Task {
 
    @Override
    protected String toDebugString() {
-      return "Shooting arrow at " + this.target.getType().getDescriptionId();
+      return "Shooting arrow at " + this.target.getType().getTranslationKey();
    }
 }

@@ -11,20 +11,19 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.StlHelper;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.state.BlockState;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CropBlock;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.Item;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 public class CollectCropTask extends ResourceTask {
    private final ItemTarget cropToCollect;
@@ -74,8 +73,8 @@ public class CollectCropTask extends ResourceTask {
          }
 
          if (mod.getEntityTracker().itemDropped(this.cropSeed)) {
-            Optional<ItemEntity> closest = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().position(), this.cropSeed);
-            if (closest.isPresent() && closest.get().closerThan(mod.getPlayer(), 7.0)) {
+            Optional<ItemEntity> closest = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().getPos(), this.cropSeed);
+            if (closest.isPresent() && closest.get().isInRange(mod.getPlayer(), 7.0)) {
                return this.collectSeedTask;
             }
          }
@@ -88,7 +87,7 @@ public class CollectCropTask extends ResourceTask {
          assert !this.emptyCropland.isEmpty();
 
          return new DoToClosestBlockTask(
-            blockPos -> new InteractWithBlockTask(new ItemTarget(this.cropSeed, 1), Direction.UP, blockPos.below(), true),
+            blockPos -> new InteractWithBlockTask(new ItemTarget(this.cropSeed, 1), Direction.UP, blockPos.down(), true),
             pos -> this.emptyCropland.stream().min(StlHelper.compareValues(block -> BlockPosVer.getSquaredDistance(block, pos))),
             this.emptyCropland::contains,
             Blocks.FARMLAND
@@ -158,7 +157,7 @@ public class CollectCropTask extends ResourceTask {
       if (mod.getChunkTracker().isChunkLoaded(blockPos) && WorldHelper.canReach(this.controller, blockPos)) {
          BlockState s = mod.getWorld().getBlockState(blockPos);
          if (s.getBlock() instanceof CropBlock crop) {
-            boolean mature = crop.isMaxAge(s);
+            boolean mature = crop.isMature(s);
             if (this.wasFullyGrown.contains(blockPos)) {
                if (!mature) {
                   this.wasFullyGrown.remove(blockPos);

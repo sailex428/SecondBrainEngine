@@ -2,17 +2,16 @@ package adris.altoclef;
 
 import baritone.api.utils.RayTraceUtils;
 import baritone.autoclef.AltoClefSettings;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext.Fluid;
-import net.minecraft.world.level.block.state.BlockState;
-
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.RaycastContext.FluidHandling;
 
 public class BotBehaviour {
    private final AltoClefController mod;
@@ -97,7 +96,7 @@ public class BotBehaviour {
       this.current().applyState();
    }
 
-   public void setRayTracingFluidHandling(Fluid fluidHandling) {
+   public void setRayTracingFluidHandling(FluidHandling fluidHandling) {
       this.current().rayFluidHandling = fluidHandling;
       this.current().applyState();
    }
@@ -237,7 +236,7 @@ public class BotBehaviour {
       public List<BiFunction<Double, BlockPos, Double>> globalHeuristics = new ArrayList<>();
       public boolean allowWalkThroughFlowingWater = false;
       public boolean pauseOnLostFocus = true;
-      public Fluid rayFluidHandling;
+      public FluidHandling rayFluidHandling;
       public boolean escapeLava = true;
 
       public State() {

@@ -4,12 +4,16 @@ import adris.altoclef.AltoClefController;
 import adris.altoclef.multiversion.BlockTagVer;
 import adris.altoclef.multiversion.item.ItemVer;
 import adris.altoclef.util.WoodType;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.LeavesBlock;
+import net.minecraft.block.MapColor;
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.DyeColor;
 
 import java.util.*;
 
@@ -1172,12 +1176,12 @@ public class ItemHelper {
       String[] possibilities = new String[]{"item.minecraft.", "block.minecraft."};
 
       for (String possible : possibilities) {
-         if (item.getDescriptionId().startsWith(possible)) {
-            return item.getDescriptionId().substring(possible.length());
+         if (item.getTranslationKey().startsWith(possible)) {
+            return item.getTranslationKey().substring(possible.length());
          }
       }
 
-      return item.getDescriptionId();
+      return item.getTranslationKey();
    }
 
    public static Item[] blocksToItems(Block[] blocks) {
@@ -1195,7 +1199,7 @@ public class ItemHelper {
 
       for (Item item : items) {
          if (item instanceof BlockItem) {
-            Block b = Block.byItem(item);
+            Block b = Block.getBlockFromItem(item);
             if (b != null && b != Blocks.AIR) {
                result.add(b);
             }
@@ -1266,7 +1270,7 @@ public class ItemHelper {
    }
 
    private static boolean isStackProtected(AltoClefController mod, ItemStack stack) {
-      if (stack.isEnchanted() && mod.getModSettings().getDontThrowAwayEnchantedItems()) {
+      if (stack.hasEnchantments() && mod.getModSettings().getDontThrowAwayEnchantedItems()) {
          return true;
       } else {
          return ItemVer.hasCustomName(stack) && mod.getModSettings().getDontThrowAwayCustomNameItems()
@@ -1284,14 +1288,14 @@ public class ItemHelper {
    }
 
    public static boolean canStackTogether(ItemStack from, ItemStack to) {
-      return to.isEmpty() && from.getCount() <= from.getMaxStackSize()
+      return to.isEmpty() && from.getCount() <= from.getMaxCount()
          ? true
-         : to.getItem().equals(from.getItem()) && from.getCount() + to.getCount() < to.getMaxStackSize();
+         : to.getItem().equals(from.getItem()) && from.getCount() + to.getCount() < to.getMaxCount();
    }
 
    private static Map<Item, Integer> getFuelTimeMap() {
       if (fuelTimeMap == null) {
-         fuelTimeMap = AbstractFurnaceBlockEntity.getFuel();
+         fuelTimeMap = AbstractFurnaceBlockEntity.createFuelTimeMap();
       }
 
       return fuelTimeMap;

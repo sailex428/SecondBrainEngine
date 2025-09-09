@@ -1,6 +1,6 @@
 package adris.altoclef.eventbus.events;
 
-import net.minecraft.world.entity.Entity;
+import net.minecraft.entity.Entity;
 
 public class EntitySwungEvent {
    public Entity entity;

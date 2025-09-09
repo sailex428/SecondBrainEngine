@@ -8,12 +8,11 @@ import adris.altoclef.tasks.resources.KillAndLootTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ItemHelper;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Slime;
-
 import java.util.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ExperienceOrbEntity;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.SlimeEntity;
 
 public class HeroTask extends Task {
    @Override
@@ -27,17 +26,17 @@ public class HeroTask extends Task {
          this.setDebugState("Eat first.");
          return null;
       } else {
-         Optional<Entity> experienceOrb = mod.getEntityTracker().getClosestEntity(ExperienceOrb.class);
+         Optional<Entity> experienceOrb = mod.getEntityTracker().getClosestEntity(ExperienceOrbEntity.class);
          if (experienceOrb.isPresent()) {
             this.setDebugState("Getting experience.");
             return new GetToEntityTask(experienceOrb.get());
          } else {
             assert this.controller.getWorld() != null;
 
-            Iterable<Entity> hostiles = this.controller.getWorld().getAllEntities();
+            Iterable<Entity> hostiles = this.controller.getWorld().iterateEntities();
             if (hostiles != null) {
                for (Entity hostile : hostiles) {
-                  if (hostile instanceof Monster || hostile instanceof Slime) {
+                  if (hostile instanceof HostileEntity || hostile instanceof SlimeEntity) {
                      Optional<Entity> closestHostile = mod.getEntityTracker().getClosestEntity(hostile.getClass());
                      if (closestHostile.isPresent()) {
                         this.setDebugState("Killing hostiles or picking hostile drops.");

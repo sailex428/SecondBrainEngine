@@ -3,12 +3,11 @@ package adris.altoclef.tasks.entity;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.Debug;
 import adris.altoclef.tasksystem.Task;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.Sheep;
-import net.minecraft.world.item.Items;
-
 import java.util.Optional;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.item.Items;
+import net.minecraft.sound.SoundCategory;
 
 public class ShearSheepTask extends AbstractDoToEntityTask {
    public ShearSheepTask() {
@@ -27,8 +26,8 @@ public class ShearSheepTask extends AbstractDoToEntityTask {
          return null;
       } else {
          if (mod.getSlotHandler().forceEquipItem(Items.SHEARS)) {
-            ((Sheep)entity).shear(SoundSource.PLAYERS);
-            mod.getPlayer().getMainHandItem().hurtAndBreak(1, mod.getPlayer(), e -> {});
+            ((SheepEntity)entity).sheared(SoundCategory.PLAYERS);
+            mod.getPlayer().getMainHandStack().damage(1, mod.getPlayer(), e -> {});
          }
 
          return null;
@@ -39,7 +38,7 @@ public class ShearSheepTask extends AbstractDoToEntityTask {
    protected Optional<Entity> getEntityTarget(AltoClefController mod) {
       return mod.getEntityTracker()
          .getClosestEntity(
-            mod.getPlayer().position(), entity -> !(entity instanceof Sheep sheep) ? false : sheep.readyForShearing() && !sheep.isSheared(), Sheep.class
+            mod.getPlayer().getPos(), entity -> !(entity instanceof SheepEntity sheep) ? false : sheep.isShearable() && !sheep.isSheared(), SheepEntity.class
          );
    }
 

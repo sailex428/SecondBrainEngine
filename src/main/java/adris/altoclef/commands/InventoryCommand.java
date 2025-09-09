@@ -7,10 +7,9 @@ import adris.altoclef.commandsystem.ArgParser;
 import adris.altoclef.commandsystem.Command;
 import adris.altoclef.commandsystem.CommandException;
 import adris.altoclef.util.helpers.ItemHelper;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-
 import java.util.HashMap;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class InventoryCommand extends Command {
    public InventoryCommand() throws CommandException {

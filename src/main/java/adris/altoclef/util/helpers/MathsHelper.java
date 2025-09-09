@@ -1,26 +1,26 @@
 package adris.altoclef.util.helpers;
 
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 public interface MathsHelper {
-   static Vec3 project(Vec3 vec, Vec3 onto, boolean assumeOntoNormalized) {
+   static Vec3d project(Vec3d vec, Vec3d onto, boolean assumeOntoNormalized) {
       if (!assumeOntoNormalized) {
          onto = onto.normalize();
       }
 
-      return onto.scale(vec.dot(onto));
+      return onto.multiply(vec.dotProduct(onto));
    }
 
-   static Vec3 project(Vec3 vec, Vec3 onto) {
+   static Vec3d project(Vec3d vec, Vec3d onto) {
       return project(vec, onto, false);
    }
 
-   static Vec3 projectOntoPlane(Vec3 vec, Vec3 normal, boolean assumeNormalNormalized) {
-      Vec3 p = project(vec, normal, assumeNormalNormalized);
+   static Vec3d projectOntoPlane(Vec3d vec, Vec3d normal, boolean assumeNormalNormalized) {
+      Vec3d p = project(vec, normal, assumeNormalNormalized);
       return vec.subtract(p);
    }
 
-   static Vec3 projectOntoPlane(Vec3 vec, Vec3 normal) {
+   static Vec3d projectOntoPlane(Vec3d vec, Vec3d normal) {
       return projectOntoPlane(vec, normal, false);
    }
 }

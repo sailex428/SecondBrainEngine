@@ -2,8 +2,8 @@ package adris.altoclef.util.baritone;
 
 import baritone.api.pathing.goals.Goal;
 import baritone.api.pathing.goals.GoalBlock;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 
 public class GoalFollowEntity implements Goal {
    private final Entity entity;
@@ -17,14 +17,14 @@ public class GoalFollowEntity implements Goal {
    @Override
    public boolean isInGoal(int x, int y, int z) {
       BlockPos p = new BlockPos(x, y, z);
-      return this.entity.blockPosition().equals(p) || p.closerToCenterThan(this.entity.position(), this.closeEnoughDistance);
+      return this.entity.getBlockPos().equals(p) || p.isWithinDistance(this.entity.getPos(), this.closeEnoughDistance);
    }
 
    @Override
    public double heuristic(int x, int y, int z) {
-      double xDiff = x - this.entity.position().x();
-      int yDiff = y - this.entity.blockPosition().getY();
-      double zDiff = z - this.entity.position().z();
+      double xDiff = x - this.entity.getPos().getX();
+      int yDiff = y - this.entity.getBlockPos().getY();
+      double zDiff = z - this.entity.getPos().getZ();
       return GoalBlock.calculate(xDiff, yDiff, zDiff);
    }
 }

@@ -4,7 +4,7 @@ import adris.altoclef.TaskCatalogue;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.MiningRequirement;
 import adris.altoclef.util.helpers.StorageHelper;
-import net.minecraft.world.item.Items;
+import net.minecraft.item.Items;
 
 public class SatisfyMiningRequirementTask extends Task {
    private final MiningRequirement requirement;

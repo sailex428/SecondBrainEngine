@@ -6,18 +6,17 @@ import adris.altoclef.trackers.TrackerManager;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.slots.Slot;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 public class ItemStorageTracker extends Tracker {
    private final InventorySubTracker inventory;
@@ -105,11 +104,11 @@ public class ItemStorageTracker extends Tracker {
       return this.containers.getContainersWithItem(items);
    }
 
-   public Optional<ContainerCache> getClosestContainerWithItem(Vec3 pos, Item... items) {
+   public Optional<ContainerCache> getClosestContainerWithItem(Vec3d pos, Item... items) {
       return this.containers
          .getCachedContainers(c -> c.hasItem(items))
          .stream()
-         .min(Comparator.comparingDouble(c -> c.getBlockPos().distSqr(new Vec3i((int)pos.x(), (int)pos.y(), (int)pos.z()))));
+         .min(Comparator.comparingDouble(c -> c.getBlockPos().getSquaredDistance(new Vec3i((int)pos.getX(), (int)pos.getY(), (int)pos.getZ()))));
    }
 
    public Optional<BlockPos> getLastBlockPosInteraction() {

@@ -12,16 +12,15 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-
 import java.util.LinkedList;
 import java.util.function.Predicate;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.World;
 
 public class ConstructNetherPortalObsidianTask extends Task {
    private static final Vec3i[] PORTAL_FRAME = new Vec3i[]{
@@ -62,9 +61,9 @@ public class ConstructNetherPortalObsidianTask extends Task {
    private BlockPos destroyTarget;
 
    private BlockPos getBuildableAreaNearby(AltoClefController mod) {
-      BlockPos checkOrigin = mod.getPlayer().blockPosition();
+      BlockPos checkOrigin = mod.getPlayer().getBlockPos();
 
-      for (BlockPos toCheck : WorldHelper.scanRegion(checkOrigin, checkOrigin.offset(PORTALABLE_REGION_SIZE))) {
+      for (BlockPos toCheck : WorldHelper.scanRegion(checkOrigin, checkOrigin.add(PORTALABLE_REGION_SIZE))) {
          if (this.controller.getWorld() == null) {
             return null;
          }
@@ -86,7 +85,7 @@ public class ConstructNetherPortalObsidianTask extends Task {
       mod.getBehaviour().avoidBlockBreaking((Predicate<BlockPos>)(block -> {
          if (this.origin != null) {
             for (Vec3i framePosRelative : PORTAL_FRAME) {
-               BlockPos framePos = this.origin.offset(framePosRelative);
+               BlockPos framePos = this.origin.add(framePosRelative);
                if (block.equals(framePos)) {
                   return mod.getWorld().getBlockState(framePos).getBlock() == Blocks.OBSIDIAN;
                }
@@ -101,16 +100,16 @@ public class ConstructNetherPortalObsidianTask extends Task {
    @Override
    protected Task onTick() {
       AltoClefController mod = this.controller;
-      if (this.origin != null && mod.getWorld().getBlockState(this.origin.above()).getBlock() == Blocks.NETHER_PORTAL) {
+      if (this.origin != null && mod.getWorld().getBlockState(this.origin.up()).getBlock() == Blocks.NETHER_PORTAL) {
          this.setDebugState("Done constructing nether portal.");
-         mod.getBlockScanner().addBlock(Blocks.NETHER_PORTAL, this.origin.above());
+         mod.getBlockScanner().addBlock(Blocks.NETHER_PORTAL, this.origin.up());
          return null;
       } else {
          int neededObsidian = 10;
          BlockPos placeTarget = null;
          if (this.origin != null) {
             for (Vec3i frameOffs : PORTAL_FRAME) {
-               BlockPos framePos = this.origin.offset(frameOffs);
+               BlockPos framePos = this.origin.add(frameOffs);
                if (!mod.getBlockScanner().isBlockAtPosition(framePos, Blocks.OBSIDIAN)) {
                   placeTarget = framePos;
                   break;
@@ -140,17 +139,17 @@ public class ConstructNetherPortalObsidianTask extends Task {
                return new DestroyBlockTask(this.destroyTarget);
             } else {
                for (Vec3i middleOffs : PORTAL_INTERIOR) {
-                  BlockPos middlePos = this.origin.offset(middleOffs);
+                  BlockPos middlePos = this.origin.add(middleOffs);
                   if (!WorldHelper.isAir(this.controller.getWorld().getBlockState(middlePos).getBlock())) {
                      this.destroyTarget = middlePos;
                      return new DestroyBlockTask(this.destroyTarget);
                   }
                }
 
-               return new InteractWithBlockTask(new ItemTarget(Items.FLINT_AND_STEEL, 1), Direction.UP, this.origin.below(), true);
+               return new InteractWithBlockTask(new ItemTarget(Items.FLINT_AND_STEEL, 1), Direction.UP, this.origin.down(), true);
             }
          } else {
-            Level clientWorld = mod.getWorld();
+            World clientWorld = mod.getWorld();
             if (this.surroundedByAir(clientWorld, placeTarget)) {
                LinkedList<BlockPos> queue = new LinkedList<>();
                queue.add(placeTarget);
@@ -161,8 +160,8 @@ public class ConstructNetherPortalObsidianTask extends Task {
                      return new PlaceStructureBlockTask(pos);
                   }
 
-                  queue.add(pos.above());
-                  queue.add(pos.below());
+                  queue.add(pos.up());
+                  queue.add(pos.down());
                   queue.add(pos.east());
                   queue.add(pos.west());
                   queue.add(pos.north());
@@ -182,12 +181,12 @@ public class ConstructNetherPortalObsidianTask extends Task {
       }
    }
 
-   private boolean surroundedByAir(Level world, BlockPos pos) {
+   private boolean surroundedByAir(World world, BlockPos pos) {
       return world.getBlockState(pos.west()).isAir()
          && world.getBlockState(pos.south()).isAir()
          && world.getBlockState(pos.east()).isAir()
-         && world.getBlockState(pos.above()).isAir()
-         && world.getBlockState(pos.below()).isAir()
+         && world.getBlockState(pos.up()).isAir()
+         && world.getBlockState(pos.down()).isAir()
          && world.getBlockState(pos.north()).isAir();
    }
 

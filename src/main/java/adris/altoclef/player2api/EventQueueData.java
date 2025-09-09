@@ -8,7 +8,6 @@ import adris.altoclef.player2api.status.StatusUtils;
 import adris.altoclef.player2api.status.WorldStatus;
 import adris.altoclef.player2api.utils.Utils;
 import com.google.gson.JsonObject;
-import net.minecraft.world.entity.LivingEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
+import net.minecraft.entity.LivingEntity;
 
 public class EventQueueData {
 
@@ -213,7 +213,7 @@ public class EventQueueData {
     }
 
     public UUID getUUID() {
-        return mod.getPlayer().getUUID();
+        return mod.getPlayer().getUuid();
     }
 
     public AltoClefController getMod() {

@@ -1,23 +1,22 @@
 package adris.altoclef.util.slots;
 
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.item.ItemStack;
-
 import java.util.Objects;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.collection.DefaultedList;
 
 public class Slot {
    public static final int CURSOR_SLOT_INDEX = -1;
    private static final int UNDEFINED_SLOT_INDEX = -999;
    public static final Slot UNDEFINED = new Slot(null, -999);
-   private final NonNullList<ItemStack> inventory;
+   private final DefaultedList<ItemStack> inventory;
    private final int index;
 
-   public Slot(NonNullList<ItemStack> inventory, int index) {
+   public Slot(DefaultedList<ItemStack> inventory, int index) {
       this.inventory = inventory;
       this.index = index;
    }
 
-   public NonNullList<ItemStack> getInventory() {
+   public DefaultedList<ItemStack> getInventory() {
       return this.inventory;
    }
 

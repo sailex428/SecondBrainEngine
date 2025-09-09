@@ -10,15 +10,27 @@ import adris.altoclef.tasks.resources.wood.*;
 import adris.altoclef.tasks.squashed.CataloguedResourceTask;
 import adris.altoclef.util.*;
 import adris.altoclef.util.helpers.ItemHelper;
-import net.minecraft.world.entity.GlowSquid;
-import net.minecraft.world.entity.animal.*;
-import net.minecraft.world.entity.monster.*;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.MapColor;
+import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.entity.mob.SkeletonEntity;
+import net.minecraft.entity.mob.SlimeEntity;
+import net.minecraft.entity.mob.SpiderEntity;
+import net.minecraft.entity.mob.WitherSkeletonEntity;
+import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.CodEntity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.GlowSquidEntity;
+import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.entity.passive.RabbitEntity;
+import net.minecraft.entity.passive.SalmonEntity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.entity.passive.SquidEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.DyeColor;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -53,7 +65,7 @@ public class TaskCatalogue {
          resourcesObtainable.addAll(Arrays.asList(matches));
          if (matches.length == 1) {
             if (itemToResourceTask.containsKey(matches[0])) {
-               throw new IllegalStateException("Tried cataloguing " + matches[0].getDescriptionId() + " twice!");
+               throw new IllegalStateException("Tried cataloguing " + matches[0].getTranslationKey() + " twice!");
             }
 
             itemToResourceTask.put(matches[0], result);
@@ -131,7 +143,7 @@ public class TaskCatalogue {
       Block[] toMineBlocks = new Block[toMine.length];
 
       for (int i = 0; i < toMine.length; i++) {
-         toMineBlocks[i] = Block.byItem(toMine[i]);
+         toMineBlocks[i] = Block.getBlockFromItem(toMine[i]);
       }
 
       return mine(name, requirement, toMineBlocks, targets);
@@ -150,7 +162,7 @@ public class TaskCatalogue {
    }
 
    private static CataloguedResource mine(String name, Item target) {
-      return mine(name, Block.byItem(target), target);
+      return mine(name, Block.getBlockFromItem(target), target);
    }
 
    private static CataloguedResource shear(String name, Block[] toShear, Item... targets) {
@@ -331,7 +343,7 @@ public class TaskCatalogue {
       String o = null;
       mine("log", MiningRequirement.HAND, ItemHelper.LOG, ItemHelper.LOG).anyDimension();
       woodTasks(
-         "log", wood -> wood.log, (wood, count) -> new MineAndCollectTask(wood.log, count, new Block[]{Block.byItem(wood.log)}, MiningRequirement.HAND), true
+         "log", wood -> wood.log, (wood, count) -> new MineAndCollectTask(wood.log, count, new Block[]{Block.getBlockFromItem(wood.log)}, MiningRequirement.HAND), true
       );
       mine("dirt", MiningRequirement.HAND, new Block[]{Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.DIRT_PATH}, Items.DIRT);
       simple("cobblestone", Items.COBBLESTONE, CollectBlockByOneTask.CollectCobblestoneTask::new).dontMineIfPresent();
@@ -383,20 +395,20 @@ public class TaskCatalogue {
       simple("obsidian", Items.OBSIDIAN, CollectObsidianTask::new).dontMineIfPresent();
       simple("wool", ItemHelper.WOOL, CollectWoolTask::new);
       simple("egg", Items.EGG, CollectEggsTask::new);
-      mob("bone", Items.BONE, Skeleton.class);
-      mob("gunpowder", Items.GUNPOWDER, Creeper.class);
+      mob("bone", Items.BONE, SkeletonEntity.class);
+      mob("gunpowder", Items.GUNPOWDER, CreeperEntity.class);
       simple("ender_pearl", Items.ENDER_PEARL, KillEndermanTask::new);
-      mob("spider_eye", Items.SPIDER_EYE, Spider.class);
-      mob("leather", Items.LEATHER, Cow.class);
-      mob("feather", Items.FEATHER, Chicken.class);
-      mob("rotten_flesh", Items.ROTTEN_FLESH, Zombie.class);
-      mob("rabbit_foot", Items.RABBIT_FOOT, Rabbit.class);
-      mob("rabbit_hide", Items.RABBIT_HIDE, Rabbit.class);
-      mob("slime_ball", Items.SLIME_BALL, Slime.class);
-      mob("wither_skeleton_skull", Items.WITHER_SKELETON_SKULL, WitherSkeleton.class).forceDimension(Dimension.NETHER);
-      mob("ink_sac", Items.INK_SAC, Squid.class);
-      mob("glow_ink_sac", Items.GLOW_INK_SAC, GlowSquid.class);
-      mob("string", Items.STRING, Spider.class);
+      mob("spider_eye", Items.SPIDER_EYE, SpiderEntity.class);
+      mob("leather", Items.LEATHER, CowEntity.class);
+      mob("feather", Items.FEATHER, ChickenEntity.class);
+      mob("rotten_flesh", Items.ROTTEN_FLESH, ZombieEntity.class);
+      mob("rabbit_foot", Items.RABBIT_FOOT, RabbitEntity.class);
+      mob("rabbit_hide", Items.RABBIT_HIDE, RabbitEntity.class);
+      mob("slime_ball", Items.SLIME_BALL, SlimeEntity.class);
+      mob("wither_skeleton_skull", Items.WITHER_SKELETON_SKULL, WitherSkeletonEntity.class).forceDimension(Dimension.NETHER);
+      mob("ink_sac", Items.INK_SAC, SquidEntity.class);
+      mob("glow_ink_sac", Items.GLOW_INK_SAC, GlowSquidEntity.class);
+      mob("string", Items.STRING, SpiderEntity.class);
       mine("sugar_cane", Items.SUGAR_CANE);
       mine("brown_mushroom", MiningRequirement.HAND, new Block[]{Blocks.BROWN_MUSHROOM, Blocks.BROWN_MUSHROOM_BLOCK}, Items.BROWN_MUSHROOM);
       mine("red_mushroom", MiningRequirement.HAND, new Block[]{Blocks.RED_MUSHROOM, Blocks.RED_MUSHROOM_BLOCK}, Items.RED_MUSHROOM);
@@ -431,9 +443,9 @@ public class TaskCatalogue {
          "leaves",
          woodItems -> woodItems.leaves,
          (woodItems, count) -> (ResourceTask)(woodItems.isNetherWood()
-            ? new MineAndCollectTask(woodItems.leaves, count, new Block[]{Block.byItem(woodItems.leaves)}, MiningRequirement.HAND)
+            ? new MineAndCollectTask(woodItems.leaves, count, new Block[]{Block.getBlockFromItem(woodItems.leaves)}, MiningRequirement.HAND)
                .forceDimension(Dimension.NETHER)
-            : new ShearAndCollectBlockTask(woodItems.leaves, count, Block.byItem(woodItems.leaves)))
+            : new ShearAndCollectBlockTask(woodItems.leaves, count, Block.getBlockFromItem(woodItems.leaves)))
       )) {
          resource.dontMineIfPresent();
       }
@@ -624,7 +636,7 @@ public class TaskCatalogue {
       shapedRecipeSlab("sandstone_slab", Items.SANDSTONE_SLAB, "sandstone");
       shapedRecipeStairs("sandstone_stairs", Items.SANDSTONE_STAIRS, "sandstone");
       shapedRecipeWall("sandstone_wall", Items.SANDSTONE_WALL, "sandstone");
-      shapedRecipeSlab("cut_sandstone_slab", Items.CUT_STANDSTONE_SLAB, "cut_sandstone");
+      shapedRecipeSlab("cut_sandstone_slab", Items.CUT_SANDSTONE_SLAB, "cut_sandstone");
       shapedRecipeSlab("smooth_sandstone_slab", Items.SMOOTH_SANDSTONE_SLAB, "smooth_sandstone");
       shapedRecipeStairs("smooth_sandstone_stairs", Items.SMOOTH_SANDSTONE_STAIRS, "smooth_sandstone");
       shapedRecipeSlab("red_sandstone_slab", Items.RED_SANDSTONE_SLAB, "red_sandstone");
@@ -886,13 +898,13 @@ public class TaskCatalogue {
       alias("minecart_with_furnace", "furnace_minecart");
       alias("minecart_with_hopper", "hopper_minecart");
       alias("minecart_with_tnt", "tnt_minecart");
-      mobCook("porkchop", Items.PORKCHOP, Items.COOKED_PORKCHOP, Pig.class);
-      mobCook("beef", Items.BEEF, Items.COOKED_BEEF, Cow.class);
-      mobCook("chicken", Items.CHICKEN, Items.COOKED_CHICKEN, Chicken.class);
-      mobCook("mutton", Items.MUTTON, Items.COOKED_MUTTON, Sheep.class);
-      mobCook("rabbit", Items.RABBIT, Items.COOKED_RABBIT, Rabbit.class);
-      mobCook("salmon", Items.SALMON, Items.COOKED_SALMON, Salmon.class);
-      mobCook("cod", Items.COD, Items.COOKED_COD, Cod.class);
+      mobCook("porkchop", Items.PORKCHOP, Items.COOKED_PORKCHOP, PigEntity.class);
+      mobCook("beef", Items.BEEF, Items.COOKED_BEEF, CowEntity.class);
+      mobCook("chicken", Items.CHICKEN, Items.COOKED_CHICKEN, ChickenEntity.class);
+      mobCook("mutton", Items.MUTTON, Items.COOKED_MUTTON, SheepEntity.class);
+      mobCook("rabbit", Items.RABBIT, Items.COOKED_RABBIT, RabbitEntity.class);
+      mobCook("salmon", Items.SALMON, Items.COOKED_SALMON, SalmonEntity.class);
+      mobCook("cod", Items.COD, Items.COOKED_COD, CodEntity.class);
       simple("milk", Items.MILK_BUCKET, CollectMilkTask::new);
       mine("apple", Blocks.OAK_LEAVES, Items.APPLE);
       smelt("baked_potato", Items.BAKED_POTATO, "potato");

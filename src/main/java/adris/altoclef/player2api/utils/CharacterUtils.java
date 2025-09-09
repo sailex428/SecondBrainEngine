@@ -5,12 +5,11 @@ import adris.altoclef.player2api.Player2APIService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.network.FriendlyByteBuf;
-
 import java.util.Map;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.network.PacketByteBuf;
 
 public class CharacterUtils {
    public static Character DEFAULT_CHARACTER = new Character(
@@ -80,42 +79,42 @@ public class CharacterUtils {
       }
    }
 
-   public static Character readFromBuf(FriendlyByteBuf buf) {
-      String name = buf.readUtf();
-      String shortName = buf.readUtf();
-      String greetingInfo = buf.readUtf();
-      String description = buf.readUtf();
-      String skinURL = buf.readUtf();
+   public static Character readFromBuf(PacketByteBuf buf) {
+      String name = buf.readString();
+      String shortName = buf.readString();
+      String greetingInfo = buf.readString();
+      String description = buf.readString();
+      String skinURL = buf.readString();
       int arrSize = buf.readInt();
       String[] voiceIds = new String[arrSize];
 
       for (int i = 0; i < arrSize; i++) {
-         voiceIds[i] = buf.readUtf();
+         voiceIds[i] = buf.readString();
       }
 
       return new Character(name, shortName, greetingInfo, description, skinURL, voiceIds);
    }
 
-   public static void writeToBuf(FriendlyByteBuf buf, Character character) {
-      buf.writeUtf(character.name());
-      buf.writeUtf(character.shortName());
-      buf.writeUtf(character.greetingInfo());
-      buf.writeUtf(character.description());
-      buf.writeUtf(character.skinURL());
+   public static void writeToBuf(PacketByteBuf buf, Character character) {
+      buf.writeString(character.name());
+      buf.writeString(character.shortName());
+      buf.writeString(character.greetingInfo());
+      buf.writeString(character.description());
+      buf.writeString(character.skinURL());
       buf.writeInt(character.voiceIds().length);
 
       for (String id : character.voiceIds()) {
-         buf.writeUtf(id);
+         buf.writeString(id);
       }
    }
 
-   public static Character readFromNBT(CompoundTag compound) {
+   public static Character readFromNBT(NbtCompound compound) {
       String name = compound.getString("name");
       String shortName = compound.getString("shortName");
       String greetingInfo = compound.getString("greetingInfo");
       String description = compound.getString("description");
       String skinURL = compound.getString("skinURL");
-      ListTag voiceIdsList = compound.getList("voiceIds", 8);
+      NbtList voiceIdsList = compound.getList("voiceIds", 8);
       String[] voiceIds = new String[voiceIdsList.size()];
 
       for (int i = 0; i < voiceIdsList.size(); i++) {
@@ -125,16 +124,16 @@ public class CharacterUtils {
       return new Character(name, shortName, greetingInfo, description, skinURL, voiceIds);
    }
 
-   public static void writeToNBT(CompoundTag compound, Character character) {
+   public static void writeToNBT(NbtCompound compound, Character character) {
       compound.putString("name", character.name());
       compound.putString("shortName", character.shortName());
       compound.putString("greetingInfo", character.greetingInfo());
       compound.putString("description", character.description());
       compound.putString("skinURL", character.skinURL());
-      ListTag voiceIds = new ListTag();
+      NbtList voiceIds = new NbtList();
 
       for (String id : character.voiceIds()) {
-         voiceIds.add(StringTag.valueOf(id));
+         voiceIds.add(NbtString.of(id));
       }
 
       compound.put("voiceIds", voiceIds);

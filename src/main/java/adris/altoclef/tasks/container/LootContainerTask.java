@@ -6,16 +6,15 @@ import adris.altoclef.tasks.slot.EnsureFreeInventorySlotTask;
 import adris.altoclef.tasksystem.Task;
 import baritone.api.entity.IInventoryProvider;
 import baritone.api.entity.LivingEntityInventory;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import net.minecraft.block.entity.LootableContainerBlockEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class LootContainerTask extends Task {
    private final BlockPos containerPos;
@@ -44,23 +43,23 @@ public class LootContainerTask extends Task {
       if (this.finished) {
          return null;
       } else if (!this.containerPos
-         .closerThan(
+         .isWithinDistance(
             new Vec3i(
-               (int)this.controller.getEntity().position().x, (int)this.controller.getEntity().position().y, (int)this.controller.getEntity().position().z
+               (int)this.controller.getEntity().getPos().x, (int)this.controller.getEntity().getPos().y, (int)this.controller.getEntity().getPos().z
             ),
             4.5
          )) {
          this.setDebugState("Going to container");
          return new GetToBlockTask(this.containerPos);
-      } else if (this.controller.getWorld().getBlockEntity(this.containerPos) instanceof RandomizableContainerBlockEntity container) {
-         RandomizableContainerBlockEntity containerInventory = container;
+      } else if (this.controller.getWorld().getBlockEntity(this.containerPos) instanceof LootableContainerBlockEntity container) {
+         LootableContainerBlockEntity containerInventory = container;
          LivingEntityInventory playerInventory = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
          this.controller.getItemStorage().containers.WritableCache(this.controller, this.containerPos);
          boolean somethingToLoot = false;
          this.setDebugState("Looting items: " + this.targets);
 
-         for (int i = 0; i < containerInventory.getContainerSize(); i++) {
-            ItemStack stack = containerInventory.getItem(i);
+         for (int i = 0; i < containerInventory.size(); i++) {
+            ItemStack stack = containerInventory.getStack(i);
             if (!stack.isEmpty() && this.targets.contains(stack.getItem()) && this.check.test(stack)) {
                somethingToLoot = true;
                if (!playerInventory.insertStack(new ItemStack(stack.getItem()))) {
@@ -69,8 +68,8 @@ public class LootContainerTask extends Task {
                }
 
                if (playerInventory.insertStack(stack.copy())) {
-                  containerInventory.setItem(i, ItemStack.EMPTY);
-                  container.setChanged();
+                  containerInventory.setStack(i, ItemStack.EMPTY);
+                  container.markDirty();
                   this.controller.getItemStorage().registerSlotAction();
                   return null;
                }
@@ -96,7 +95,7 @@ public class LootContainerTask extends Task {
    public boolean isFinished() {
       return this.finished
          || !this.controller.getChunkTracker().isChunkLoaded(this.containerPos)
-         || !(this.controller.getWorld().getBlockEntity(this.containerPos) instanceof RandomizableContainerBlockEntity);
+         || !(this.controller.getWorld().getBlockEntity(this.containerPos) instanceof LootableContainerBlockEntity);
    }
 
    @Override

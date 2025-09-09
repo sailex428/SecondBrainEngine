@@ -9,18 +9,17 @@ import adris.altoclef.tasks.movement.SafeRandomShimmyTask;
 import adris.altoclef.tasksystem.TaskRunner;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.input.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EndPortalFrameBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.LinkedList;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.EndPortalFrameBlock;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 public class UnstuckChain extends SingleTaskChain {
-   private final LinkedList<Vec3> posHistory = new LinkedList<>();
+   private final LinkedList<Vec3d> posHistory = new LinkedList<>();
    private final TimerGame shimmyTimer = new TimerGame(5.0);
    private final TimerGame placeBlockGoToBlockTimeout = new TimerGame(5.0);
    private boolean isProbablyStuck = false;
@@ -38,7 +37,7 @@ public class UnstuckChain extends SingleTaskChain {
       if (this.controller != null && this.controller.getTaskRunner().isActive()) {
          this.isProbablyStuck = false;
          LivingEntity player = this.controller.getEntity();
-         this.posHistory.addFirst(player.position());
+         this.posHistory.addFirst(player.getPos());
          if (this.posHistory.size() > 500) {
             this.posHistory.removeLast();
          }
@@ -73,14 +72,14 @@ public class UnstuckChain extends SingleTaskChain {
    private void checkStuckInWater() {
       if (this.posHistory.size() >= 100) {
          LivingEntity player = this.controller.getEntity();
-         Level world = this.controller.getWorld();
-         if (world.getBlockState(player.blockPosition()).is(Blocks.WATER)) {
-            if (!player.onGround() && player.getAirSupply() >= player.getMaxAirSupply()) {
-               Vec3 firstPos = this.posHistory.get(0);
+         World world = this.controller.getWorld();
+         if (world.getBlockState(player.getBlockPos()).isOf(Blocks.WATER)) {
+            if (!player.isOnGround() && player.getAir() >= player.getMaxAir()) {
+               Vec3d firstPos = this.posHistory.get(0);
 
                for (int i = 1; i < 100; i++) {
-                  Vec3 nextPos = this.posHistory.get(i);
-                  if (Math.abs(firstPos.x() - nextPos.x()) > 0.75 || Math.abs(firstPos.z() - nextPos.z()) > 0.75) {
+                  Vec3d nextPos = this.posHistory.get(i);
+                  if (Math.abs(firstPos.getX() - nextPos.getX()) > 0.75 || Math.abs(firstPos.getZ() - nextPos.getZ()) > 0.75) {
                      return;
                   }
                }
@@ -97,14 +96,14 @@ public class UnstuckChain extends SingleTaskChain {
 
    private void checkStuckInPowderSnow() {
       LivingEntity player = this.controller.getEntity();
-      if (player.isInPowderSnow) {
+      if (player.inPowderSnow) {
          this.isProbablyStuck = true;
-         BlockPos playerPos = player.blockPosition();
+         BlockPos playerPos = player.getBlockPos();
          BlockPos toBreak = null;
-         if (player.level().getBlockState(playerPos).is(Blocks.POWDER_SNOW)) {
+         if (player.method_48926().getBlockState(playerPos).isOf(Blocks.POWDER_SNOW)) {
             toBreak = playerPos;
-         } else if (player.level().getBlockState(playerPos.above()).is(Blocks.POWDER_SNOW)) {
-            toBreak = playerPos.above();
+         } else if (player.method_48926().getBlockState(playerPos.up()).isOf(Blocks.POWDER_SNOW)) {
+            toBreak = playerPos.up();
          }
 
          if (toBreak != null) {
@@ -116,9 +115,9 @@ public class UnstuckChain extends SingleTaskChain {
    }
 
    private void checkStuckOnEndPortalFrame() {
-      BlockState standingOn = this.controller.getWorld().getBlockState(this.controller.getEntity().getOnPos());
-      if (standingOn.is(Blocks.END_PORTAL_FRAME)
-         && !(Boolean)standingOn.getValue(EndPortalFrameBlock.HAS_EYE)
+      BlockState standingOn = this.controller.getWorld().getBlockState(this.controller.getEntity().getSteppingPos());
+      if (standingOn.isOf(Blocks.END_PORTAL_FRAME)
+         && !(Boolean)standingOn.get(EndPortalFrameBlock.EYE)
          && !this.controller.getFoodChain().isTryingToEat()) {
          this.isProbablyStuck = true;
          this.controller.getBaritone().getInputOverrideHandler().setInputForceState(Input.MOVE_FORWARD, true);

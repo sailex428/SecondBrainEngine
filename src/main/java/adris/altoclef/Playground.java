@@ -25,22 +25,21 @@ import adris.altoclef.util.Dimension;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.SmeltTarget;
 import adris.altoclef.util.helpers.WorldHelper;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Ghast;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.chunk.EmptyLevelChunk;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Predicate;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.GhastEntity;
+import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.EmptyChunk;
 
 public class Playground {
    public static void IDLE_TEST_INIT_FUNCTION(AltoClefController mod) {
@@ -60,7 +59,7 @@ public class Playground {
             return;
          case "chunk":
             BlockPos p = new BlockPos(100000, 3, 100000);
-            Debug.logMessage("LOADED? " + (!(mod.getWorld().getChunk(p) instanceof EmptyLevelChunk) ? 1 : 0));
+            Debug.logMessage("LOADED? " + (!(mod.getWorld().getChunk(p) instanceof EmptyChunk) ? 1 : 0));
             return;
          case "structure":
             mod.runUserTask(new PlaceStructureBlockTask(new BlockPos(10, 6, 10)));
@@ -103,7 +102,7 @@ public class Playground {
             );
             return;
          case "kill":
-            List<Zombie> zombs = mod.getEntityTracker().getTrackedEntities(Zombie.class);
+            List<ZombieEntity> zombs = mod.getEntityTracker().getTrackedEntities(ZombieEntity.class);
             if (zombs.size() == 0) {
                Debug.logWarning("No zombs found.");
             } else {
@@ -145,11 +144,11 @@ public class Playground {
                File f = new File(fname);
                FileWriter fw = new FileWriter(f);
 
-               for (ResourceLocation id : BuiltInRegistries.ITEM.keySet()) {
-                  Item item = (Item)BuiltInRegistries.ITEM.get(id);
+               for (Identifier id : Registries.ITEM.getIds()) {
+                  Item item = (Item)Registries.ITEM.get(id);
                   if (!TaskCatalogue.isObtainable(item)) {
                      unobtainable++;
-                     fw.write(item.getDescriptionId() + "\n");
+                     fw.write(item.getTranslationKey() + "\n");
                   }
 
                   total++;
@@ -200,11 +199,11 @@ public class Playground {
             );
             return;
          case "arrow":
-            List<Ghast> ghasts = mod.getEntityTracker().getTrackedEntities(Ghast.class);
+            List<GhastEntity> ghasts = mod.getEntityTracker().getTrackedEntities(GhastEntity.class);
             if (ghasts.size() == 0) {
                Debug.logWarning("No ghasts found.");
             } else {
-               Ghast ghast = ghasts.get(0);
+               GhastEntity ghast = ghasts.get(0);
                mod.runUserTask(new ShootArrowSimpleProjectileTask(ghast));
             }
 

@@ -3,7 +3,6 @@ package adris.altoclef.player2api.status;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.helpers.ItemHelper;
-import baritone.api.entity.IAutomatone;
 import java.util.*;
 import java.util.Map.Entry;
 import net.minecraft.entity.Entity;
@@ -21,8 +20,8 @@ public class StatusUtils {
    public static String getInventoryString(AltoClefController mod) {
       Map<String, Integer> counts = new HashMap<>();
 
-      for (int i = 0; i < mod.getBaritone().getEntityContext().inventory().getContainerSize(); i++) {
-         ItemStack stack = mod.getBaritone().getEntityContext().inventory().getItem(i);
+      for (int i = 0; i < mod.getBaritone().getPlayerContext().inventory().size(); i++) {
+         ItemStack stack = mod.getBaritone().getPlayerContext().inventory().getStack(i);
          if (!stack.isEmpty()) {
             String name = ItemHelper.stripItemName(stack.getItem());
             counts.put(name, counts.getOrDefault(name, 0) + stack.getCount());

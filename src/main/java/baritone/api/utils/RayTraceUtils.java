@@ -31,6 +31,8 @@ import static baritone.api.utils.RotationUtils.getCameraPosVec;
  */
 public final class RayTraceUtils {
 
+    public static RaycastContext.FluidHandling fluidHandling = RaycastContext.FluidHandling.NONE;
+
     private RayTraceUtils() {}
 
     /**

@@ -4,9 +4,9 @@ import adris.altoclef.trackers.Tracker;
 import adris.altoclef.trackers.TrackerManager;
 import adris.altoclef.util.helpers.ItemHelper;
 import adris.altoclef.util.slots.Slot;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
 import java.util.*;
+
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -56,7 +56,7 @@ public class InventorySubTracker extends Tracker {
    public List<Slot> getSlotsWithItemsPlayerInventory(boolean includeArmor, Item... items) {
       this.ensureUpdated();
       List<Slot> result = new ArrayList<>();
-      LivingEntityInventory inventory = ((IInventoryProvider)this.mod.getEntity()).getLivingInventory();
+      PlayerInventory inventory = this.mod.getInventory();
 
       for (Item item : items) {
          if (this.itemToSlotPlayer.containsKey(item)) {
@@ -85,7 +85,7 @@ public class InventorySubTracker extends Tracker {
 
    public List<ItemStack> getInventoryStacks() {
       this.ensureUpdated();
-      LivingEntityInventory inventory = ((IInventoryProvider)this.mod.getEntity()).getLivingInventory();
+      PlayerInventory inventory = this.mod.getInventory();
       List<ItemStack> stacks = new ArrayList<>();
       stacks.addAll(inventory.main);
       stacks.addAll(inventory.armor);
@@ -96,7 +96,7 @@ public class InventorySubTracker extends Tracker {
    public List<Slot> getSlotsThatCanFit(ItemStack item, boolean acceptPartial) {
       this.ensureUpdated();
       List<Slot> result = new ArrayList<>();
-      LivingEntityInventory inventory = ((IInventoryProvider)this.mod.getEntity()).getLivingInventory();
+      PlayerInventory inventory = this.mod.getInventory();
       if (item.isStackable()) {
          for (int i = 0; i < inventory.main.size(); i++) {
             ItemStack stackInSlot = (ItemStack)inventory.main.get(i);
@@ -126,7 +126,7 @@ public class InventorySubTracker extends Tracker {
    @Override
    protected void updateState() {
       this.reset();
-      LivingEntityInventory inventory = ((IInventoryProvider)this.mod.getEntity()).getLivingInventory();
+      PlayerInventory inventory = this.mod.getInventory();
       if (inventory != null) {
          for (int i = 0; i < inventory.main.size(); i++) {
             ItemStack stack = (ItemStack)inventory.main.get(i);

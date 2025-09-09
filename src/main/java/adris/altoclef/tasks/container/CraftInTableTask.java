@@ -12,11 +12,10 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.RecipeTarget;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.time.TimerGame;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
 import java.util.Arrays;
 import java.util.Optional;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
@@ -118,7 +117,7 @@ public class CraftInTableTask extends ResourceTask {
                            return new CollectRecipeCataloguedResourcesTask(false, this.targets);
                         }
 
-                        LivingEntityInventory inventory = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
+                        PlayerInventory inventory = this.controller.getInventory();
 
                         for (ItemTarget ingredient : target.getRecipe().getSlots()) {
                            if (ingredient != null && !ingredient.isEmpty()) {

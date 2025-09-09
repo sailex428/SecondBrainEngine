@@ -8,8 +8,7 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.RecipeTarget;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.time.TimerGame;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -69,7 +68,7 @@ public class CraftInInventoryTask extends ResourceTask {
             if (craftsNeeded <= 0) {
                return null;
             } else {
-               LivingEntityInventory inventory = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
+               PlayerInventory inventory = this.controller.getInventory();
 
                for (int i = 0; i < craftsNeeded; i++) {
                   if (!StorageHelper.hasRecipeMaterialsOrTarget(

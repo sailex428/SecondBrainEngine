@@ -17,23 +17,24 @@ import adris.altoclef.trackers.storage.ContainerSubTracker;
 import adris.altoclef.trackers.storage.ItemStorageTracker;
 import baritone.Baritone;
 import baritone.api.IBaritone;
-import baritone.api.entity.LivingEntityInventory;
 import baritone.api.utils.IEntityContext;
-import baritone.api.utils.IInteractionController;
+import baritone.api.utils.InteractionController;
 import baritone.settings.AltoClefSettings;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 public class AltoClefController {
+
    private final IBaritone baritone;
    private AIPersistantData aiPersistantData;
    private Player2APIService player2apiService;
@@ -189,7 +190,7 @@ public class AltoClefController {
       return this.commandExecutor;
    }
 
-   public LivingEntity getEntity() {
+   public ServerPlayerEntity getEntity() {
       return this.ctx.entity();
    }
 
@@ -197,8 +198,8 @@ public class AltoClefController {
       return this.ctx.world();
    }
 
-   public IInteractionController getInteractionManager() {
-      return this.ctx.playerController();
+   public InteractionController getInteractionManager() {
+      return this.ctx.interactionController();
    }
 
    public IBaritone getBaritone() {
@@ -293,7 +294,7 @@ public class AltoClefController {
       return true;
    }
 
-   public LivingEntity getPlayer() {
+   public ServerPlayerEntity getPlayer() {
       return this.ctx.entity();
    }
 
@@ -305,8 +306,8 @@ public class AltoClefController {
       return this.slotHandler;
    }
 
-   public LivingEntityInventory getInventory() {
-      return this.getBaritone().getEntityContext().inventory();
+   public PlayerInventory getInventory() {
+      return this.getBaritone().getPlayerContext().inventory();
    }
 
    public PlayerExtraController getControllerExtras() {

@@ -1,7 +1,7 @@
 package adris.altoclef.util.slots;
 
-import baritone.api.entity.LivingEntityInventory;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerInventory;
 
 public final class PlayerSlot {
    public static final int ARMOR_BOOTS_SLOT_INDEX = 0;
@@ -11,19 +11,19 @@ public final class PlayerSlot {
    public static final int[] ARMOR_SLOTS_INDICES = new int[]{0, 1, 2, 3};
    public static final int OFFHAND_SLOT_INDEX = 0;
 
-   public static Slot getMainSlot(LivingEntityInventory inventory, int index) {
+   public static Slot getMainSlot(PlayerInventory inventory, int index) {
       return new Slot(inventory.main, index);
    }
 
-   public static Slot getArmorSlot(LivingEntityInventory inventory, int armorIndex) {
+   public static Slot getArmorSlot(PlayerInventory inventory, int armorIndex) {
       return new Slot(inventory.armor, armorIndex);
    }
 
-   public static Slot getOffhandSlot(LivingEntityInventory inventory) {
+   public static Slot getOffhandSlot(PlayerInventory inventory) {
       return new Slot(inventory.offHand, 0);
    }
 
-   public static Slot getEquipSlot(LivingEntityInventory inventory, EquipmentSlot equipSlot) {
+   public static Slot getEquipSlot(PlayerInventory inventory, EquipmentSlot equipSlot) {
       switch (equipSlot.getType()) {
          case HAND:
             if (equipSlot == EquipmentSlot.MAINHAND) {
@@ -38,7 +38,7 @@ public final class PlayerSlot {
       }
    }
 
-   public static Slot getEquipSlot(LivingEntityInventory inventory) {
+   public static Slot getEquipSlot(PlayerInventory inventory) {
       return getEquipSlot(inventory, EquipmentSlot.MAINHAND);
    }
 }

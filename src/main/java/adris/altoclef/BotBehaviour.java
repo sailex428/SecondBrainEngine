@@ -192,12 +192,12 @@ public class BotBehaviour {
 
    public State pop() {
       if (this.states.isEmpty()) {
-         baritone.utils.Debug.logError("State stack is empty. This shouldn't be happening.");
+         Debug.logError("State stack is empty. This shouldn't be happening.");
          return null;
       } else {
          State popped = this.states.pop();
          if (this.states.isEmpty()) {
-            baritone.utils.Debug.logError("State stack is empty after pop. This shouldn't be happening.");
+            Debug.logError("State stack is empty after pop. This shouldn't be happening.");
             return null;
          } else {
             this.states.peek().applyState();
@@ -208,7 +208,7 @@ public class BotBehaviour {
 
    private State current() {
       if (this.states.isEmpty()) {
-         baritone.utils.Debug.logError("STATE EMPTY, UNEMPTIED!");
+         Debug.logError("STATE EMPTY, UNEMPTIED!");
          this.push();
       }
 

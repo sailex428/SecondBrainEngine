@@ -33,7 +33,6 @@ import adris.altoclef.util.*;
 import adris.altoclef.util.helpers.*;
 import adris.altoclef.util.slots.Slot;
 import adris.altoclef.util.time.TimerGame;
-import baritone.api.entity.LivingEntityInventory;
 import baritone.api.utils.input.Input;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -48,6 +47,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PillagerEntity;
 import net.minecraft.entity.mob.SilverfishEntity;
 import net.minecraft.entity.mob.WitchEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.EnderEyeItem;
 import net.minecraft.item.Item;
@@ -309,8 +309,7 @@ public class BeatMinecraftTask extends Task {
    }
 
    public static boolean hasItem(AltoClefController mod, Item item) {
-      LivingEntity player = mod.getPlayer();
-      LivingEntityInventory inv = mod.getInventory();
+      PlayerInventory inv = mod.getInventory();
 
       for (List<ItemStack> list : List.of(inv.main, inv.armor, inv.offHand)) {
          for (ItemStack itemStack : list) {
@@ -680,7 +679,7 @@ public class BeatMinecraftTask extends Task {
 
                   for (Slot slot : list) {
                      if (slot.getInventorySlot() != -1) {
-                        ItemStack stack = mod.getBaritone().getEntityContext().inventory().getItem(slot.getInventorySlot());
+                        ItemStack stack = mod.getBaritone().getPlayerContext().inventory().getStack(slot.getInventorySlot());
                         if (!StorageHelper.shouldSaveStack(mod, Blocks.STONE, stack) && stack.getItem().equals(Items.IRON_PICKAXE)) {
                            hasSafeIronPick = true;
                            break;
@@ -1036,7 +1035,7 @@ public class BeatMinecraftTask extends Task {
       boolean hasInHotbar = false;
 
       for (int i = 0; i < 9; i++) {
-         ItemStack stack = this.mod.getBaritone().getEntityContext().inventory().getItem(i);
+         ItemStack stack = this.mod.getBaritone().getPlayerContext().inventory().getStack(i);
          if (stack.getItem().equals(Items.IRON_PICKAXE) && StorageHelper.shouldSaveStack(this.mod, Blocks.STONE, stack)) {
             shouldSwap = true;
          }

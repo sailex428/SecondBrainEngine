@@ -14,14 +14,13 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.SmeltTarget;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.time.TimerGame;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -137,7 +136,7 @@ public class SmeltInFurnaceTask extends ResourceTask {
                ItemStack outputStack = furnace.getStack(2);
                if (!outputStack.isEmpty()) {
                   this.setDebugState("Taking smelted items.");
-                  LivingEntityInventory playerInv = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
+                  PlayerInventory playerInv = this.controller.getInventory();
                   if (!playerInv.insertStack(outputStack)) {
                      this.setDebugState("Inventory is full, cannot take smelted items.");
                      return null;
@@ -157,13 +156,13 @@ public class SmeltInFurnaceTask extends ResourceTask {
                } else {
                   ItemStack materialSlot = furnace.getStack(0);
                   ItemStack fuelSlot = furnace.getStack(1);
-                  LivingEntityInventory playerInv = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
+                  PlayerInventory playerInv = this.controller.getInventory();
                   if (((MixinAbstractFurnaceBlockEntity)furnace).getPropertyDelegate().get(0) <= 1 && fuelSlot.isEmpty()) {
                      this.setDebugState("Adding fuel.");
                      Item fuelItem = controller.getModSettings().getSupportedFuelItems()[0];
                      int fuelSlotIndex = playerInv.getSlotWithStack(new ItemStack(fuelItem));
                      if (fuelSlotIndex != -1) {
-                        furnace.setStack(1, playerInv.removeItem(fuelSlotIndex, fuelNeeded));
+                        furnace.setStack(1, playerInv.removeStack(fuelSlotIndex, fuelNeeded));
                         furnace.markDirty();
                      }
                   }
@@ -173,7 +172,8 @@ public class SmeltInFurnaceTask extends ResourceTask {
                      Item materialItem = currentTarget.getMaterial().getMatches()[0];
                      int materialSlotIndex = playerInv.getSlotWithStack(new ItemStack(materialItem));
                      if (materialSlotIndex != -1) {
-                        furnace.setStack(0, playerInv.removeItem(materialSlotIndex, currentTarget.getMaterial().getTargetCount()));
+                        furnace.setStack(0, playerInv.removeStack(materialSlotIndex,
+                                currentTarget.getMaterial().getTargetCount()));
                         this.isSmelting = true;
                         this.smeltTimer.reset();
                         furnace.markDirty();

@@ -5,11 +5,10 @@ import adris.altoclef.tasks.movement.GetToBlockTask;
 import adris.altoclef.tasks.slot.EnsureFreeInventorySlotTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
 import java.util.Arrays;
 import java.util.Objects;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -44,7 +43,7 @@ public class PickupFromContainerTask extends Task {
          return null;
       } else {
          LootableContainerBlockEntity containerInventory = container;
-         LivingEntityInventory playerInventory = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
+         PlayerInventory playerInventory = this.controller.getInventory();
 
          for (ItemTarget target : this.targets) {
             int needed = target.getTargetCount() - this.controller.getItemStorage().getItemCount(target);

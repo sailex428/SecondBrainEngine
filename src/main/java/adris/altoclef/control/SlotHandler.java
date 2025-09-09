@@ -5,9 +5,8 @@ import adris.altoclef.Debug;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.slots.PlayerSlot;
 import adris.altoclef.util.slots.Slot;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.EmptyMapItem;
@@ -84,13 +83,13 @@ public class SlotHandler {
    }
 
    public void forceEquipItemToOffhand(Item toEquip) {
-      LivingEntityInventory inventory = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
-      ItemStack offhandStack = inventory.getItem(0);
+      PlayerInventory inventory = this.controller.getEntity().getInventory();
+      ItemStack offhandStack = inventory.getStack(0);
       if (!offhandStack.isOf(toEquip)) {
          for (int i = 0; i < inventory.main.size(); i++) {
             ItemStack potential = (ItemStack)inventory.main.get(i);
             if (potential.isOf(toEquip)) {
-               inventory.setItem(0, potential);
+               inventory.setStack(0, potential);
                inventory.main.set(i, offhandStack);
                this.registerSlotAction();
                return;
@@ -100,13 +99,13 @@ public class SlotHandler {
    }
 
    public boolean forceEquipItem(Item[] toEquip) {
-      LivingEntityInventory inventory = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
+      PlayerInventory inventory = this.controller.getEntity().getInventory();
       if (Arrays.stream(toEquip).allMatch(ix -> ix == inventory.getMainHandStack().getItem())) {
          return true;
       } else {
          for (int i = 0; i < 9; i++) {
             int finalI = i;
-            if (Arrays.stream(toEquip).allMatch(it -> it == inventory.getItem(finalI).getItem())) {
+            if (Arrays.stream(toEquip).allMatch(it -> it == inventory.getStack(finalI).getItem())) {
                inventory.selectedSlot = i;
                this.registerSlotAction();
                return true;
@@ -115,10 +114,10 @@ public class SlotHandler {
 
          for (int ix = 9; ix < inventory.main.size(); ix++) {
             int finalI = ix;
-            if (Arrays.stream(toEquip).allMatch(it -> it == inventory.getItem(finalI).getItem())) {
+            if (Arrays.stream(toEquip).allMatch(it -> it == inventory.getStack(finalI).getItem())) {
                ItemStack handStack = inventory.getMainHandStack();
-               inventory.setItem(inventory.selectedSlot, inventory.getItem(ix));
-               inventory.setItem(ix, handStack);
+               inventory.setStack(inventory.selectedSlot, inventory.getStack(ix));
+               inventory.setStack(ix, handStack);
                this.registerSlotAction();
                return true;
             }
@@ -129,12 +128,12 @@ public class SlotHandler {
    }
 
    public boolean forceEquipItem(Item toEquip) {
-      LivingEntityInventory inventory = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
-      if (inventory.getMainHandStack().is(toEquip)) {
+      PlayerInventory inventory = this.controller.getEntity().getInventory();
+      if (inventory.getMainHandStack().isOf(toEquip)) {
          return true;
       } else {
          for (int i = 0; i < 9; i++) {
-            if (inventory.getItem(i).is(toEquip)) {
+            if (inventory.getStack(i).isOf(toEquip)) {
                inventory.selectedSlot = i;
                this.registerSlotAction();
                return true;
@@ -142,10 +141,10 @@ public class SlotHandler {
          }
 
          for (int ix = 9; ix < inventory.main.size(); ix++) {
-            if (inventory.getItem(ix).is(toEquip)) {
+            if (inventory.getStack(ix).isOf(toEquip)) {
                ItemStack handStack = inventory.getMainHandStack();
-               inventory.setItem(inventory.selectedSlot, inventory.getItem(ix));
-               inventory.setItem(ix, handStack);
+               inventory.setStack(inventory.selectedSlot, inventory.getStack(ix));
+               inventory.setStack(ix, handStack);
                this.registerSlotAction();
                return true;
             }
@@ -156,16 +155,16 @@ public class SlotHandler {
    }
 
    public boolean forceDeequip(Predicate<ItemStack> isBad) {
-      LivingEntityInventory inventory = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
+      PlayerInventory inventory = this.controller.getEntity().getInventory();
       ItemStack equip = inventory.getMainHandStack();
       if (isBad.test(equip)) {
          int emptySlot = inventory.getEmptySlot();
          if (emptySlot != -1) {
-            if (LivingEntityInventory.isValidHotbarIndex(emptySlot)) {
+            if (PlayerInventory.isValidHotbarIndex(emptySlot)) {
                inventory.selectedSlot = emptySlot;
             } else {
-               inventory.setItem(emptySlot, equip);
-               inventory.setItem(inventory.selectedSlot, ItemStack.EMPTY);
+               inventory.setStack(emptySlot, equip);
+               inventory.setStack(inventory.selectedSlot, ItemStack.EMPTY);
             }
 
             this.registerSlotAction();
@@ -246,18 +245,18 @@ public class SlotHandler {
    }
 
    public void forceEquipArmor(AltoClefController controller, ItemTarget target) {
-      LivingEntityInventory inventory = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
+      PlayerInventory inventory = this.controller.getEntity().getInventory();
 
       for (Item item : target.getMatches()) {
          if (item instanceof ArmorItem armorItem) {
             EquipmentSlot slotType = armorItem.getType().getEquipmentSlot();
             if (!controller.getEntity().getEquippedStack(slotType).isOf(item)) {
-               for (int i = 0; i < inventory.getContainerSize(); i++) {
-                  ItemStack stackInSlot = inventory.getItem(i);
+               for (int i = 0; i < inventory.size(); i++) {
+                  ItemStack stackInSlot = inventory.getStack(i);
                   if (stackInSlot.isOf(item)) {
                      ItemStack currentlyEquipped = controller.getEntity().getEquippedStack(slotType).copy();
                      controller.getEntity().equipStack(slotType, stackInSlot.copy());
-                     inventory.setItem(i, currentlyEquipped);
+                     inventory.setStack(i, currentlyEquipped);
                      this.registerSlotAction();
                      break;
                   }

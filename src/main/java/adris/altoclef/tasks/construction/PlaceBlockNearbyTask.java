@@ -14,7 +14,6 @@ import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import adris.altoclef.util.time.TimerGame;
-import baritone.api.entity.IInteractionManagerProvider;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.input.Input;
 import baritone.pathing.movement.MovementHelper;
@@ -166,9 +165,10 @@ public class PlaceBlockNearbyTask extends Task {
          HitResult mouseOver = MinecraftClient.getInstance().crosshairTarget;
          if (mouseOver != null && mouseOver.getType() == Type.BLOCK) {
             Hand hand = Hand.MAIN_HAND;
-            if (((IInteractionManagerProvider)mod.getEntity())
+            if (this.controller
                      .getInteractionManager()
-                     .interactBlock(mod.getPlayer(), mod.getWorld(), mod.getPlayer().getMainHandStack(), hand, (BlockHitResult)mouseOver)
+                     .processRightClickBlock(mod.getPlayer(), mod.getWorld(), hand,
+                             (BlockHitResult)mouseOver)
                   == ActionResult.SUCCESS
                && mod.getPlayer().isSneaking()) {
                mod.getPlayer().swingHand(hand);

@@ -6,14 +6,13 @@ import adris.altoclef.tasks.movement.GetToBlockTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ItemHelper;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -70,7 +69,7 @@ public class StoreInContainerTask extends Task {
             return null;
          } else {
             LootableContainerBlockEntity var19 = container;
-            LivingEntityInventory var20 = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
+            PlayerInventory var20 = this.controller.getInventory();
             this.controller.getItemStorage().containers.WritableCache(this.controller, this.containerPos);
             this.setDebugState("Storing items");
 
@@ -79,8 +78,8 @@ public class StoreInContainerTask extends Task {
                if (currentInContainer < targetx.getTargetCount()) {
                   int neededInContainer = targetx.getTargetCount() - currentInContainer;
 
-                  for (int i = 0; i < var20.getContainerSize(); i++) {
-                     ItemStack playerStack = var20.getItem(i);
+                  for (int i = 0; i < var20.size(); i++) {
+                     ItemStack playerStack = var20.getStack(i);
                      if (targetx.matches(playerStack.getItem())) {
                         int toMove = Math.min(neededInContainer, playerStack.getCount());
                         ItemStack toInsert = playerStack.copy();
@@ -90,7 +89,7 @@ public class StoreInContainerTask extends Task {
                            int moved = toMove - remainder.getCount();
                            if (moved > 0) {
                               playerStack.decrement(moved);
-                              var20.setItem(i, playerStack);
+                              var20.setStack(i, playerStack);
                               container.markDirty();
                               this.controller.getItemStorage().registerSlotAction();
                               return null;

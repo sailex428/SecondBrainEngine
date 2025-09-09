@@ -10,10 +10,9 @@ import adris.altoclef.tasks.squashed.CataloguedResourceTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.StorageHelper;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
 import java.util.Optional;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
@@ -87,7 +86,7 @@ public class UpgradeInSmithingTableTask extends ResourceTask {
                return new GetToBlockTask(this.tablePos);
             } else {
                this.setDebugState("Upgrading item...");
-               LivingEntityInventory inventory = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
+               PlayerInventory inventory = this.controller.getInventory();
                inventory.remove(stack -> this.template.matches(stack.getItem()), 1, inventory);
                inventory.remove(stack -> this.tool.matches(stack.getItem()), 1, inventory);
                inventory.remove(stack -> this.material.matches(stack.getItem()), 1, inventory);

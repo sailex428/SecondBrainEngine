@@ -8,12 +8,11 @@ import adris.altoclef.util.MiningRequirement;
 import adris.altoclef.util.Pair;
 import adris.altoclef.util.RecipeTarget;
 import adris.altoclef.util.slots.Slot;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
 import baritone.utils.ToolSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -60,8 +59,8 @@ public class StorageHelper {
    }
 
    public static boolean isEquipped(AltoClefController controller, Item... items) {
-      LivingEntityInventory inv = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
-      return Arrays.stream(items).anyMatch(item -> inv.getMainHandStack().is(item));
+      PlayerInventory inv = controller.getEntity().getInventory();
+      return Arrays.stream(items).anyMatch(item -> inv.getMainHandStack().isOf(item));
    }
 
    public static MiningRequirement getCurrentMiningRequirement(AltoClefController controller) {
@@ -124,12 +123,12 @@ public class StorageHelper {
    }
 
    public static Optional<Slot> getGarbageSlot(AltoClefController controller) {
-      LivingEntityInventory inventory = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
+      PlayerInventory inventory = controller.getEntity().getInventory();
       int bestScore = Integer.MIN_VALUE;
       Slot bestSlot = null;
 
       for (int i = 0; i < inventory.main.size(); i++) {
-         ItemStack stack = inventory.getItem(i);
+         ItemStack stack = inventory.getStack(i);
          if (!stack.isEmpty() && ItemHelper.canThrowAwayStack(controller, stack)) {
             int score = 0;
             if (controller.getModSettings().isThrowaway(stack.getItem())) {
@@ -225,7 +224,7 @@ public class StorageHelper {
 
    public static ItemTarget[] getAllInventoryItemsAsTargets(AltoClefController controller, Predicate<Slot> accept) {
       HashMap<Item, Integer> counts = new HashMap<>();
-      LivingEntityInventory inv = ((IInventoryProvider)controller.getEntity()).getLivingInventory();
+      PlayerInventory inv = controller.getEntity().getInventory();
 
       for (int i = 0; i < inv.main.size(); i++) {
          Slot slot = new Slot(inv.main, i);

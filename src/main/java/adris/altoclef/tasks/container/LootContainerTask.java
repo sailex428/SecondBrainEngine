@@ -4,13 +4,12 @@ import adris.altoclef.Debug;
 import adris.altoclef.tasks.movement.GetToBlockTask;
 import adris.altoclef.tasks.slot.EnsureFreeInventorySlotTask;
 import adris.altoclef.tasksystem.Task;
-import baritone.api.entity.IInventoryProvider;
-import baritone.api.entity.LivingEntityInventory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -53,7 +52,7 @@ public class LootContainerTask extends Task {
          return new GetToBlockTask(this.containerPos);
       } else if (this.controller.getWorld().getBlockEntity(this.containerPos) instanceof LootableContainerBlockEntity container) {
          LootableContainerBlockEntity containerInventory = container;
-         LivingEntityInventory playerInventory = ((IInventoryProvider)this.controller.getEntity()).getLivingInventory();
+         PlayerInventory playerInventory = this.controller.getInventory();
          this.controller.getItemStorage().containers.WritableCache(this.controller, this.containerPos);
          boolean somethingToLoot = false;
          this.setDebugState("Looting items: " + this.targets);

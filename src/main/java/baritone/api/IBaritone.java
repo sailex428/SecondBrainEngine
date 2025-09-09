@@ -27,15 +27,11 @@ import baritone.api.process.*;
 import baritone.api.utils.ICommandHelper;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.IInputOverrideHandler;
-import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -44,8 +40,7 @@ import java.util.stream.Stream;
  * @author Brady
  * @since 9/29/2018
  */
-public interface IBaritone extends ServerTickingComponent {
-    ComponentKey<IBaritone> KEY = ComponentRegistry.getOrCreate(Identifier.of("automatone", "core"), IBaritone.class);
+public interface IBaritone {
 
     /**
      * @return The {@link IPathingBehavior} instance
@@ -196,4 +191,6 @@ public interface IBaritone extends ServerTickingComponent {
     Settings settings();
 
     ICommandHelper getCommandHelper();
+
+    void serverTick();
 }

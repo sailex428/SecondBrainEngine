@@ -75,12 +75,12 @@ public class BaritoneArgumentType implements ArgumentType<String> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            assert MinecraftClient.getInstance().player != null;
-            IBaritone baritone = IBaritone.KEY.get(MinecraftClient.getInstance().player);
-            tabComplete(baritone.getCommandManager(), builder.getRemaining()).forEach(builder::suggest);
-            return builder.buildFuture();
-        }
+//        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+//            assert MinecraftClient.getInstance().player != null;
+//            IBaritone baritone = IBaritone.KEY.get(MinecraftClient.getInstance().player);
+//            tabComplete(baritone.getCommandManager(), builder.getRemaining()).forEach(builder::suggest);
+//            return builder.buildFuture();
+//        }
         return Suggestions.empty();
     }
 

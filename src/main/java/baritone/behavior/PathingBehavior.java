@@ -99,13 +99,13 @@ public final class PathingBehavior extends Behavior implements IPathingBehavior 
         dispatchEvents();
         // Fuck it, synchronizing every tick for now
         // TODO try not to synchronize every tick
-        IBaritone.KEY.sync(this.baritone.getPlayerContext().entity());
+        //IBaritone.KEY.sync(this.baritone.getPlayerContext().entity());
     }
 
     public void shutdown() {
         secretInternalSegmentCancel();
         baritone.getPathingControlManager().cancelEverything();
-        IBaritone.KEY.sync(this.baritone.getPlayerContext().entity());
+        //IBaritone.KEY.sync(this.baritone.getPlayerContext().entity());
     }
 
     private void tickPath() {

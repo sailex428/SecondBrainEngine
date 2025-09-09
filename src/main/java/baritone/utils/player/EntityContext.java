@@ -22,7 +22,7 @@ import baritone.api.cache.IWorldData;
 import baritone.api.pathing.calc.Avoidance;
 import baritone.api.utils.BetterBlockPos;
 import baritone.api.utils.IEntityContext;
-import baritone.api.utils.IPlayerController;
+import baritone.api.utils.InteractionController;
 import baritone.api.utils.RayTraceUtils;
 import baritone.utils.accessor.ServerChunkManagerAccessor;
 import net.minecraft.block.SlabBlock;
@@ -48,10 +48,12 @@ import java.util.stream.Stream;
 public class EntityContext implements IEntityContext {
 
     private final ServerPlayerEntity entity;
+    private final InteractionController controller;
     private @Nullable Supplier<List<Avoidance>> avoidanceFinder;
 
     public EntityContext(ServerPlayerEntity entity) {
         this.entity = entity;
+        this.controller = new PlayerEntityInteractionController(entity);
     }
 
     @Override
@@ -65,8 +67,8 @@ public class EntityContext implements IEntityContext {
     }
 
     @Override
-    public IPlayerController playerController() {
-        return IPlayerController.KEY.get(this.entity);
+    public InteractionController interactionController() {
+        return controller;
     }
 
     @Override
@@ -83,7 +85,7 @@ public class EntityContext implements IEntityContext {
 
     @Override
     public HitResult objectMouseOver() {
-        return RayTraceUtils.rayTraceTowards(entity(), entityRotations(), playerController().getBlockReachDistance());
+        return RayTraceUtils.rayTraceTowards(entity(), entityRotations(), interactionController().getBlockReachDistance());
     }
 
     @Override

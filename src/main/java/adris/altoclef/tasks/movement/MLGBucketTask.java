@@ -185,8 +185,8 @@ public class MLGBucketTask extends Task {
             mod.getBaritone().getInputOverrideHandler().setInputForceState(Input.CLICK_RIGHT, false);
             return null;
          } else {
-            IEntityContext ctx = mod.getBaritone().getEntityContext();
-            Optional<Rotation> reachable = RotationUtils.reachableCenter(ctx.entity(), toPlaceOn, ctx.playerController().getBlockReachDistance(), false);
+            IEntityContext ctx = mod.getBaritone().getPlayerContext();
+            Optional<Rotation> reachable = RotationUtils.reachableCenter(ctx.entity(), toPlaceOn, ctx.interactionController().getBlockReachDistance(), false);
             if (reachable.isPresent()) {
                this.setDebugState("Performing MLG");
                LookHelper.lookAt(this.controller, reachable.get());
@@ -201,7 +201,7 @@ public class MLGBucketTask extends Task {
                }
 
                BlockPos[] toCheckLook = new BlockPos[]{toPlaceOn, toPlaceOn.up(), toPlaceOn.up(2)};
-               if (hasClutch && Arrays.stream(toCheckLook).anyMatch(check -> mod.getBaritone().getEntityContext().isLookingAt(check))) {
+               if (hasClutch && Arrays.stream(toCheckLook).anyMatch(check -> mod.getBaritone().getPlayerContext().isLookingAt(check))) {
                   Debug.logMessage("HIT: " + willLandIn);
                   this.placedPos = willLandIn;
                   mod.getInputControls().tryPress(Input.CLICK_RIGHT);

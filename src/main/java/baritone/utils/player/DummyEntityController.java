@@ -17,7 +17,7 @@
 
 package baritone.utils.player;
 
-import baritone.api.utils.IPlayerController;
+import baritone.api.utils.InteractionController;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 /**
  * A stubbed controller implementation for entities that cannot break or place blocks
  */
-public class DummyEntityController implements IPlayerController {
+public class DummyEntityController implements InteractionController {
     public static final DummyEntityController INSTANCE = new DummyEntityController();
 
     @Override

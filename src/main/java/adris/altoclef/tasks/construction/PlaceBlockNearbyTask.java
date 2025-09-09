@@ -140,7 +140,7 @@ public class PlaceBlockNearbyTask extends Task {
    private BlockPos getCurrentlyLookingBlockPlace(AltoClefController mod) {
       if (MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult bhit) {
          BlockPos bpos = bhit.getBlockPos();
-         IEntityContext ctx = mod.getBaritone().getEntityContext();
+         IEntityContext ctx = mod.getBaritone().getPlayerContext();
          if (MovementHelper.canPlaceAgainst(ctx, bpos)) {
             BlockPos placePos = bhit.getBlockPos().add(bhit.getSide().getVector());
             if (WorldHelper.isInsidePlayer(this.controller, placePos)) {

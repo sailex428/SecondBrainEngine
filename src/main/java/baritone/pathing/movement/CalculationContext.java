@@ -31,13 +31,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -85,7 +84,7 @@ public class CalculationContext {
     /**The extra space required on each side of the entity for free movement; 0 in the case of a normal size player*/
     public final int requiredSideSpace;
     public final int height;
-    private final PlayerEntity player;
+    private final ServerPlayerEntity player;
     private final BlockPos.Mutable blockPos;
     public final int breathTime;
     public final int startingBreathTime;
@@ -100,8 +99,7 @@ public class CalculationContext {
     public CalculationContext(IBaritone baritone, boolean forUseOnAnotherThread) {
         this.safeForThreadedUse = forUseOnAnotherThread;
         this.baritone = baritone;
-        LivingEntity entity = baritone.getPlayerContext().entity();
-        this.player = entity instanceof PlayerEntity ? (PlayerEntity) entity : null;
+        this.player = baritone.getPlayerContext().entity();
         this.world = baritone.getPlayerContext().world();
         this.worldData = (WorldData) baritone.getWorldProvider().getCurrentWorld();
         this.bsi = new BlockStateInterface(world);

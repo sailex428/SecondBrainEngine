@@ -144,11 +144,11 @@ public final class RotationUtils {
      * @see #reachable(ServerPlayerEntity, BlockPos, double)
      */
     public static Optional<Rotation> reachable(IEntityContext ctx, BlockPos pos) {
-        return reachable(ctx.entity(), pos, ctx.playerController().getBlockReachDistance());
+        return reachable(ctx.entity(), pos, ctx.interactionController().getBlockReachDistance());
     }
 
     public static Optional<Rotation> reachable(IEntityContext ctx, BlockPos pos, boolean wouldSneak) {
-        return reachable(ctx.entity(), pos, ctx.playerController().getBlockReachDistance(), wouldSneak);
+        return reachable(ctx.entity(), pos, ctx.interactionController().getBlockReachDistance(), wouldSneak);
     }
 
     /**

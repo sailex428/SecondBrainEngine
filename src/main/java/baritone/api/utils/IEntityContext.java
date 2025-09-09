@@ -51,12 +51,12 @@ public interface IEntityContext {
     ServerPlayerEntity entity();
 
     default IBaritone baritone() {
-        return IBaritone.KEY.get(entity());
+        return BaritoneAPI.getProvider().getBaritone(this.entity());
     }
 
     @Nullable PlayerInventory inventory();
 
-    IPlayerController playerController();
+    InteractionController interactionController();
 
     ServerWorld world();
 
@@ -119,7 +119,7 @@ public interface IEntityContext {
         MinecraftServer server = world().getServer();
         for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
             if (server.getPlayerManager().isOperator(p.getGameProfile())) {
-                IBaritone.KEY.get(p).logDirect(message);
+                BaritoneAPI.getProvider().getBaritone(this.entity()).logDirect(message);
             }
         }
     }

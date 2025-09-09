@@ -112,7 +112,7 @@ public class MovementFall extends Movement {
                 return state.setStatus(MovementStatus.UNREACHABLE);
             }
 
-            if (ctx.entity().getY() - dest.getY() < ctx.playerController().getBlockReachDistance() && !ctx.entity().isOnGround()) {
+            if (ctx.entity().getY() - dest.getY() < ctx.interactionController().getBlockReachDistance() && !ctx.entity().isOnGround()) {
                 inventory.selectedSlot = InventoryBehavior.getSlotWithStack(inventory, Automatone.WATER_BUCKETS);
 
                 targetRotation = new Rotation(toDest.getYaw(), 90.0F);

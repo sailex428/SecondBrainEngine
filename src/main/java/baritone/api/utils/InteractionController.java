@@ -17,13 +17,9 @@
 
 package baritone.api.utils;
 
-import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.component.TransientComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -34,8 +30,7 @@ import net.minecraft.world.World;
  * @author Brady
  * @since 12/14/2018
  */
-public interface IPlayerController extends TransientComponent {
-    ComponentKey<IPlayerController> KEY = ComponentRegistry.getOrCreate(Identifier.of("automatone", "controller"), IPlayerController.class);
+public interface InteractionController {
 
     boolean hasBrokenBlock();
 

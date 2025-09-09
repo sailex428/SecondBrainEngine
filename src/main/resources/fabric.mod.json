@@ -13,33 +13,20 @@
     "sailex"
   ],
   "contact": {
-    "sources": "https://github.com/Ladysnake/automatone",
-    "issues": "https://github.com/Ladysnake/automatone/issues"
+    "sources": "https://github.com/sailex428/SecondBrainEngine",
+    "issues": "https://github.com/sailex428/SecondBrainEngine/issues"
   },
-  "environment": "*",
+  "environment": "server",
   "entrypoints": {
     "main": [
       "baritone.Automatone"
-    ],
-    "cardinal-components": [
-      "baritone.AutomatoneComponents"
     ]
   },
   "depends": {
     "fabric": "*",
-    "cardinal-components-base": "6.1.2",
-    "cardinal-components-entity": "6.1.2",
-    "cardinal-components-world": "6.1.2"
+    "fabricloader": ">=0.16.9"
   },
   "mixins": [
     "mixins.automatone.json"
-  ],
-  "custom": {
-    "cardinal-components": [
-      "automatone:core",
-      "automatone:controller",
-      "automatone:world_data_provider",
-      "automatone:selection_manager"
-    ]
-  }
+  ]
 }

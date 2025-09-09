@@ -42,11 +42,11 @@ public final class BlockBreakHelper {
     public void stopBreakingBlock() {
         // The player controller will never be null, but the player can be
         if (ctx.entity() != null && lastPos != null) {
-            if (!ctx.playerController().hasBrokenBlock()) {
+            if (!ctx.interactionController().hasBrokenBlock()) {
                 // insane bypass to check breaking succeeded
-                ctx.playerController().setHittingBlock(true);
+                ctx.interactionController().setHittingBlock(true);
             }
-            ctx.playerController().resetBlockRemoving();
+            ctx.interactionController().resetBlockRemoving();
             lastPos = null;
         }
     }
@@ -58,16 +58,16 @@ public final class BlockBreakHelper {
         if (isLeftClick && isBlockTrace) {
             BlockPos pos = ((BlockHitResult) trace).getBlockPos();
             if (!Objects.equals(lastPos, pos)) {
-                ctx.playerController().clickBlock(pos, ((BlockHitResult) trace).getSide());
+                ctx.interactionController().clickBlock(pos, ((BlockHitResult) trace).getSide());
                 ctx.entity().swingHand(Hand.MAIN_HAND);
             }
 
             // Attempt to break the block
-            if (ctx.playerController().onPlayerDamageBlock(pos, ((BlockHitResult) trace).getSide())) {
+            if (ctx.interactionController().onPlayerDamageBlock(pos, ((BlockHitResult) trace).getSide())) {
                 ctx.entity().swingHand(Hand.MAIN_HAND);
             }
 
-            ctx.playerController().setHittingBlock(false);
+            ctx.interactionController().setHittingBlock(false);
 
             lastPos = pos;
         } else if (lastPos != null) {

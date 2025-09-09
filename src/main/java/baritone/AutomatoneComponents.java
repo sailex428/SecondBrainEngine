@@ -21,27 +21,23 @@ import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import baritone.api.cache.IWorldProvider;
 import baritone.api.selection.ISelectionManager;
-import baritone.api.utils.IPlayerController;
+import baritone.api.utils.InteractionController;
 import baritone.cache.WorldProvider;
 import baritone.selection.SelectionManager;
-import baritone.utils.player.ServerPlayerController;
-import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
-import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
-import org.ladysnake.cca.api.v3.world.WorldComponentFactoryRegistry;
-import org.ladysnake.cca.api.v3.world.WorldComponentInitializer;
+import baritone.utils.player.PlayerEntityInteractionController;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-@KeepName
-public final class AutomatoneComponents implements EntityComponentInitializer, WorldComponentInitializer {
-    @Override
-    public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-        registry.registerFor(ServerPlayerEntity.class, IBaritone.KEY, BaritoneAPI.getProvider().componentFactory());
-        registry.registerFor(ServerPlayerEntity.class, ISelectionManager.KEY, SelectionManager::new);
-        registry.registerFor(ServerPlayerEntity.class, IPlayerController.KEY, ServerPlayerController::new);
-    }
-
-    @Override
-    public void registerWorldComponentFactories(WorldComponentFactoryRegistry registry) {
-        registry.register(IWorldProvider.KEY, WorldProvider::new);
-    }
-}
+//@KeepName
+//public final class AutomatoneComponents implements EntityComponentInitializer, WorldComponentInitializer {
+//    @Override
+//    public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
+//        registry.registerFor(ServerPlayerEntity.class, IBaritone.KEY, BaritoneAPI.getProvider().componentFactory());
+//        registry.registerFor(ServerPlayerEntity.class, ISelectionManager.KEY, SelectionManager::new);
+//        registry.registerFor(ServerPlayerEntity.class, InteractionController.KEY, PlayerEntityInteractionController::new);
+//    }
+//
+//    @Override
+//    public void registerWorldComponentFactories(WorldComponentFactoryRegistry registry) {
+//        registry.register(IWorldProvider.KEY, WorldProvider::new);
+//    }
+//}

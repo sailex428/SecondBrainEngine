@@ -28,8 +28,10 @@ import baritone.command.CommandSystem;
 import baritone.utils.SettingsLoader;
 import baritone.utils.schematic.SchematicSystem;
 import net.minecraft.server.network.ServerPlayerEntity;
-import org.ladysnake.cca.api.v3.component.ComponentFactory;
 import net.minecraft.entity.LivingEntity;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Brady
@@ -39,21 +41,29 @@ public final class BaritoneProvider implements IBaritoneProvider {
 
     public static final BaritoneProvider INSTANCE = new BaritoneProvider();
 
+    public final Map<ServerPlayerEntity, IBaritone> playerToBaritone;
+
     private final Settings settings;
 
     public BaritoneProvider() {
         this.settings = new Settings();
+        this.playerToBaritone = new HashMap<>();
         SettingsLoader.readAndApply(settings);
     }
 
     @Override
     public IBaritone getBaritone(ServerPlayerEntity entity) {
-        if (entity.getWorld().isClient()) throw new IllegalStateException("Lol we only support servers now");
-        return IBaritone.KEY.get(entity);
+        if (entity.getWorld().isClient()) throw new IllegalStateException("lol we only support servers now");
+
+        IBaritone baritone = playerToBaritone.get(entity);
+        if (baritone == null) {
+            return new Baritone(entity);
+        }
+        return baritone;
     }
 
     public boolean isPathing(LivingEntity entity) {
-        IBaritone baritone = IBaritone.KEY.getNullable(entity);
+        IBaritone baritone = playerToBaritone.get(entity);
         return baritone != null && baritone.isActive();
     }
 
@@ -75,10 +85,5 @@ public final class BaritoneProvider implements IBaritoneProvider {
     @Override
     public Settings getGlobalSettings() {
         return this.settings;
-    }
-
-    @Override
-    public <E extends ServerPlayerEntity> ComponentFactory<E, IBaritone> componentFactory() {
-        return Baritone::new;
     }
 }

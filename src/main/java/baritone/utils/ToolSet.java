@@ -17,22 +17,22 @@
 
 package baritone.utils;
 
+import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,13 +57,13 @@ public class ToolSet {
      */
     private final Function<Block, Double> backendCalculation;
 
-    private final PlayerEntity player;
+    private final ServerPlayerEntity player;
     private final IBaritone baritone;
 
-    public ToolSet(PlayerEntity player) {
+    public ToolSet(ServerPlayerEntity player) {
         this.breakStrengthCache = new HashMap<>();
         this.player = player;
-        this.baritone = IBaritone.KEY.get(player);
+        this.baritone = BaritoneAPI.getProvider().getBaritone(player);
 
         if (baritone.settings().considerPotionEffects.get()) {
             double amplifier = potionAmplifier();

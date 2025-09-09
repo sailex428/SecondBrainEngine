@@ -37,23 +37,25 @@ public class ClientPathingBehaviour {
 
     public Goal getGoal() {
         // Reaching across sides is fun
-        return Optional.ofNullable(MinecraftClient.getInstance().getServer())
-                .map(s -> s.getWorld(this.entity.getWorld().getRegistryKey()))
-                .map(w -> w.getEntity(this.entity.getUuid()))
-                .map(IBaritone.KEY::getNullable)
-                .map(IBaritone::getPathingBehavior)
-                .map(IPathingBehavior::getGoal)
-                .orElse(null);
+//        return Optional.ofNullable(MinecraftClient.getInstance().getServer())
+//                .map(s -> s.getWorld(this.entity.getWorld().getRegistryKey()))
+//                .map(w -> w.getEntity(this.entity.getUuid()))
+//                .map(IBaritone.KEY::getNullable)
+//                .map(IBaritone::getPathingBehavior)
+//                .map(IPathingBehavior::getGoal)
+//                .orElse(null);
+        return null;
     }
 
     public Optional<? extends IPathFinder> getInProgress() {
         // Reaching across sides is fun
-        return Optional.ofNullable(MinecraftClient.getInstance().getServer())
-                .map(s -> s.getWorld(this.entity.getWorld().getRegistryKey()))
-                .map(w -> w.getEntity(this.entity.getUuid()))
-                .map(IBaritone.KEY::getNullable)
-                .map(IBaritone::getPathingBehavior)
-                .flatMap(IPathingBehavior::getInProgress);
+//        return Optional.ofNullable(MinecraftClient.getInstance().getServer())
+//                .map(s -> s.getWorld(this.entity.getWorld().getRegistryKey()))
+//                .map(w -> w.getEntity(this.entity.getUuid()))
+//                .map(IBaritone.KEY::getNullable)
+//                .map(IBaritone::getPathingBehavior)
+//                .flatMap(IPathingBehavior::getInProgress);
+        return Optional.empty();
     }
 
     public RenderedPath getCurrent() {

@@ -30,12 +30,12 @@ public interface LookHelper {
       IEntityContext context = controller.getBaritone().getEntityContext();
       Optional<Rotation> reachableRotation;
       if (side == null) {
-         reachableRotation = RotationUtils.reachable(context.entity(), target, context.playerController().getBlockReachDistance());
+         reachableRotation = RotationUtils.reachable(context.entity(), target, context.interactionController().getBlockReachDistance());
       } else {
          Vec3i sideVector = side.getVector();
          Vec3d centerOffset = new Vec3d(0.5 + sideVector.getX() * 0.5, 0.5 + sideVector.getY() * 0.5, 0.5 + sideVector.getZ() * 0.5);
          Vec3d sidePoint = centerOffset.add(target.getX(), target.getY(), target.getZ());
-         reachableRotation = RotationUtils.reachableOffset(context.entity(), target, sidePoint, context.playerController().getBlockReachDistance(), false);
+         reachableRotation = RotationUtils.reachableOffset(context.entity(), target, sidePoint, context.interactionController().getBlockReachDistance(), false);
          if (reachableRotation.isPresent()) {
             Vec3d cameraPos = context.entity().getEyePosition(1.0F);
             Vec3d vecToPlayerPos = cameraPos.subtract(sidePoint);

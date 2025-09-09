@@ -17,9 +17,7 @@
 
 package baritone.mixins;
 
-import baritone.api.IBaritone;
 import baritone.api.utils.IEntityAccessor;
-import baritone.behavior.PathingBehavior;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,7 +33,8 @@ public abstract class MixinEntity implements IEntityAccessor {
     @Inject(method = "setRemoved", at = @At("RETURN"))
     private void shutdownPathingOnUnloading(Entity.RemovalReason reason, CallbackInfo ci) {
         if (!getWorld().isClient()) {
-            IBaritone.KEY.maybeGet(this).ifPresent(b -> ((PathingBehavior) b.getPathingBehavior()).shutdown());
+            System.out.println("is this still used???");
+//            IBaritone.KEY.maybeGet(this).ifPresent(b -> ((PathingBehavior) b.getPathingBehavior()).shutdown());
         }
     }
 }

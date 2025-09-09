@@ -89,6 +89,7 @@ public class Baritone implements IBaritone {
 
     private final CarpetPlayerCommandHelper commandHelper;
 
+    private final WorldProvider worldProvider;
     private final AltoClefSettings altoClefSettings;
 
     public Baritone(ServerPlayerEntity player) {
@@ -123,6 +124,7 @@ public class Baritone implements IBaritone {
         this.commandManager = new BaritoneCommandManager(this);
         this.execControlProcess = DefaultCommands.controlCommands.registerProcess(this);
 
+        this.worldProvider = new WorldProvider(player.getWorld());
         this.altoClefSettings = new AltoClefSettings();
     }
 
@@ -198,7 +200,7 @@ public class Baritone implements IBaritone {
 
     @Override
     public WorldProvider getWorldProvider() {
-        return (WorldProvider) IWorldProvider.KEY.get(this.getPlayerContext().world());
+        return this.worldProvider;
     }
 
     @Override
@@ -241,19 +243,9 @@ public class Baritone implements IBaritone {
         MinecraftServer server = this.getPlayerContext().world().getServer();
         for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
             if (server.getPlayerManager().isOperator(p.getGameProfile())) {
-                KEY.get(p).logDirect(message);
+                logDirect(message);
             }
         }
-    }
-
-    @Override
-    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
-        // NO-OP
-    }
-
-    @Override
-    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
-        // NO-OP
     }
 
     @Override

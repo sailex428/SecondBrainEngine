@@ -17,17 +17,11 @@
 
 package baritone.api.cache;
 
-import org.ladysnake.cca.api.v3.component.Component;
-import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import net.minecraft.util.Identifier;
-
 /**
  * @author Brady
  * @since 9/24/2018
  */
-public interface IWorldProvider extends Component {
-    ComponentKey<IWorldProvider> KEY = ComponentRegistry.getOrCreate(Identifier.of("automatone", "world_data_provider"), IWorldProvider.class);
+public interface IWorldProvider {
 
     /**
      * Returns the data of the currently loaded world

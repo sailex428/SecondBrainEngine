@@ -25,11 +25,6 @@ plugins {
 group project.maven_group
 version project.mod_version
 
-compileJava {
-    options.encoding = "UTF-8" // allow emoji in comments :^)
-}
-
-
 sourceSets {
     testmod {
         compileClasspath += main.compileClasspath + main.output
@@ -67,7 +62,8 @@ dependencies {
     compileOnly "com.demonwav.mcdev:annotations:1.0"
 }
 
-task testmodJar(type: Jar, dependsOn: testmodClasses) {
+tasks.register('testmodJar', Jar) {
+    dependsOn testmodClasses
     archiveBaseName.set('Otomaton')
     archiveClassifier.set('dev')
     filesMatching('fabric.mod.json') {
@@ -75,7 +71,8 @@ task testmodJar(type: Jar, dependsOn: testmodClasses) {
     }
 }
 
-task remapTestmodJar(type: RemapJarTask, dependsOn: project.testmodJar) {
+tasks.register('remapTestmodJar', RemapJarTask) {
+    dependsOn project.testmodJar
     archiveBaseName.set('Otomaton')
     inputFile.set(testmodJar.archiveFile)
     addNestedDependencies.set(false)
@@ -87,6 +84,12 @@ processResources {
         expand "version": project.mod_version
     }
 }
+
+compileJava {
+    options.encoding = "UTF-8" // allow emoji in comments :^)
+}
+
+
 java {
     withSourcesJar()
 }

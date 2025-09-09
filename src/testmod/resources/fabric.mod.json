@@ -19,9 +19,6 @@
     "main": [
       "io.github.ladysnake.otomaton.Otomaton"
     ],
-    "fabric-gametest": [
-      "io.github.ladysnake.otomaton.OtomatonTestSuite"
-    ]
   },
   "depends": {
     "fabric": "*"

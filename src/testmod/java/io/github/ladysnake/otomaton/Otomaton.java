@@ -21,8 +21,6 @@ import net.fabricmc.api.ModInitializer;
 
 public class Otomaton implements ModInitializer {
 
-    private boolean isInitialized = false;
-
     @Override
     public void onInitialize() {
 

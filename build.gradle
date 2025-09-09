@@ -39,7 +39,6 @@ repositories {
         url = 'https://maven.ladysnake.org/releases'
     }
     maven { url = "https://jitpack.io" }
-    mavenLocal()
 }
 
 dependencies {
@@ -60,6 +59,10 @@ dependencies {
     }
     modImplementation("com.github.gnembon:fabric-carpet:${carpet_version}")
     compileOnly "com.demonwav.mcdev:annotations:1.0"
+
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.16.0'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.16.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
 }
 
 tasks.register('testmodJar', Jar) {

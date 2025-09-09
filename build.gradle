@@ -38,12 +38,20 @@ repositories {
         name = "Ladysnake Mods"
         url = 'https://maven.ladysnake.org/releases'
     }
+    maven {
+        name = "ParchmentMC"
+        url = "https://maven.parchmentmc.net/"
+    }
     maven { url = "https://jitpack.io" }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${mc_version}"
-    mappings "net.fabricmc:yarn:${mc_version}+build.${yarn_build}:v2"
+//    mappings "net.fabricmc:yarn:${mc_version}+build.${yarn_build}:v2"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.20.1:2023.09.03")
+    }
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fapi_version}+${mc_version}"
 

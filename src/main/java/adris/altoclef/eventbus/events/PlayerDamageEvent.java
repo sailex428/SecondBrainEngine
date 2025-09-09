@@ -1,7 +1,7 @@
 package adris.altoclef.eventbus.events;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.damage.DamageSource;
 
 public class PlayerDamageEvent {
    public Entity target;

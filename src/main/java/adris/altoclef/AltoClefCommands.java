@@ -20,13 +20,11 @@ public class AltoClefCommands {
             new FoodCommand(),
             new MeatCommand(),
             new ReloadSettingsCommand(),
-            new ResetMemoryCommand(),
             new GamerCommand(),
             new FollowCommand(),
             new GiveCommand(),
             new ScanCommand(),
             new AttackPlayerOrMobCommand(),
-            new SetAIBridgeEnabledCommand(),
             new FarmCommand(),
             new FishCommand()
          );

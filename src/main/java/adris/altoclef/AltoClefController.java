@@ -6,10 +6,6 @@ import adris.altoclef.commandsystem.CommandExecutor;
 import adris.altoclef.control.InputControls;
 import adris.altoclef.control.PlayerExtraController;
 import adris.altoclef.control.SlotHandler;
-import adris.altoclef.player2api.AIPersistantData;
-import adris.altoclef.player2api.Character;
-import adris.altoclef.player2api.EventQueueManager;
-import adris.altoclef.player2api.Player2APIService;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.tasksystem.TaskRunner;
 import adris.altoclef.trackers.*;
@@ -20,11 +16,9 @@ import baritone.api.IBaritone;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.InteractionController;
 import baritone.settings.AltoClefSettings;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
@@ -36,21 +30,19 @@ import java.util.UUID;
 public class AltoClefController {
 
    private final IBaritone baritone;
-   private AIPersistantData aiPersistantData;
-   private Player2APIService player2apiService;
    private final IEntityContext ctx;
-   private CommandExecutor commandExecutor;
-   private TaskRunner taskRunner;
-   private TrackerManager trackerManager;
-   private BotBehaviour botBehaviour;
-   private UserTaskChain userTaskChain;
-   private FoodChain foodChain;
-   private MobDefenseChain mobDefenseChain;
-   private MLGBucketFallChain mlgBucketChain;
-   private ItemStorageTracker storageTracker;
+   private final CommandExecutor commandExecutor;
+   private final TaskRunner taskRunner;
+   private final TrackerManager trackerManager;
+   private final BotBehaviour botBehaviour;
+   private final UserTaskChain userTaskChain;
+   private final FoodChain foodChain;
+   private final MobDefenseChain mobDefenseChain;
+   private final MLGBucketFallChain mlgBucketChain;
+   private final ItemStorageTracker storageTracker;
    private ContainerSubTracker containerSubTracker;
-   private EntityTracker entityTracker;
-   private BlockScanner blockScanner;
+   private final EntityTracker entityTracker;
+   private final BlockScanner blockScanner;
    private SimpleChunkTracker chunkTracker;
    private MiscBlockTracker miscBlockTracker;
    private CraftingRecipeTracker craftingRecipeTracker;
@@ -62,7 +54,6 @@ public class AltoClefController {
    private Settings settings;
    private boolean paused = false;
    private Task storedTask;
-   public boolean isStopping = false;
    private PlayerEntity owner;
 
    public AltoClefController(IBaritone baritone, Character character, String player2GameId) {
@@ -110,11 +101,6 @@ public class AltoClefController {
          }
       );
       Playground.IDLE_TEST_INIT_FUNCTION(this);
-
-      // AI setup: (should be at end to ensure as many things are not null as possible)
-      EventQueueManager.getOrCreateEventQueueData(this);
-      this.aiPersistantData = new AIPersistantData(this, character);
-      this.player2apiService = new Player2APIService(player2GameId);
    }
 
    public void serverTick() {
@@ -126,9 +112,6 @@ public class AltoClefController {
       this.taskRunner.tick();
       this.inputControls.onTickPost();
       this.baritone.serverTick();
-   }
-   public static void staticServerTick(MinecraftServer server) {
-      EventQueueManager.injectOnTick(server);
    }
 
    public void stop() {
@@ -314,27 +297,10 @@ public class AltoClefController {
       return this.extraController;
    }
 
-   public void setChatClefEnabled(boolean enabled) {
-      EventQueueManager.getOrCreateEventQueueData(this).setEnabled(enabled);
-
+   public void setEnabled(boolean enabled) {
       if (!enabled) {
          this.getUserTaskChain().cancel(this);
          this.getTaskRunner().disable();
-      }
-   }
-
-   public void logCharacterMessage(String message, Character character, boolean isPublic) {
-      int maxLength = 256;
-      int start = 0;
-
-      while (start < message.length()) {
-         int end = Math.min(start + maxLength, message.length());
-         String chunk = message.substring(start, end);
-         if (chunk.length() > 0 && !chunk.isBlank()) {
-            Debug.logCharacterMessage(chunk, character, isPublic);
-         }
-
-         start = end;
       }
    }
 
@@ -344,17 +310,11 @@ public class AltoClefController {
 
    public void setOwner(PlayerEntity owner) {
       this.owner = owner;
-      aiPersistantData.updateSystemPrompt();
-   }
-   public boolean isOwner(UUID playerToCheck) {
-      return playerToCheck.equals(owner.getUuid());
-   }
-   public adris.altoclef.player2api.AIPersistantData getAIPersistantData() {
-      return this.aiPersistantData;
+      //update sys prompt i guess
    }
 
-   public adris.altoclef.player2api.Player2APIService getPlayer2APIService(){
-      return this.player2apiService;
+   public boolean isOwner(UUID playerToCheck) {
+      return playerToCheck.equals(owner.getUuid());
    }
 
    public String getOwnerUsername(){

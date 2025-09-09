@@ -1,7 +1,5 @@
 package adris.altoclef;
 
-import adris.altoclef.player2api.Character;
-
 public class Debug {
    private static final int DEBUG_LOG_LEVEL = 0;
    private static final int WARN_LOG_LEVEL = 1;
@@ -22,11 +20,6 @@ public class Debug {
    }
 
    public static void logMessage(String message, boolean prefix) {
-      logInternal(message);
-   }
-
-   public static void logCharacterMessage(String message, Character character, boolean isPublic) {
-      message = String.format("§1§l§o<%s>§r %s", character.shortName(), message);
       logInternal(message);
    }
 

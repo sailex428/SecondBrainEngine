@@ -3,9 +3,11 @@ package adris.altoclef.commands;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.TaskCatalogue;
 import adris.altoclef.commandsystem.*;
-import adris.altoclef.player2api.AgentCommandUtils;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetCommand extends Command {
    public GetCommand() throws CommandException {
@@ -17,8 +19,16 @@ public class GetCommand extends Command {
    }
 
    private void getItems(AltoClefController mod, ItemTarget... items) {
-      items = AgentCommandUtils.addPresentItemsToTargets(mod, items);
-      if (items != null && items.length != 0) {
+      List<ItemTarget> resultTargets = new ArrayList<>();
+
+      for (ItemTarget target : items) {
+         int count = target.getTargetCount();
+         count += mod.getItemStorage().getItemCountInventoryOnly(target.getMatches());
+         resultTargets.add(new ItemTarget(target, count));
+      }
+      items = resultTargets.toArray(new ItemTarget[0]);
+
+      if (items.length != 0) {
          Task targetTask;
          if (items.length == 1) {
             targetTask = TaskCatalogue.getItemTask(items[0]);

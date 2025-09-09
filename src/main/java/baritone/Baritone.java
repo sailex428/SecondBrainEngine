@@ -20,9 +20,9 @@ package baritone;
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import baritone.api.Settings;
-import baritone.api.cache.IWorldProvider;
 import baritone.api.event.listener.IEventBus;
 import baritone.api.process.IBaritoneProcess;
+import baritone.api.selection.ISelectionManager;
 import baritone.api.utils.ICommandHelper;
 import baritone.api.utils.IEntityContext;
 import baritone.behavior.Behavior;
@@ -42,18 +42,15 @@ import baritone.process.FarmProcess;
 import baritone.process.FollowProcess;
 import baritone.process.GetToBlockProcess;
 import baritone.process.MineProcess;
-import baritone.render.ClientPathingBehaviour;
+import baritone.selection.SelectionManager;
 import baritone.settings.AltoClefSettings;
 import baritone.utils.BlockStateInterface;
 import baritone.utils.CarpetPlayerCommandHelper;
 import baritone.utils.InputOverrideHandler;
 import baritone.utils.PathingControlManager;
 import baritone.utils.player.EntityContext;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Brady
@@ -90,6 +87,7 @@ public class Baritone implements IBaritone {
     private final CarpetPlayerCommandHelper commandHelper;
 
     private final WorldProvider worldProvider;
+    private final ISelectionManager selectionManager;
     private final AltoClefSettings altoClefSettings;
 
     public Baritone(ServerPlayerEntity player) {
@@ -125,6 +123,7 @@ public class Baritone implements IBaritone {
         this.execControlProcess = DefaultCommands.controlCommands.registerProcess(this);
 
         this.worldProvider = new WorldProvider(player.getWorld());
+        this.selectionManager = new SelectionManager(player);
         this.altoClefSettings = new AltoClefSettings();
     }
 
@@ -201,6 +200,11 @@ public class Baritone implements IBaritone {
     @Override
     public WorldProvider getWorldProvider() {
         return this.worldProvider;
+    }
+
+    @Override
+    public ISelectionManager getSelectionManager() {
+        return this.selectionManager;
     }
 
     @Override

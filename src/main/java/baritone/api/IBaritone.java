@@ -24,6 +24,7 @@ import baritone.api.command.manager.ICommandManager;
 import baritone.api.event.listener.IEventBus;
 import baritone.api.pathing.calc.IPathingControlManager;
 import baritone.api.process.*;
+import baritone.api.selection.ISelectionManager;
 import baritone.api.utils.ICommandHelper;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.IInputOverrideHandler;
@@ -101,6 +102,8 @@ public interface IBaritone {
      * @see IWorldProvider
      */
     IWorldProvider getWorldProvider();
+
+    ISelectionManager getSelectionManager();
 
     /**
      * Returns the {@link IPathingControlManager} for this {@link IBaritone} instance, which is responsible

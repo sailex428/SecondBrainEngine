@@ -20,7 +20,7 @@ import baritone.api.IBaritone;
 import baritone.api.entity.LivingEntityInventory;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.IInteractionController;
-import baritone.autoclef.AltoClefSettings;
+import baritone.settings.AltoClefSettings;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -66,7 +66,7 @@ public class AltoClefController {
 
    public AltoClefController(IBaritone baritone, Character character, String player2GameId) {
       this.baritone = baritone;
-      this.ctx = baritone.getEntityContext();
+      this.ctx = baritone.getPlayerContext();
       this.commandExecutor = new CommandExecutor(this);
       this.taskRunner = new TaskRunner(this);
       this.trackerManager = new TrackerManager(this);

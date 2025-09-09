@@ -43,6 +43,7 @@ import baritone.process.FollowProcess;
 import baritone.process.GetToBlockProcess;
 import baritone.process.MineProcess;
 import baritone.render.ClientPathingBehaviour;
+import baritone.settings.AltoClefSettings;
 import baritone.utils.BlockStateInterface;
 import baritone.utils.CarpetPlayerCommandHelper;
 import baritone.utils.InputOverrideHandler;
@@ -84,11 +85,11 @@ public class Baritone implements IBaritone {
 
     private final IEntityContext playerContext;
 
-    private final @Nullable ClientPathingBehaviour clientPathingBehaviour;
-
     public BlockStateInterface bsi;
 
     private final CarpetPlayerCommandHelper commandHelper;
+
+    private final AltoClefSettings altoClefSettings;
 
     public Baritone(ServerPlayerEntity player) {
         this.commandHelper = new CarpetPlayerCommandHelper(this, player);
@@ -121,7 +122,8 @@ public class Baritone implements IBaritone {
 
         this.commandManager = new BaritoneCommandManager(this);
         this.execControlProcess = DefaultCommands.controlCommands.registerProcess(this);
-        this.clientPathingBehaviour = player.getWorld().isClient ? new ClientPathingBehaviour(player) : null;
+
+        this.altoClefSettings = new AltoClefSettings();
     }
 
     @Override
@@ -213,11 +215,6 @@ public class Baritone implements IBaritone {
         return execControlProcess;
     }
 
-    public ClientPathingBehaviour getClientPathingBehaviour() {
-        if (this.clientPathingBehaviour == null) throw new IllegalStateException("Not a clientside baritone instance");
-        return this.clientPathingBehaviour;
-    }
-
     @Override
     public boolean isActive() {
         return this.pathingControlManager.isActive();
@@ -267,5 +264,9 @@ public class Baritone implements IBaritone {
     @Override
     public ICommandHelper getCommandHelper() {
         return this.commandHelper;
+    }
+
+    public AltoClefSettings getExtraBaritoneSettings() {
+        return this.altoClefSettings;
     }
 }

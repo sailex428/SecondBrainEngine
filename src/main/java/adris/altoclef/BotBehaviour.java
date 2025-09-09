@@ -1,7 +1,7 @@
 package adris.altoclef;
 
 import baritone.api.utils.RayTraceUtils;
-import baritone.autoclef.AltoClefSettings;
+import baritone.settings.AltoClefSettings;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;

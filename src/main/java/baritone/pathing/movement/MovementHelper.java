@@ -34,9 +34,7 @@ import baritone.utils.BlockStateInterface;
 import baritone.utils.ToolSet;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.Fluid;
@@ -45,6 +43,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.WaterFluid;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -116,6 +115,11 @@ public interface MovementHelper extends ActionCosts {
                 || block instanceof SlabBlock
                 || block instanceof TrapdoorBlock
                 || block == Blocks.HONEY_BLOCK
+                || block == Blocks.AZALEA
+                || block == Blocks.FLOWERING_AZALEA
+                || block == Blocks.GLOW_LICHEN
+                || block == Blocks.CAVE_VINES
+                || block == Blocks.CAVE_VINES_PLANT
                 || block == Blocks.END_ROD) {
             return false;
         }
@@ -453,10 +457,8 @@ public interface MovementHelper extends ActionCosts {
      * @param b   the blockstate to mine
      */
     static void switchToBestToolFor(IEntityContext ctx, BlockState b) {
-        LivingEntity entity = ctx.entity();
-        if (entity instanceof PlayerEntity) {
-            switchToBestToolFor(ctx, b, new ToolSet((PlayerEntity) entity), ctx.baritone().settings().preferSilkTouch.get());
-        }
+        ServerPlayerEntity entity = ctx.entity();
+        switchToBestToolFor(ctx, b, new ToolSet(entity), ctx.baritone().settings().preferSilkTouch.get());
     }
 
     /**
@@ -584,7 +586,7 @@ public interface MovementHelper extends ActionCosts {
                 double faceY = (placeAt.getY() + against1.getY() + 0.5D) * 0.5D;
                 double faceZ = (placeAt.getZ() + against1.getZ() + 1.0D) * 0.5D;
                 Rotation place = RotationUtils.calcRotationFromVec3d(wouldSneak ? RayTraceUtils.inferSneakingEyePosition(ctx.entity()) : ctx.headPos(), new Vec3d(faceX, faceY, faceZ), ctx.entityRotations());
-                HitResult res = RayTraceUtils.rayTraceTowards(ctx.entity(), place, ctx.playerController().getBlockReachDistance(), wouldSneak);
+                HitResult res = RayTraceUtils.rayTraceTowards(ctx.entity(), place, ctx.interactionController().getBlockReachDistance(), wouldSneak);
                 if (res != null && res.getType() == HitResult.Type.BLOCK && ((BlockHitResult) res).getBlockPos().equals(against1) && ((BlockHitResult) res).getBlockPos().offset(((BlockHitResult) res).getSide()).equals(placeAt)) {
                     state.setTarget(new MovementState.MovementTarget(place, true));
                     found = true;

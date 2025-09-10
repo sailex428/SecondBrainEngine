@@ -16,21 +16,28 @@
  */
 pluginManagement {
     repositories {
-        maven {
-            name = 'Cotton'
-            url = 'https://server.bbkr.space/artifactory/libs-release/'
+        maven("https://server.bbkr.space/artifactory/libs-release/") {
+            name = "Cotton"
         }
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        maven {
-            name = 'Quilt'
-            url = 'https://maven.quiltmc.org/repository/release'
+        maven("https://maven.fabricmc.net/") {
+            name = "Fabric"
         }
         gradlePluginPortal()
-        mavenLocal()
+        maven("https://maven.kikugie.dev/snapshots") {
+            name = "KikuGie Snapshots"
+        }
     }
 }
 
-rootProject.name = mod_name.toLowerCase(Locale.ROOT).replace(' ', '-')
+plugins {
+    id("dev.kikugie.stonecutter") version "0.7.10"
+}
+
+stonecutter {
+    create(rootProject) {
+        versions("1.20.1", "1.21.1")
+        vcsVersion = "1.20.1"
+    }
+}
+
+rootProject.name = "secondbrainengine"

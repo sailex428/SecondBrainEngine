@@ -86,7 +86,7 @@ public interface LookHelper {
       return cleanLineOfSight(clientPlayerEntity, end, maxRange);
    }
 
-   // $VF: Unable to simplify switch-on-enum, as the enum class was not able to be found.
+   // VF: Unable to simplify switch-on-enum, as the enum class was not able to be found.
    // Please report this to the Vineflower issue tracker, at https://github.com/Vineflower/vineflower/issues with a copy of the class file (if you have the rights to distribute it!)
    static boolean cleanLineOfSight(Entity entity, BlockPos block, double maxRange) {
       Vec3d targetPosition = WorldHelper.toVec3d(block);

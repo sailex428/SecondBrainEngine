@@ -79,7 +79,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: "v${{ env.MOD_VERSION }}"
-          name: "Automatone v${{ env.MOD_VERSION }}"
+          name: "SecondBrainEngine v${{ env.MOD_VERSION }}"
           files: |
             artifacts/*
           draft: false

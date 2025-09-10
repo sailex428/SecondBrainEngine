@@ -43,20 +43,20 @@ public class AltoClefController {
    private ContainerSubTracker containerSubTracker;
    private final EntityTracker entityTracker;
    private final BlockScanner blockScanner;
-   private SimpleChunkTracker chunkTracker;
-   private MiscBlockTracker miscBlockTracker;
-   private CraftingRecipeTracker craftingRecipeTracker;
-   private EntityStuckTracker entityStuckTracker;
-   private UserBlockRangeTracker userBlockRangeTracker;
-   private InputControls inputControls;
-   private SlotHandler slotHandler;
-   private PlayerExtraController extraController;
+   private final SimpleChunkTracker chunkTracker;
+   private final MiscBlockTracker miscBlockTracker;
+   private final CraftingRecipeTracker craftingRecipeTracker;
+   private final EntityStuckTracker entityStuckTracker;
+   private final UserBlockRangeTracker userBlockRangeTracker;
+   private final InputControls inputControls;
+   private final SlotHandler slotHandler;
+   private final PlayerExtraController extraController;
    private Settings settings;
    private boolean paused = false;
    private Task storedTask;
    private PlayerEntity owner;
 
-   public AltoClefController(IBaritone baritone, Character character, String player2GameId) {
+   public AltoClefController(IBaritone baritone) {
       this.baritone = baritone;
       this.ctx = baritone.getPlayerContext();
       this.commandExecutor = new CommandExecutor(this);

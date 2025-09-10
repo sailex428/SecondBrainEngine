@@ -167,14 +167,19 @@ public class SettingsUtil {
         ),
         ITEM(
                 Item.class,
-                str -> Registries.ITEM.get(Identifier.of(str.trim())), // TODO this now returns AIR on failure instead of null, is that an issue?
+                str -> Registries.ITEM.get(/*? =1.20.1 {*/ new Identifier(str.trim()) /*?} elif =1.21.1 {*//* Identifier.of(str.trim()) *//*?}*/), // TODO this now returns AIR on failure instead of null, is that
+                // an issue?
                 item -> Registries.ITEM.getKey(item).toString()
         ),
         TAG() {
             @Override
             public Object parse(ParserContext context, String raw) {
                 Type type = ((ParameterizedType) context.getSetting().getType()).getActualTypeArguments()[0];
-                Identifier id = Identifier.of(raw);
+                //? if =1.20.1 {
+                Identifier id = new Identifier(raw);
+                //?} elif =1.21.1 {
+                /*Identifier id = Identifier.of(raw);
+                 *///?}
                 if (type == Block.class) {
                     return TagKey.of(RegistryKeys.BLOCK, id);
                 } else if (type == Item.class) {

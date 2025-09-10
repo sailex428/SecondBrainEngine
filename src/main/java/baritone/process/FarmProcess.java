@@ -224,7 +224,7 @@ public final class FarmProcess extends BaritoneProcessHelper implements IFarmPro
             }
             if (state.getBlock() instanceof Fertilizable) {
                 Fertilizable ig = (Fertilizable) state.getBlock();
-                if (ig.isFertilizable(ctx.world(), pos, state) && ig.canGrow(ctx.world(), ctx.world().random, pos, state)) {
+                if (ig.isFertilizable(ctx.world(), pos, state  /*? >=1.21.1  {*/ /**/ /*?} else {*/, false/*?}*/) && ig.canGrow(ctx.world(), ctx.world().random, pos, state)) {
                     bonemealable.add(pos);
                 }
             }

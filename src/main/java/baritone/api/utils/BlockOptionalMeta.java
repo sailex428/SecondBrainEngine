@@ -30,7 +30,6 @@ import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -47,6 +46,12 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+//? if =1.20.1 {
+import net.minecraft.util.Identifier;
+//?} elif =1.21.1 {
+/*import net.minecraft.registry.RegistryKey;
+ *///?}
 
 public final class BlockOptionalMeta {
 
@@ -137,12 +142,18 @@ public final class BlockOptionalMeta {
     // TODO check if erasing the metadata of both the block and the drops is a good idea
     private static synchronized List<Item> drops(ServerWorld world, Block b) {
         return drops.computeIfAbsent(b, block -> {
+            //? if =1.20.1 {
+            Identifier lootTableLocation = block.getLootTableId();
+            LootTable table = world.getServer().getLootManager().getLootTable(lootTableLocation);
+            //?} elif =1.21.1 {
+            /*
             RegistryKey<LootTable> lootTableLocation = block.getLootTableKey();
+            LootTable table = world.getServer().getReloadableRegistries().getLootTable(lootTableLocation);
+             *///?}
             if (lootTableLocation == LootTables.EMPTY) {
                 return Collections.emptyList();
             } else {
                 List<Item> items = new ArrayList<>();
-                LootTable table = world.getServer().getReloadableRegistries().getLootTable(lootTableLocation);
                 table.generateLoot(
                     new LootContext.Builder(new LootContextParameterSet.Builder(world)
                             .add(LootContextParameters.ORIGIN, Vec3d.of(BlockPos.ZERO))

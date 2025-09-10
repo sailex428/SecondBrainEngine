@@ -31,7 +31,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -43,6 +42,12 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import static baritone.api.pathing.movement.ActionCosts.COST_INF;
+
+//? if >=1.21.1 {
+/*import net.minecraft.entity.attribute.EntityAttributes;
+ *///?} else {
+import net.minecraft.enchantment.EnchantmentHelper;
+//?}
 
 /**
  * @author Brady
@@ -119,7 +124,13 @@ public class CalculationContext {
         this.allowDownward = baritone.settings().allowDownward.get();
         this.maxFallHeightNoWater = baritone.settings().maxFallHeightNoWater.get();
         this.maxFallHeightBucket = baritone.settings().maxFallHeightBucket.get();
-        int depth = (int) entity.getAttributeValue(EntityAttributes.GENERIC_WATER_MOVEMENT_EFFICIENCY);
+
+        //? if >=1.21.1 {
+        /*int depth = (int) player.getAttributeValue(EntityAttributes.GENERIC_WATER_MOVEMENT_EFFICIENCY);
+        *///?} else {
+        int depth = EnchantmentHelper.getDepthStrider(player);
+        //?}
+
         if (depth > 3) {
             depth = 3;
         }
@@ -134,21 +145,21 @@ public class CalculationContext {
         // then you get a wildly inconsistent path that isn't optimal for either scenario.
         this.worldTop = world.getTopY();
         this.worldBottom = world.getBottomY();
-        EntityDimensions dimensions = entity.getDimensions(EntityPose.STANDING);
-        this.width = MathHelper.ceil(dimensions.width());
+        EntityDimensions dimensions = player.getDimensions(EntityPose.STANDING);
+        this.width = MathHelper.ceil(/*? =1.20.1 {*/ dimensions.width /*?} elif =1.21.1 {*//* dimensions.width() *//*?}*/);
         // Note: if width is less than 1 (but not negative), we get side space of 0
         this.requiredSideSpace = getRequiredSideSpace(dimensions);
-        this.height = MathHelper.ceil(dimensions.height());
+        this.height = MathHelper.ceil(/*? =1.20.1 {*/ dimensions.height /*?} elif =1.21.1 {*//* dimensions.height() *//*?}*/);
         this.blockPos = new BlockPos.Mutable();
         this.allowSwimming = baritone.settings().allowSwimming.get();
-        this.breathTime = baritone.settings().ignoreBreath.get() ? Integer.MAX_VALUE : entity.getMaxAir();
-        this.startingBreathTime = entity.getAir();
-        this.airIncreaseOnLand = ((ILivingEntityAccessor) entity).automatone$getNextAirOnLand(0);
-        this.airDecreaseInWater = breathTime - ((ILivingEntityAccessor) entity).automatone$getNextAirUnderwater(breathTime);
+        this.breathTime = baritone.settings().ignoreBreath.get() ? Integer.MAX_VALUE : player.getMaxAir();
+        this.startingBreathTime = player.getAir();
+        this.airIncreaseOnLand = ((ILivingEntityAccessor) player).automatone$getNextAirOnLand(0);
+        this.airDecreaseInWater = breathTime - ((ILivingEntityAccessor) player).automatone$getNextAirUnderwater(breathTime);
     }
 
     public static int getRequiredSideSpace(EntityDimensions dimensions) {
-        return MathHelper.ceil((dimensions.width() - 1) * 0.5f);
+        return MathHelper.ceil((/*? =1.20.1 {*/ dimensions.width /*?} elif =1.21.1 {*//* dimensions.width() *//*?}*/ - 1) * 0.5f);
     }
 
     public final IBaritone getBaritone() {

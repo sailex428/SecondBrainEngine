@@ -21,7 +21,6 @@ import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -29,15 +28,22 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
+
+//? if >=1.21.1 {
+/*
+import net.minecraft.enchantment.Enchantment;
+import java.util.Optional;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+*///?} else {
+import net.minecraft.enchantment.EnchantmentHelper;
+//?}
 
 /**
  * A cached list of the best tools on the hotbar for any block
@@ -95,15 +101,18 @@ public class ToolSet {
     }
 
     public boolean hasSilkTouch(ItemStack stack) {
-        return getEnchantmentLevel(Enchantments.SILK_TOUCH, stack, player) > 0;
+        return /*? =1.20.1 {*/ EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, stack) /*?} elif >=1.21.1 {*//* getEnchantmentLevel(Enchantments.SILK_TOUCH, stack, player) *//*?}*/ > 0;
     }
 
+    //? if >=1.21.1 {
+    /*
     private static int getEnchantmentLevel(RegistryKey<Enchantment> enchantmentKey, ItemStack stack, Entity entity) {
         Enchantment enchantment = entity.getRegistryManager().get(RegistryKeys.ENCHANTMENT).get(enchantmentKey);
         ItemEnchantmentsComponent component = stack.getEnchantments();
         Optional<RegistryEntry<Enchantment>> enchantmentHolder = component.getEnchantments().stream().filter(holder -> holder.value().equals(enchantment)).findFirst();
         return enchantmentHolder.map(component::getLevel).orElse(0);
     }
+    *///?}
 
     /**
      * Calculate which tool on the hotbar is best for mining, depending on an override setting,
@@ -174,7 +183,11 @@ public class ToolSet {
     }
 
     private double avoidanceMultiplier(Block b) {
-        return b.getRegistryEntry().isIn(baritone.settings().blocksToAvoidBreaking.get()) ? 0.1 : 1;
+        //? if >=1.21.1 {
+        /*return b.getRegistryEntry().isIn(baritone.settings().blocksToAvoidBreaking.get()) ? 0.1 : 1;
+        *///?} else {
+        return baritone.settings().blocksToAvoidBreaking.get().contains(b) ? 0.1 : 1;
+        //?}
     }
 
     /**
@@ -193,7 +206,8 @@ public class ToolSet {
 
         float speed = item.getMiningSpeedMultiplier(state);
         if (speed > 1) {
-            int effLevel = getEnchantmentLevel(Enchantments.EFFICIENCY, item, entity);
+
+            int effLevel =/*? =1.20.1 {*/ EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, item) /*?} elif >=1.21.1 {*//*  getEnchantmentLevel(Enchantments.EFFICIENCY, item, entity); *//*?}*/;
             if (effLevel > 0 && !item.isEmpty()) {
                 speed += effLevel * effLevel + 1;
             }

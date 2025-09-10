@@ -116,16 +116,6 @@ public class SelectionManager implements ISelectionManager {
         return null;
     }
 
-    @Override
-    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
-        // NO-OP
-    }
-
-    @Override
-    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup provider) {
-        // NO-OP
-    }
-
 //    @Override
 //    public boolean shouldSyncWith(ServerPlayerEntity player) {
 //        return player == this.holder || (

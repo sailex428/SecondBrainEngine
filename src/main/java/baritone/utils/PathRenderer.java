@@ -63,7 +63,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public final class PathRenderer implements IRenderer {
 
-    private static final Identifier TEXTURE_BEACON_BEAM = Identifier.of("textures/entity/beacon_beam.png");
+    private static final Identifier TEXTURE_BEACON_BEAM = /*? =1.20.1 {*/ new Identifier("textures/entity/beacon_beam.png"); /*?} elif =1.21.1 {*//* Identifier.of("textures/entity/beacon_beam.png"); *//*?}*/
 
     private PathRenderer() {}
 
@@ -80,7 +80,11 @@ public final class PathRenderer implements IRenderer {
     }
 
     public static void render(WorldRenderContext event, ClientPathingBehaviour behavior) {
-        float partialTicks = event.tickCounter().getTickDelta(true);
+        //? if =1.20.1 {
+        float partialTicks = event.tickDelta();
+        //?} elif =1.21.1 {
+        /*float partialTicks = event.tickCounter().getTickDelta(true);
+         *///?}
         Goal goal = behavior.getGoal();
         MinecraftClient mc = MinecraftClient.getInstance();
 
@@ -191,16 +195,16 @@ public final class PathRenderer implements IRenderer {
         boolean renderPathAsFrickinThingy = !settings.renderPathAsLine.get();
 
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-        BufferBuilder buffer = tessellator.begin(renderPathAsFrickinThingy ? VertexFormat.DrawMode.DEBUG_LINE_STRIP : VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
-        buffer.vertex((float) (x1 + 0.5D - vpX), (float) (y1 + 0.5D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
-        buffer.vertex((float) (x2 + 0.5D - vpX), (float) (y2 + 0.5D - vpY), (float) (z2 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
-
-        if (renderPathAsFrickinThingy) {
-            buffer.vertex((float) (x2 + 0.5D - vpX), (float) (y2 + 0.53D - vpY), (float) (z2 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
-            buffer.vertex((float) (x1 + 0.5D - vpX), (float) (y1 + 0.53D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
-            buffer.vertex((float) (x1 + 0.5D - vpX), (float) (y1 + 0.5D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
-        }
-        BufferRenderer.draw(buffer.end());
+//        BufferBuilder buffer = tessellator.begin(renderPathAsFrickinThingy ? VertexFormat.DrawMode.DEBUG_LINE_STRIP : VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
+//        buffer.vertex((float) (x1 + 0.5D - vpX), (float) (y1 + 0.5D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+//        buffer.vertex((float) (x2 + 0.5D - vpX), (float) (y2 + 0.5D - vpY), (float) (z2 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+//
+//        if (renderPathAsFrickinThingy) {
+//            buffer.vertex((float) (x2 + 0.5D - vpX), (float) (y2 + 0.53D - vpY), (float) (z2 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+//            buffer.vertex((float) (x1 + 0.5D - vpX), (float) (y1 + 0.53D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+//            buffer.vertex((float) (x1 + 0.5D - vpX), (float) (y1 + 0.5D - vpY), (float) (z1 + 0.5D - vpZ)).color(State.red, State.green, State.blue, State.alpha);
+//        }
+//        BufferRenderer.draw(buffer.end());
     }
 
     public static void drawManySelectionBoxes(Entity player, Collection<BlockPos> positions, Color color) {
@@ -266,7 +270,7 @@ public final class PathRenderer implements IRenderer {
                         player.getWorld().getTime(),
                         0,
                         player.getWorld().getHeight(),
-                        color.getRGB(),
+                        /*? =1.20.1 {*/ color.getColorComponents(null), /*?} elif =1.21.1 {*//* color.getRGB() *//*?}*/
                         // Arguments filled by the private method lol
                         0.2F,
                         0.25F
@@ -318,29 +322,29 @@ public final class PathRenderer implements IRenderer {
         renderHorizontalQuad(minX, maxX, minZ, maxZ, y2);
 
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-        BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
-        buffer.vertex((float) minX, (float) minY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.vertex((float) minX, (float) maxY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.vertex((float) maxX, (float) minY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.vertex((float) maxX, (float) maxY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.vertex((float) maxX, (float) minY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.vertex((float) maxX, (float) maxY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.vertex((float) minX, (float) minY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-        buffer.vertex((float) minX, (float) maxY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-        BufferRenderer.draw(buffer.end());
+//        BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
+//        buffer.vertex((float) minX, (float) minY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+//        buffer.vertex((float) minX, (float) maxY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+//        buffer.vertex((float) maxX, (float) minY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+//        buffer.vertex((float) maxX, (float) maxY, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+//        buffer.vertex((float) maxX, (float) minY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+//        buffer.vertex((float) maxX, (float) maxY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+//        buffer.vertex((float) minX, (float) minY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+//        buffer.vertex((float) minX, (float) maxY, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+//        BufferRenderer.draw(buffer.end());
 
         IRenderer.endLines(settings.renderGoalIgnoreDepth.get());
     }
 
     private static void renderHorizontalQuad(double minX, double maxX, double minZ, double maxZ, double y) {
         if (y != 0) {
-            RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-            BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
-            buffer.vertex((float) minX, (float) y, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-            buffer.vertex((float) maxX, (float) y, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
-            buffer.vertex((float) maxX, (float) y, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-            buffer.vertex((float) minX, (float) y, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
-            BufferRenderer.draw(buffer.end());
+//            RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+//            BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
+//            buffer.vertex((float) minX, (float) y, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+//            buffer.vertex((float) maxX, (float) y, (float) minZ).color(State.red, State.green, State.blue, State.alpha);
+//            buffer.vertex((float) maxX, (float) y, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+//            buffer.vertex((float) minX, (float) y, (float) maxZ).color(State.red, State.green, State.blue, State.alpha);
+//            BufferRenderer.draw(buffer.end());
         }
     }
 }

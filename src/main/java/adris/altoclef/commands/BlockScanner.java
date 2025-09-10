@@ -269,7 +269,7 @@ public class BlockScanner {
 
       HashMap<Block, HashSet<BlockPos>> map = new HashMap<>();
       BlockPos pos = this.mod.getPlayer().getBlockPos();
-      World world = this.mod.getPlayer().method_48926();
+      World world = this.mod.getPlayer().getWorld();
 
       for (int x = pos.getX() - 8; x <= pos.getX() + 8; x++) {
          for (int y = pos.getY() - 8; y < pos.getY() + 8; y++) {

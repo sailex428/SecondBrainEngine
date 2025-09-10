@@ -39,6 +39,7 @@ import baritone.process.BuilderProcess;
 import baritone.process.CustomGoalProcess;
 import baritone.process.ExploreProcess;
 import baritone.process.FarmProcess;
+import baritone.process.FishingProcess;
 import baritone.process.FollowProcess;
 import baritone.process.GetToBlockProcess;
 import baritone.process.MineProcess;
@@ -75,6 +76,7 @@ public class Baritone implements IBaritone {
     private final ExploreProcess exploreProcess;
     private final BackfillProcess backfillProcess;
     private final FarmProcess farmProcess;
+    private final FishingProcess fishingProcess;
     private final IBaritoneProcess execControlProcess;
 
     private final PathingControlManager pathingControlManager;
@@ -117,6 +119,7 @@ public class Baritone implements IBaritone {
             this.pathingControlManager.registerProcess(exploreProcess = new ExploreProcess(this));
             this.pathingControlManager.registerProcess(backfillProcess = new BackfillProcess(this));
             this.pathingControlManager.registerProcess(farmProcess = new FarmProcess(this));
+            this.pathingControlManager.registerProcess(fishingProcess = new FishingProcess(this));
         }
 
         this.commandManager = new BaritoneCommandManager(this);
@@ -264,5 +267,9 @@ public class Baritone implements IBaritone {
 
     public AltoClefSettings getExtraBaritoneSettings() {
         return this.altoClefSettings;
+    }
+
+    public FishingProcess getFishingProcess() {
+        return this.fishingProcess;
     }
 }

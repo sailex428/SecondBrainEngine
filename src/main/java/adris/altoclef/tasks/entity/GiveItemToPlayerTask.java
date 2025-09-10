@@ -84,7 +84,7 @@ public class GiveItemToPlayerTask extends Task {
                            int amountToThrow = Math.min(neededToThrow, stack.getCount());
                            mod.getSlotHandler().forceEquipSlot(mod, slot);
                            mod.getPlayer().dropStack(mod.getPlayer().getMainHandStack(), amountToThrow).setPickupDelay(40);
-                           mod.getInventory().setItem(mod.getInventory().selectedSlot, ItemStack.EMPTY);
+                           mod.getInventory().setStack(mod.getInventory().selectedSlot, ItemStack.EMPTY);
                            this.throwTarget.set(i, new ItemTarget(target, neededToThrow - amountToThrow));
                            return null;
                         }

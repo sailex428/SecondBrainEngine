@@ -20,6 +20,7 @@ import baritone.api.pathing.goals.Goal;
 import baritone.api.pathing.goals.GoalNear;
 import baritone.api.pathing.goals.GoalTwoBlocks;
 import baritone.api.process.ICustomGoalProcess;
+import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -30,7 +31,6 @@ import net.minecraft.block.FlowerBlock;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
@@ -408,7 +408,7 @@ public class InteractWithBlockTask extends Task {
                }
             }
          } else {
-            Optional<BlockRotation> reachable = this.getCurrentReach();
+            Optional<Rotation> reachable = this.getCurrentReach();
             if (reachable.isPresent()) {
                if (LookHelper.isLookingAt(mod, this.target)) {
                   if (this.toUse != null) {
@@ -443,7 +443,7 @@ public class InteractWithBlockTask extends Task {
       }
    }
 
-   public Optional<BlockRotation> getCurrentReach() {
+   public Optional<Rotation> getCurrentReach() {
       return LookHelper.getReach(this.controller, this.target, this.direction);
    }
 

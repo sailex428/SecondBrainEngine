@@ -58,8 +58,8 @@ public class DepositCommand extends Command {
             countsLeftover.put(name, countsLeftover.getOrDefault(name, 0) + itemTarget.getTargetCount());
          }
 
-         for (int i = 0; i < mod.getInventory().getContainerSize(); i++) {
-            ItemStack stack = mod.getInventory().getItem(i);
+         for (int i = 0; i < mod.getInventory().size(); i++) {
+            ItemStack stack = mod.getInventory().getStack(i);
             if (!stack.isEmpty()) {
                String name = ItemHelper.stripItemName(stack.getItem());
                int count = stack.getCount();

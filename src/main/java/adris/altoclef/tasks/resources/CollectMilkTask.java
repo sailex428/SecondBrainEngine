@@ -71,7 +71,7 @@ public class CollectMilkTask extends ResourceTask {
             return null;
          } else {
             if (mod.getSlotHandler().forceEquipItem(Items.BUCKET)) {
-               mod.getInventory().setItem(mod.getInventory().selectedSlot, new ItemStack(Items.MILK_BUCKET));
+               mod.getInventory().setStack(mod.getInventory().selectedSlot, new ItemStack(Items.MILK_BUCKET));
             }
 
             return null;

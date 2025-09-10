@@ -100,9 +100,9 @@ public class UnstuckChain extends SingleTaskChain {
          this.isProbablyStuck = true;
          BlockPos playerPos = player.getBlockPos();
          BlockPos toBreak = null;
-         if (player.method_48926().getBlockState(playerPos).isOf(Blocks.POWDER_SNOW)) {
+         if (player.getWorld().getBlockState(playerPos).isOf(Blocks.POWDER_SNOW)) {
             toBreak = playerPos;
-         } else if (player.method_48926().getBlockState(playerPos.up()).isOf(Blocks.POWDER_SNOW)) {
+         } else if (player.getWorld().getBlockState(playerPos.up()).isOf(Blocks.POWDER_SNOW)) {
             toBreak = playerPos.up();
          }
 

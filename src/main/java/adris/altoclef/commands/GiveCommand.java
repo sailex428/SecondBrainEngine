@@ -45,8 +45,8 @@ public class GiveCommand extends Command {
       if (TaskCatalogue.taskExists(item)) {
          target = TaskCatalogue.getItemTarget(item, count);
       } else {
-         for (int i = 0; i < mod.getInventory().getContainerSize(); i++) {
-            ItemStack stack = mod.getInventory().getItem(i);
+         for (int i = 0; i < mod.getInventory().size(); i++) {
+            ItemStack stack = mod.getInventory().getStack(i);
             if (!stack.isEmpty()) {
                String name = ItemHelper.stripItemName(stack.getItem());
                if (name.equals(item)) {
@@ -74,8 +74,8 @@ public class GiveCommand extends Command {
          } else {
             Set<String> validNames = new HashSet<>(TaskCatalogue.resourceNames());
 
-            for (int ix = 0; ix < mod.getInventory().getContainerSize(); ix++) {
-               ItemStack stack = mod.getInventory().getItem(ix);
+            for (int ix = 0; ix < mod.getInventory().size(); ix++) {
+               ItemStack stack = mod.getInventory().getStack(ix);
                if (!stack.isEmpty()) {
                   String name = ItemHelper.stripItemName(stack.getItem());
                   validNames.add(name);

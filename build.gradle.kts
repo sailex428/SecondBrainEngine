@@ -15,9 +15,10 @@ sourceSets {
 }
 
 repositories {
+    maven("https://api.modrinth.com/maven")
     mavenCentral()
-    maven("https://jitpack.io")
 }
+
 
 dependencies {
     minecraft("com.mojang:minecraft:${project.property("mc_version")}")
@@ -25,13 +26,14 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${project.property("fabric_loader_version")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fapi_version")}+${project.property("mc_version")}")
 
-    implementation("com.google.code.findbugs:jsr305:3.0.2")
-    modImplementation("com.github.gnembon:fabric-carpet:${project.property("carpet_version")}")
-    compileOnly("com.demonwav.mcdev:annotations:1.0")
+    modImplementation("maven.modrinth:carpet:${project.property("carpet_version")}")
 
     implementation("com.fasterxml.jackson.core:jackson-core:2.16.0")
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.16.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.0")
+
+    implementation("com.google.code.findbugs:jsr305:3.0.2")
+    compileOnly("com.demonwav.mcdev:annotations:1.0")
 }
 
 tasks.register<Jar>("testmodJar") {

@@ -1,8 +1,5 @@
 pluginManagement {
     repositories {
-        maven("https://server.bbkr.space/artifactory/libs-release/") {
-            name = "Cotton"
-        }
         maven("https://maven.fabricmc.net/") {
             name = "Fabric"
         }

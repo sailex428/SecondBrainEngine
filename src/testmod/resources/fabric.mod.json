@@ -2,21 +2,17 @@
   "schemaVersion": 1,
   "id": "otomaton",
   "version": "1.0.0",
-  "name": "Automatone Test Mod",
+  "name": "SecondBrainEngine Test Mod",
   "description": "It's just a test... Or is it ?",
   "license": "LGPL-3.0-or-later",
   "icon": "assets/icon.png",
   "authors": [
     "sailex"
   ],
-  "contact": {
-    "sources": "https://github.com/Ladysnake/Automatone",
-    "issues": "https://github.com/Ladysnake/Automatone/issues"
-  },
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.ladysnake.otomaton.Otomaton"
+      "me.sailex.otomaton.Otomaton"
     ]
   },
   "depends": {

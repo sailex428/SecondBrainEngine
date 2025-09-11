@@ -3,6 +3,7 @@ package common;
 import carpet.patches.EntityPlayerMPFake;
 import carpet.patches.FakeClientConnection;
 import com.mojang.authlib.GameProfile;
+import common.mixin.PlayerEntityAccessor;
 import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;

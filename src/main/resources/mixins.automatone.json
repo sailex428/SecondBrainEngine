@@ -1,27 +1,18 @@
 {
   "required": true,
   "compatibilityLevel": "JAVA_17",
+  "package": "baritone.mixins",
   "verbose": false,
   "injectors": {
     "maxShiftBy": 2
   },
   "mixins": [
-      "adris.altoclef.mixins.ClientConnectionAccessor",
-      "adris.altoclef.mixins.EntityAccessor",
-      "adris.altoclef.mixins.EntityAnimationSwungMixin",
-      "adris.altoclef.mixins.LivingEntityMixin",
-      "adris.altoclef.mixins.MixinAbstractFurnaceBlockEntity",
-      "adris.altoclef.mixins.PersistentProjectileEntityAccessor",
-      "adris.altoclef.mixins.PlayerCollidesWithEntityMixin",
-      "adris.altoclef.mixins.PlayerDamageMixin",
-      "adris.altoclef.mixins.WorldBlockModifiedMixin",
-      "baritone.mixins.MixinEntity",
-      "baritone.mixins.MixinItemStack",
-      "baritone.mixins.MixinLivingEntity",
-      "baritone.mixins.MixinMobEntity",
-      "baritone.mixins.MixinServerChunkManager",
-      "baritone.mixins.MixinServerCommandSource",
-      "baritone.mixins.MixinUtil",
-      "common.PlayerEntityAccessor"
+      "MixinEntity",
+      "MixinItemStack",
+      "MixinLivingEntity",
+      "MixinMobEntity",
+      "MixinServerChunkManager",
+      "MixinServerCommandSource",
+      "MixinUtil"
   ]
 }

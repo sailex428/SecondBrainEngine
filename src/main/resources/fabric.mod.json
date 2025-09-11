@@ -27,6 +27,8 @@
     "fabricloader": ">=0.16.9"
   },
   "mixins": [
-    "mixins.automatone.json"
+    "mixins.automatone.json",
+    "mixins.common.json",
+    "mixins.altoclef.json"
   ]
 }

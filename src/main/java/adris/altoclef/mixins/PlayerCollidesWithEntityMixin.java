@@ -2,7 +2,7 @@ package adris.altoclef.mixins;
 
 import adris.altoclef.eventbus.EventBus;
 import adris.altoclef.eventbus.events.PlayerCollidedWithEntityEvent;
-import net.minecraft.client.network.ClientPlayerEntity;
+//import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,9 +19,9 @@ public class PlayerCollidesWithEntityMixin {
       )
    )
    private void onCollideWithEntity(Entity self, PlayerEntity player) {
-      if (player instanceof ClientPlayerEntity) {
-         EventBus.publish(new PlayerCollidedWithEntityEvent(player, self));
-      }
+//      if (player instanceof ClientPlayerEntity) {
+//         EventBus.publish(new PlayerCollidedWithEntityEvent(player, self));
+//      }
 
       self.onPlayerCollision(player);
    }

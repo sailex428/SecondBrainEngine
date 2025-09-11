@@ -33,7 +33,7 @@ public abstract class MixinEntity implements IEntityAccessor {
     @Inject(method = "setRemoved", at = @At("RETURN"))
     private void shutdownPathingOnUnloading(Entity.RemovalReason reason, CallbackInfo ci) {
         if (!getWorld().isClient()) {
-            System.out.println("is this still used???");
+//            System.out.println("is this still used???");
 //            IBaritone.KEY.maybeGet(this).ifPresent(b -> ((PathingBehavior) b.getPathingBehavior()).shutdown());
         }
     }

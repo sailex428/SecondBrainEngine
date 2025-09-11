@@ -1,4 +1,4 @@
-package common;
+package common.mixin;
 
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.player.PlayerEntity;

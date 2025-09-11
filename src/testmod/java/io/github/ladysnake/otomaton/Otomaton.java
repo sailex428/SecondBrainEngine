@@ -17,12 +17,16 @@
 
 package io.github.ladysnake.otomaton;
 
+import baritone.api.BaritoneAPI;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
 public class Otomaton implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 
+        });
     }
 }

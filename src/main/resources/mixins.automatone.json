@@ -6,7 +6,6 @@
     "maxShiftBy": 2
   },
   "mixins": [
-      "adris.altoclef.mixins.ClientBlockBreakMixin",
       "adris.altoclef.mixins.ClientConnectionAccessor",
       "adris.altoclef.mixins.EntityAccessor",
       "adris.altoclef.mixins.EntityAnimationSwungMixin",
@@ -22,6 +21,7 @@
       "baritone.mixins.MixinMobEntity",
       "baritone.mixins.MixinServerChunkManager",
       "baritone.mixins.MixinServerCommandSource",
-      "baritone.mixins.MixinUtil"
+      "baritone.mixins.MixinUtil",
+      "common.PlayerEntityAccessor"
   ]
 }

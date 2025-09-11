@@ -7,18 +7,17 @@
   "license": "LGPL-3.0-or-later",
   "icon": "assets/icon.png",
   "authors": [
-    "Pyrofab"
+    "sailex"
   ],
   "contact": {
     "sources": "https://github.com/Ladysnake/Automatone",
-    "issues": "https://github.com/Ladysnake/Automatone/issues",
-    "discord": "ladysnake.glitch.me/discord"
+    "issues": "https://github.com/Ladysnake/Automatone/issues"
   },
   "environment": "*",
   "entrypoints": {
     "main": [
       "io.github.ladysnake.otomaton.Otomaton"
-    ],
+    ]
   },
   "depends": {
     "fabric": "*"

@@ -16,6 +16,7 @@ import baritone.api.IBaritone;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.InteractionController;
 import baritone.settings.AltoClefSettings;
+import common.ServerTickable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class AltoClefController {
+public class AltoClefController implements ServerTickable {
 
    private final IBaritone baritone;
    private final IEntityContext ctx;
@@ -101,9 +102,11 @@ public class AltoClefController {
          }
       );
       Playground.IDLE_TEST_INIT_FUNCTION(this);
+      registerTickListener();
    }
 
-   public void serverTick() {
+   @Override
+   public void onTick() {
       this.inputControls.onTickPre();
       this.storageTracker.setDirty();
       this.miscBlockTracker.tick();

@@ -7,12 +7,13 @@
     "maxShiftBy": 2
   },
   "mixins": [
-      "MixinEntity",
-      "MixinItemStack",
-      "MixinLivingEntity",
-      "MixinMobEntity",
-      "MixinServerChunkManager",
-      "MixinServerCommandSource",
-      "MixinUtil"
+    "MixinEntity",
+    "MixinItemStack",
+    "MixinLivingEntity",
+    "MixinMobEntity",
+    "MixinServerChunkManager",
+    "MixinServerCommandSource",
+    "MixinServerPlayerInteractionManager",
+    "MixinUtil"
   ]
 }

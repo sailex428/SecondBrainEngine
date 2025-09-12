@@ -17,6 +17,8 @@ import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.IEntityContext;
 import baritone.api.utils.input.Input;
 import baritone.pathing.movement.MovementHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
@@ -137,18 +139,28 @@ public class PlaceBlockNearbyTask extends Task {
    }
 
    private BlockPos getCurrentlyLookingBlockPlace(AltoClefController mod) {
-      if (MinecraftClient.getInstance().crosshairTarget instanceof BlockHitResult bhit) {
-         BlockPos bpos = bhit.getBlockPos();
-         IEntityContext ctx = mod.getBaritone().getPlayerContext();
-         if (MovementHelper.canPlaceAgainst(ctx, bpos)) {
-            BlockPos placePos = bhit.getBlockPos().add(bhit.getSide().getVector());
-            if (WorldHelper.isInsidePlayer(this.controller, placePos)) {
-               return null;
-            }
+      double reach = 5.0D;
+      Vec3d eyePos = this.controller.getEntity().getEyePos();
+      Vec3d lookVec = this.controller.getEntity().getRotationVector();
+      Vec3d end = eyePos.add(lookVec.x * reach, lookVec.y * reach, lookVec.z * reach);
 
-            if (WorldHelper.canPlace(this.controller, placePos)) {
-               return placePos;
-            }
+      RaycastContext context = new RaycastContext(eyePos, end,
+              RaycastContext.ShapeType.OUTLINE,
+              RaycastContext.FluidHandling.NONE,
+              this.controller.getEntity()
+      );
+      BlockHitResult bhit = this.controller.getWorld().raycast(context);
+
+      BlockPos bpos = bhit.getBlockPos();
+      IEntityContext ctx = mod.getBaritone().getPlayerContext();
+      if (MovementHelper.canPlaceAgainst(ctx, bpos)) {
+         BlockPos placePos = bhit.getBlockPos().add(bhit.getSide().getVector());
+         if (WorldHelper.isInsidePlayer(this.controller, placePos)) {
+            return null;
+         }
+
+         if (WorldHelper.canPlace(this.controller, placePos)) {
+            return placePos;
          }
       }
 

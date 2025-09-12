@@ -15,7 +15,7 @@ Below a basic example of basic usage for spawning a NPC, initializing a Controll
  GameProfile npcProfile = new GameProfile(UUID.randomUUID(), "minusaura");
  
  NPCSpawner.spawn(npcProfile, server, spawnPos, npcEntity -> {
-    IBaritone automatone = BaritoneAPI.getProvider().getBaritone(npc);
+    IBaritone automatone = BaritoneAPI.getProvider().getBaritone(npcEntity);
     
     AltoClefController controller = new AltoClefController(automatone);
     

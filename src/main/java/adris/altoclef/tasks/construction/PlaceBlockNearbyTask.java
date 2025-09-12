@@ -24,12 +24,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.Arrays;
 import java.util.function.Predicate;
 import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.hit.HitResult.Type;
 import net.minecraft.util.math.BlockPos;
 
@@ -139,18 +137,7 @@ public class PlaceBlockNearbyTask extends Task {
    }
 
    private BlockPos getCurrentlyLookingBlockPlace(AltoClefController mod) {
-      double reach = 5.0D;
-      Vec3d eyePos = this.controller.getEntity().getEyePos();
-      Vec3d lookVec = this.controller.getEntity().getRotationVector();
-      Vec3d end = eyePos.add(lookVec.x * reach, lookVec.y * reach, lookVec.z * reach);
-
-      RaycastContext context = new RaycastContext(eyePos, end,
-              RaycastContext.ShapeType.OUTLINE,
-              RaycastContext.FluidHandling.NONE,
-              this.controller.getEntity()
-      );
-      BlockHitResult bhit = this.controller.getWorld().raycast(context);
-
+      BlockHitResult bhit = getBlockHitCurrentlyLookingAt();
       BlockPos bpos = bhit.getBlockPos();
       IEntityContext ctx = mod.getBaritone().getPlayerContext();
       if (MovementHelper.canPlaceAgainst(ctx, bpos)) {
@@ -174,13 +161,13 @@ public class PlaceBlockNearbyTask extends Task {
    private boolean place(AltoClefController mod, BlockPos targetPlace) {
       if (!mod.getExtraBaritoneSettings().isInteractionPaused() && this.blockEquipped()) {
          mod.getInputControls().hold(Input.SNEAK);
-         HitResult mouseOver = MinecraftClient.getInstance().crosshairTarget;
+         BlockHitResult mouseOver = getBlockHitCurrentlyLookingAt();
          if (mouseOver != null && mouseOver.getType() == Type.BLOCK) {
             Hand hand = Hand.MAIN_HAND;
             if (this.controller
                      .getInteractionManager()
                      .processRightClickBlock(mod.getPlayer(), mod.getWorld(), hand,
-                             (BlockHitResult)mouseOver)
+                             mouseOver)
                   == ActionResult.SUCCESS
                && mod.getPlayer().isSneaking()) {
                mod.getPlayer().swingHand(hand);
@@ -229,4 +216,19 @@ public class PlaceBlockNearbyTask extends Task {
 
       return best;
    }
+
+   private BlockHitResult getBlockHitCurrentlyLookingAt() {
+      double reach = 5.0D;
+      Vec3d eyePos = this.controller.getEntity().getEyePos();
+      Vec3d lookVec = this.controller.getEntity().getRotationVector();
+      Vec3d end = eyePos.add(lookVec.x * reach, lookVec.y * reach, lookVec.z * reach);
+
+      RaycastContext context = new RaycastContext(eyePos, end,
+              RaycastContext.ShapeType.OUTLINE,
+              RaycastContext.FluidHandling.NONE,
+              this.controller.getEntity()
+      );
+      return this.controller.getWorld().raycast(context);
+   }
+
 }

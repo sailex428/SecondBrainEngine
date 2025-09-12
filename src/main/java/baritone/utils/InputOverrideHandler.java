@@ -23,6 +23,8 @@ import baritone.api.utils.IInputOverrideHandler;
 import baritone.api.utils.MoveDirection;
 import baritone.api.utils.input.Input;
 import baritone.behavior.Behavior;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -101,20 +103,20 @@ public final class InputOverrideHandler extends Behavior implements IInputOverri
             setInputForceState(Input.CLICK_RIGHT, false);
         }
 
-//        LivingEntity entity = this.ctx.entity();
-//        entity.sidewaysSpeed = 0.0F;
-//        entity.forwardSpeed = 0.0F;
-//        entity.setSneaking(false);
+        ServerPlayerEntity entity = this.ctx.entity();
+        entity.sidewaysSpeed = 0.0F;
+        entity.forwardSpeed = 0.0F;
+        entity.setSneaking(false);
         commandHelper.executeMoveStop();
         commandHelper.executeUnSneak();
 
-        //entity.setJumping(this.isInputForcedDown(Input.JUMP)); // oppa gangnam style
         if (this.isInputForcedDown(Input.JUMP)) {
+//            entity.setJumping(this.isInputForcedDown(Input.JUMP)); // oppa gangnam style
             commandHelper.executeJump();
         }
 
         if (this.isInputForcedDown(Input.MOVE_FORWARD)) {
-            //entity.forwardSpeed++;
+            entity.forwardSpeed++;
             commandHelper.executeMove(MoveDirection.FORWARD);
         }
 
@@ -138,6 +140,11 @@ public final class InputOverrideHandler extends Behavior implements IInputOverri
 //            entity.sidewaysSpeed *= 0.3D;
 //            entity.forwardSpeed *= 0.3D;
             commandHelper.executeSneak();
+        }
+
+        if (entity.isTouchingWater()) {
+            Vec3d vec3d = entity.getVelocity();
+            entity.setVelocity(vec3d.x, 0.25F, vec3d.z);
         }
 
         blockBreakHelper.tick(isInputForcedDown(Input.CLICK_LEFT));

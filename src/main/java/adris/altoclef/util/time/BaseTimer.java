@@ -4,7 +4,7 @@ public abstract class BaseTimer {
    private double prevTime = 0.0;
    private double interval;
 
-   public BaseTimer(double intervalSeconds) {
+   protected BaseTimer(double intervalSeconds) {
       this.interval = intervalSeconds;
    }
 

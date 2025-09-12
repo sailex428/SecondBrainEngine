@@ -42,16 +42,8 @@ public class Otomaton implements ModInitializer {
                 NPCSpawner.spawn(new GameProfile(UUID.randomUUID(), "minusaura"), server, handler.player.getBlockPos(), npc -> {
                     IBaritone automatone = BaritoneAPI.getProvider().getBaritone(npc);
                     this.controller = new AltoClefController(automatone);
-                    controller.getCommandExecutor().execute("goto 1000 50 200", ex -> {
-                        System.out.println(ex.getMessage());
-                    });
+                    this.controller.setOwner(handler.player);
                 });
-            }
-        });
-
-        ServerMessageEvents.CHAT_MESSAGE.register((channel, player, message) -> {
-            if (message.name().getString().equals("stop")) {
-                controller.stop();
             }
         });
     }

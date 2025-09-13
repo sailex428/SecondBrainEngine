@@ -81,7 +81,7 @@ jobs:
           tag_name: "v${{ env.MOD_VERSION }}"
           name: "SecondBrainEngine v${{ env.MOD_VERSION }}"
           files: |
-            artifacts/*
+            artifacts/**/*.jar
           draft: false
           prerelease: false
           generate_release_notes: true

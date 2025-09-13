@@ -18,6 +18,8 @@ Below a basic example of usage for spawning an NPC, initializing a Controller, a
     AltoClefController controller = new AltoClefController(automatone);
     
     controller.runUserTask(new PlaceBlockNearbyTask(Blocks.CRAFTING_TABLE, Blocks.FURNACE));
+
+    NPCEvents.ON_DEATH.register(npcEntity -> controller.setIsEnabled(false)); // disable controller if NPC is dead
  });
  ```
 

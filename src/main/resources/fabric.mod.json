@@ -19,7 +19,8 @@
   },
   "depends": {
     "minecraft": "${mcDep}",
-    "fabricloader": ">=${fabricLoader}"
+    "fabricloader": ">=${fabricLoader}",
+    "fabric-api": "*"
   },
   "mixins": [
     "mixins.automatone.json",

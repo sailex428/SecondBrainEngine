@@ -8,8 +8,10 @@ group = project.property("maven_group").toString()
 version = project.property("mod_version").toString()
 
 val mcVersion = project.property("mc_version").toString()
+val mcDep = project.property("mc_dep").toString()
 val fabricLoaderVersion = project.property("fabric_loader_version").toString()
 val jarName = "${project.property("mod_name").toString()}-$mcVersion"
+val fapiVersion = "${project.property("fapi_version")}+$mcVersion"
 
 repositories {
     maven("https://api.modrinth.com/maven")
@@ -20,7 +22,7 @@ dependencies {
     minecraft("com.mojang:minecraft:$mcVersion")
     mappings("net.fabricmc:yarn:$mcVersion+build.${project.property("yarn_build")}:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fapi_version")}+$mcVersion")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:$fapiVersion")
 
     include(modImplementation("maven.modrinth:carpet:${project.property("carpet_version")}")!!)
 
@@ -40,14 +42,14 @@ sourceSets {
 
 tasks.processResources {
     inputs.property("version", version)
-    inputs.property("mcDep", mcVersion)
+    inputs.property("mcDep", mcDep)
     inputs.property("fabricLoader", fabricLoaderVersion)
     filteringCharset = "UTF-8"
 
     filesMatching("fabric.mod.json") {
         expand(
             "version" to version,
-            "mcDep" to mcVersion,
+            "mcDep" to mcDep,
             "fabricLoader" to fabricLoaderVersion
         )
     }

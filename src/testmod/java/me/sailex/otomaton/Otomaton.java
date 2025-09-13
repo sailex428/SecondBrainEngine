@@ -18,14 +18,13 @@
 package me.sailex.otomaton;
 
 import me.sailex.altoclef.AltoClefController;
-import me.sailex.altoclef.tasks.construction.PlaceBlockNearbyTask;
+import me.sailex.altoclef.tasks.construction.compound.ConstructIronGolemTask;
 import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.IBaritone;
 import com.mojang.authlib.GameProfile;
 import me.sailex.common.NPCSpawner;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.block.Blocks;
 
 import java.util.UUID;
 
@@ -44,7 +43,8 @@ public class Otomaton implements ModInitializer {
                     IBaritone automatone = BaritoneAPI.getProvider().getBaritone(npc);
                     this.controller = new AltoClefController(automatone);
                     this.controller.setOwner(handler.player);
-                    controller.runUserTask(new PlaceBlockNearbyTask(Blocks.CRAFTING_TABLE, Blocks.FURNACE));
+                    this.controller.getCommandStatusLogger().setDebug(true);
+                    this.controller.runUserTask(new ConstructIronGolemTask());
                 });
             }
         });

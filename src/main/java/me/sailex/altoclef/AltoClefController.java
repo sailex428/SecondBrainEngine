@@ -70,6 +70,7 @@ public class AltoClefController implements ServerTickable {
    private boolean paused = false;
    private Task storedTask;
    private PlayerEntity owner;
+   private final CommandStatusLogger commandStatusLogger;
 
    public AltoClefController(IBaritone baritone) {
       this.baritone = baritone;
@@ -99,21 +100,22 @@ public class AltoClefController implements ServerTickable {
       this.extraController = new PlayerExtraController(this);
       this.initializeBaritoneSettings();
       this.botBehaviour = new BotBehaviour(this);
+      this.commandStatusLogger = new CommandStatusLogger(this);
       this.initializeCommands();
       Settings.load(
-         newSettings -> {
-            this.settings = newSettings;
-            List<Item> baritoneCanPlace = Arrays.stream(this.settings.getThrowawayItems(this, true)).toList();
-            this.getBaritoneSettings().acceptableThrowawayItems.get().addAll(baritoneCanPlace);
-            if ((!this.getUserTaskChain().isActive() || this.getUserTaskChain().isRunningIdleTask())
-               && this.getModSettings().shouldRunIdleCommandWhenNotActive()) {
-               this.getUserTaskChain().signalNextTaskToBeIdleTask();
-               this.getCommandExecutor().executeWithPrefix(this.getModSettings().getIdleCommand());
-            }
+              newSettings -> {
+                 this.settings = newSettings;
+                 List<Item> baritoneCanPlace = Arrays.stream(this.settings.getThrowawayItems(this, true)).toList();
+                 this.getBaritoneSettings().acceptableThrowawayItems.get().addAll(baritoneCanPlace);
+                 if ((!this.getUserTaskChain().isActive() || this.getUserTaskChain().isRunningIdleTask())
+                         && this.getModSettings().shouldRunIdleCommandWhenNotActive()) {
+                    this.getUserTaskChain().signalNextTaskToBeIdleTask();
+                    this.getCommandExecutor().executeWithPrefix(this.getModSettings().getIdleCommand());
+                 }
 
-            this.getExtraBaritoneSettings().avoidBlockBreak(this.userBlockRangeTracker::isNearUserTrackedBlock);
-            this.getExtraBaritoneSettings().avoidBlockPlace(this.entityStuckTracker::isBlockedByEntity);
-         }
+                 this.getExtraBaritoneSettings().avoidBlockBreak(this.userBlockRangeTracker::isNearUserTrackedBlock);
+                 this.getExtraBaritoneSettings().avoidBlockPlace(this.entityStuckTracker::isBlockedByEntity);
+              }
       );
       registerTickListener();
    }
@@ -127,6 +129,7 @@ public class AltoClefController implements ServerTickable {
       this.blockScanner.tick();
       this.taskRunner.tick();
       this.inputControls.onTickPost();
+      this.commandStatusLogger.tick();
       this.baritone.serverTick();
    }
 
@@ -178,7 +181,8 @@ public class AltoClefController implements ServerTickable {
    }
 
    public void runUserTask(Task task) {
-      this.runUserTask(task, () -> {});
+      this.runUserTask(task, () -> {
+      });
    }
 
    public void cancelUserTask() {
@@ -210,7 +214,7 @@ public class AltoClefController implements ServerTickable {
    }
 
    public AltoClefSettings getExtraBaritoneSettings() {
-      return ((Baritone)this.baritone).getExtraBaritoneSettings();
+      return ((Baritone) this.baritone).getExtraBaritoneSettings();
    }
 
    public TaskRunner getTaskRunner() {
@@ -333,18 +337,22 @@ public class AltoClefController implements ServerTickable {
       return playerToCheck.equals(owner.getUuid());
    }
 
-   public String getOwnerUsername(){
-      if(getOwner() == null){
+   public String getOwnerUsername() {
+      if (getOwner() == null) {
          return "UNKNOWN OWNER";
       }
       return getOwner().getName().getString();
    }
 
-   public Optional<ServerPlayerEntity> getClosestPlayer(){
-      return this.getWorld().getPlayers().stream().sorted((a,b)-> {
+   public Optional<ServerPlayerEntity> getClosestPlayer() {
+      return this.getWorld().getPlayers().stream().sorted((a, b) -> {
          float adist = a.distanceTo(this.getEntity());
          float bdist = b.distanceTo(this.getEntity());
          return Float.compare(adist, bdist);
-      } ).findFirst();
+      }).findFirst();
+   }
+
+   public CommandStatusLogger getCommandStatusLogger() {
+      return commandStatusLogger;
    }
 }

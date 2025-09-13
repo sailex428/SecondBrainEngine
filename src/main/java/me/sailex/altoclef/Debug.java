@@ -1,14 +1,14 @@
 package me.sailex.altoclef;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Debug {
-   private static final int DEBUG_LOG_LEVEL = 0;
-   private static final int WARN_LOG_LEVEL = 1;
-   private static final int ERROR_LOG_LEVEL = 2;
+
+   private static final Logger logger = LogManager.getLogger();
 
    public static void logInternal(String message) {
-      if (canLog(0)) {
-         System.out.println("ALTO CLEF: " + message);
-      }
+       logger.info("{}{}", getLogPrefix(), message);
    }
 
    public static void logInternal(String format, Object... args) {
@@ -36,9 +36,7 @@ public class Debug {
    }
 
    public static void logWarning(String message) {
-      if (canLog(1)) {
-         System.out.println("ALTO CLEF: WARNING: " + message);
-      }
+      logger.warn("{}{}", getLogPrefix(), message);
    }
 
    public static void logWarning(String format, Object... args) {
@@ -47,11 +45,7 @@ public class Debug {
 
    public static void logError(String message) {
       String stacktrace = getStack(2);
-      if (canLog(2)) {
-         System.err.println(message);
-         System.err.println("at:");
-         System.err.println(stacktrace);
-      }
+      logger.error("{}{} at: {}", getLogPrefix(), message, stacktrace);
    }
 
    public static void logError(String format, Object... args) {
@@ -72,21 +66,5 @@ public class Debug {
       }
 
       return stacktrace.toString();
-   }
-
-   private static boolean canLog(int level) {
-      String enabledLogLevel = "ALL";
-      switch (enabledLogLevel) {
-         case "NONE":
-         case "ALL":
-         case "NORMAL":
-            return level == 1 || level == 2;
-         case "WARN":
-            return level == 1;
-         case "ERROR":
-            return level == 2;
-         default:
-            return level != 0;
-      }
    }
 }

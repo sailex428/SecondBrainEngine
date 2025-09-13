@@ -7,7 +7,7 @@ These fake players behave like normal players and can be directed through the ta
 
 ## Usage
 
-Below a basic example of usage for spawning a NPC, initializing a Controller, and then executing a Task.
+Below a basic example of usage for spawning an NPC, initializing a Controller, and then executing a Task.
 
  ```java
  GameProfile npcProfile = new GameProfile(UUID.randomUUID(), "minusaura");

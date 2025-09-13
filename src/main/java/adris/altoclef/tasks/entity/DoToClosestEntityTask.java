@@ -3,13 +3,14 @@ package adris.altoclef.tasks.entity;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.tasks.AbstractDoToClosestObjectTask;
 import adris.altoclef.tasksystem.Task;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Vec3d;
+
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
 
 public class DoToClosestEntityTask extends AbstractDoToClosestObjectTask<Entity> {
    private final Class[] targetEntities;

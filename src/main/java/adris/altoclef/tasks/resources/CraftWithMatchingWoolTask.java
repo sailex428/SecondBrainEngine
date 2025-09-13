@@ -3,8 +3,9 @@ package adris.altoclef.tasks.resources;
 import adris.altoclef.util.CraftingRecipe;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ItemHelper;
-import java.util.function.Function;
 import net.minecraft.item.Item;
+
+import java.util.function.Function;
 
 public abstract class CraftWithMatchingWoolTask extends CraftWithMatchingMaterialsTask {
    private final Function<ItemHelper.ColorfulItems, Item> getMajorityMaterial;

@@ -1,23 +1,35 @@
 package adris.altoclef.util.helpers;
 
 import adris.altoclef.Debug;
-import adris.altoclef.util.serialization.*;
+import adris.altoclef.util.serialization.BlockPosDeserializer;
+import adris.altoclef.util.serialization.BlockPosSerializer;
+import adris.altoclef.util.serialization.ChunkPosDeserializer;
+import adris.altoclef.util.serialization.ChunkPosSerializer;
+import adris.altoclef.util.serialization.IFailableConfigFile;
+import adris.altoclef.util.serialization.IListConfigFile;
+import adris.altoclef.util.serialization.Vec3dDeserializer;
+import adris.altoclef.util.serialization.Vec3dSerializer;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import java.io.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Vec3d;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Vec3d;
 
 public class ConfigHelper {
    private static final String ALTO_FOLDER = "adris/altoclef";

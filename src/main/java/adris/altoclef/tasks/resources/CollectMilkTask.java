@@ -6,11 +6,12 @@ import adris.altoclef.TaskCatalogue;
 import adris.altoclef.tasks.ResourceTask;
 import adris.altoclef.tasks.entity.AbstractDoToEntityTask;
 import adris.altoclef.tasksystem.Task;
-import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+
+import java.util.Optional;
 
 public class CollectMilkTask extends ResourceTask {
    private final int count;

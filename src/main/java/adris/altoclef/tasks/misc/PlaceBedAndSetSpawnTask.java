@@ -20,9 +20,6 @@ import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.input.Input;
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.function.Predicate;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.util.hit.BlockHitResult;
@@ -31,6 +28,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.function.Predicate;
 
 public class PlaceBedAndSetSpawnTask extends Task {
    private final TimerGame regionScanTimer = new TimerGame(9.0);

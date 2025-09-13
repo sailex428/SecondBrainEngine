@@ -14,16 +14,16 @@ import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import baritone.api.schematic.AbstractSchematic;
 import baritone.api.utils.BlockOptionalMeta;
 import baritone.api.utils.input.Input;
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.Arrays;
-import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class PlaceBlockTask extends Task implements ITaskRequiresGrounded {
    private static final int MIN_MATERIALS = 1;

@@ -27,8 +27,8 @@ import baritone.cache.WorldScanner;
 import baritone.command.CommandSystem;
 import baritone.utils.SettingsLoader;
 import baritone.utils.schematic.SchematicSystem;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
 import java.util.Map;

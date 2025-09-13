@@ -1,10 +1,11 @@
 package adris.altoclef.tasks.entity;
 
 import adris.altoclef.AltoClefController;
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class KillPlayerTask extends AbstractKillEntityTask {
    private String playerName;

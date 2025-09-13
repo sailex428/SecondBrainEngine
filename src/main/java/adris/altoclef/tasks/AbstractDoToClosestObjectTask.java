@@ -3,10 +3,11 @@ package adris.altoclef.tasks;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.tasks.movement.TimeoutWanderTask;
 import adris.altoclef.tasksystem.Task;
+import net.minecraft.util.math.Vec3d;
+
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.OptionalDouble;
-import net.minecraft.util.math.Vec3d;
 
 public abstract class AbstractDoToClosestObjectTask<T> extends Task {
    private final HashMap<T, CachedHeuristic> heuristicMap = new HashMap<>();

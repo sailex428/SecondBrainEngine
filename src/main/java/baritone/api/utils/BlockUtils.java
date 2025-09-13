@@ -19,7 +19,6 @@ package baritone.api.utils;
 
 import net.minecraft.block.Block;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;

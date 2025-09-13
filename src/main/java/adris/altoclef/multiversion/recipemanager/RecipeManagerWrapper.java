@@ -1,11 +1,12 @@
 package adris.altoclef.multiversion.recipemanager;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.util.Identifier;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class RecipeManagerWrapper {
    private final RecipeManager recipeManager;

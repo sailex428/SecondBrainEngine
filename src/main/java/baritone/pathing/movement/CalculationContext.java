@@ -29,6 +29,7 @@ import baritone.utils.accessor.ILivingEntityAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.player.PlayerInventory;
@@ -42,11 +43,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import static baritone.api.pathing.movement.ActionCosts.COST_INF;
-
-//? if >=1.21.1 {
-/*import net.minecraft.entity.attribute.EntityAttributes;
- *///?} else {
-import net.minecraft.enchantment.EnchantmentHelper;
 //?}
 
 /**

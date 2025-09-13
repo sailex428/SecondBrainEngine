@@ -3,11 +3,12 @@ package adris.altoclef.tasks.entity;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.Debug;
 import adris.altoclef.tasksystem.Task;
-import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundCategory;
+
+import java.util.Optional;
 
 public class ShearSheepTask extends AbstractDoToEntityTask {
    public ShearSheepTask() {

@@ -1,8 +1,9 @@
 package adris.altoclef.util.serialization;
 
 import com.fasterxml.jackson.core.JsonToken;
-import java.util.List;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.List;
 
 public class BlockPosDeserializer extends AbstractVectorDeserializer<BlockPos, Integer> {
    @Override

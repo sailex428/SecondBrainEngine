@@ -7,15 +7,16 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.MiningRequirement;
 import adris.altoclef.util.helpers.StorageHelper;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.function.Function;
 import net.minecraft.block.Block;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class MineBlockPriorityTask extends PriorityTask {
    public final Block[] toMine;

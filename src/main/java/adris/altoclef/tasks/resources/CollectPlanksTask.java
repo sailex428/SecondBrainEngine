@@ -6,11 +6,16 @@ import adris.altoclef.tasks.CraftInInventoryTask;
 import adris.altoclef.tasks.ResourceTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.trackers.storage.ItemStorageTracker;
-import adris.altoclef.util.*;
+import adris.altoclef.util.CraftingRecipe;
+import adris.altoclef.util.Dimension;
+import adris.altoclef.util.ItemTarget;
+import adris.altoclef.util.MiningRequirement;
+import adris.altoclef.util.RecipeTarget;
 import adris.altoclef.util.helpers.ItemHelper;
+import net.minecraft.item.Item;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import net.minecraft.item.Item;
 
 public class CollectPlanksTask extends ResourceTask {
    private final Item[] planks;

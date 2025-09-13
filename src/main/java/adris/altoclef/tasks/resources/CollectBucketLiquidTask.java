@@ -18,8 +18,6 @@ import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.input.Input;
-import java.util.HashSet;
-import java.util.function.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
@@ -28,6 +26,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.RaycastContext.FluidHandling;
+
+import java.util.HashSet;
+import java.util.function.Predicate;
 
 public class CollectBucketLiquidTask extends ResourceTask {
    private final HashSet<BlockPos> blacklist = new HashSet<>();

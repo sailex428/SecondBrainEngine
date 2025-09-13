@@ -5,9 +5,10 @@ import adris.altoclef.Debug;
 import adris.altoclef.util.helpers.BaritoneHelper;
 import adris.altoclef.util.helpers.ProjectileHelper;
 import baritone.api.pathing.goals.Goal;
+import net.minecraft.util.math.Vec3d;
+
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.util.math.Vec3d;
 
 public class GoalDodgeProjectiles implements Goal {
    private static final double Y_SCALE = 0.3F;

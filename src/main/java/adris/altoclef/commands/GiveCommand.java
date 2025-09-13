@@ -11,9 +11,10 @@ import adris.altoclef.tasks.entity.GiveItemToPlayerTask;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.FuzzySearchHelper;
 import adris.altoclef.util.helpers.ItemHelper;
+import net.minecraft.item.ItemStack;
+
 import java.util.HashSet;
 import java.util.Set;
-import net.minecraft.item.ItemStack;
 
 public class GiveCommand extends Command {
    public GiveCommand() throws CommandException {

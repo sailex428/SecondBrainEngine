@@ -8,14 +8,14 @@ import adris.altoclef.util.Dimension;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
-import org.apache.commons.lang3.NotImplementedException;
-
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+import org.apache.commons.lang3.NotImplementedException;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class FastTravelTask extends Task {
    private static final double IN_NETHER_CLOSE_ENOUGH_THRESHOLD = 15.0;

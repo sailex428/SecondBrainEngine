@@ -4,13 +4,17 @@ import adris.altoclef.trackers.Tracker;
 import adris.altoclef.trackers.TrackerManager;
 import adris.altoclef.util.helpers.ItemHelper;
 import adris.altoclef.util.slots.Slot;
-import java.util.*;
-
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.collection.DefaultedList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InventorySubTracker extends Tracker {
    private final Map<Item, List<Integer>> itemToSlotPlayer = new HashMap<>();

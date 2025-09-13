@@ -11,8 +11,6 @@ import baritone.api.pathing.goals.Goal;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
 import baritone.pathing.movement.MovementHelper;
-import java.util.Optional;
-import java.util.function.Predicate;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -29,6 +27,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.RaycastContext.FluidHandling;
 import net.minecraft.world.RaycastContext.ShapeType;
+
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
    private final float strength;

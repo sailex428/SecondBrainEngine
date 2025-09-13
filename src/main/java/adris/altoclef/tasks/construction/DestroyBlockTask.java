@@ -3,8 +3,9 @@ package adris.altoclef.tasks.construction;
 import adris.altoclef.tasksystem.ITaskRequiresGrounded;
 import adris.altoclef.tasksystem.Task;
 import baritone.api.process.IBuilderProcess;
-import java.util.Objects;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Objects;
 
 public class DestroyBlockTask extends Task implements ITaskRequiresGrounded {
    private final BlockPos pos;

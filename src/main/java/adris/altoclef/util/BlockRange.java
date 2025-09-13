@@ -3,8 +3,9 @@ package adris.altoclef.util;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.util.helpers.WorldHelper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Objects;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Objects;
 
 public class BlockRange {
    public BlockPos start;

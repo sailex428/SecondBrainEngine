@@ -1,8 +1,9 @@
 package adris.altoclef.util.slots;
 
-import java.util.Objects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
+
+import java.util.Objects;
 
 public class Slot {
    public static final int CURSOR_SLOT_INDEX = -1;

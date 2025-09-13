@@ -3,14 +3,15 @@ package adris.altoclef.tasks;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.helpers.WorldHelper;
+import net.minecraft.block.Block;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import net.minecraft.block.Block;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 
 public class DoToClosestBlockTask extends AbstractDoToClosestObjectTask<BlockPos> {
    private final Block[] targetBlocks;

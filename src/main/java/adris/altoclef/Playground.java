@@ -13,7 +13,11 @@ import adris.altoclef.tasks.misc.EquipArmorTask;
 import adris.altoclef.tasks.misc.PlaceBedAndSetSpawnTask;
 import adris.altoclef.tasks.misc.RavageDesertTemplesTask;
 import adris.altoclef.tasks.misc.RavageRuinedPortalsTask;
-import adris.altoclef.tasks.movement.*;
+import adris.altoclef.tasks.movement.EnterNetherPortalTask;
+import adris.altoclef.tasks.movement.GoToStrongholdPortalTask;
+import adris.altoclef.tasks.movement.LocateDesertTempleTask;
+import adris.altoclef.tasks.movement.PickupDroppedItemTask;
+import adris.altoclef.tasks.movement.ThrowEnderPearlSimpleProjectileTask;
 import adris.altoclef.tasks.resources.CollectBlazeRodsTask;
 import adris.altoclef.tasks.resources.CollectFlintTask;
 import adris.altoclef.tasks.resources.CollectFoodTask;
@@ -25,11 +29,6 @@ import adris.altoclef.util.Dimension;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.SmeltTarget;
 import adris.altoclef.util.helpers.WorldHelper;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Predicate;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.GhastEntity;
@@ -40,6 +39,12 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.EmptyChunk;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class Playground {
    public static void IDLE_TEST_INIT_FUNCTION(AltoClefController mod) {

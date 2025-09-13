@@ -15,7 +15,6 @@ import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
-import java.util.Optional;
 import net.minecraft.block.AbstractFireBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -23,6 +22,8 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+
+import java.util.Optional;
 
 public class WorldSurvivalChain extends SingleTaskChain {
    private final TimerGame wasInLavaTimer = new TimerGame(1.0);

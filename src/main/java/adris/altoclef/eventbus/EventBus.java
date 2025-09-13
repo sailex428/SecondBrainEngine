@@ -1,10 +1,11 @@
 package adris.altoclef.eventbus;
 
+import net.minecraft.util.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
-import net.minecraft.util.Pair;
 
 public class EventBus {
    private static final HashMap<Class, List<Subscription>> topics = new HashMap<>();

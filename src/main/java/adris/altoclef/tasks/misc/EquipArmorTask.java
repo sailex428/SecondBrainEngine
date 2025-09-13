@@ -4,8 +4,9 @@ import adris.altoclef.tasks.squashed.CataloguedResourceTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.StorageHelper;
-import java.util.Arrays;
 import net.minecraft.item.Item;
+
+import java.util.Arrays;
 
 public class EquipArmorTask extends Task {
    private final ItemTarget[] toEquip;

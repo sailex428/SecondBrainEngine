@@ -2,11 +2,12 @@ package adris.altoclef.tasks.movement;
 
 import adris.altoclef.AltoClefController;
 import adris.altoclef.tasksystem.Task;
-import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.Optional;
 
 public class FollowPlayerTask extends Task {
    private final String playerName;

@@ -11,7 +11,6 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ConfigHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import baritone.api.utils.input.Input;
-import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
@@ -19,6 +18,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Optional;
 
 public class FoodChain extends SingleTaskChain {
    private static FoodChainConfig config;

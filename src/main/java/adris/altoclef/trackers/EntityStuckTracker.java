@@ -2,12 +2,13 @@ package adris.altoclef.trackers;
 
 import adris.altoclef.util.helpers.BaritoneHelper;
 import adris.altoclef.util.helpers.WorldHelper;
-import java.util.HashSet;
-import java.util.Set;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class EntityStuckTracker extends Tracker {
    final float MOB_RANGE = 25.0F;

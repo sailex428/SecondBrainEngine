@@ -5,15 +5,16 @@ import adris.altoclef.multiversion.recipemanager.RecipeManagerWrapper;
 import adris.altoclef.multiversion.recipemanager.WrappedRecipeEntry;
 import adris.altoclef.util.CraftingRecipe;
 import adris.altoclef.util.RecipeTarget;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.SpecialCraftingRecipe;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class CraftingRecipeTracker extends Tracker {
    private final HashMap<Item, List<CraftingRecipe>> itemRecipeMap = new HashMap<>();

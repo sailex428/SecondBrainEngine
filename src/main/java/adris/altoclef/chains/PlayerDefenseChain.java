@@ -8,13 +8,14 @@ import adris.altoclef.tasks.entity.KillPlayerTask;
 import adris.altoclef.tasksystem.TaskRunner;
 import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.time.TimerGame;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class PlayerDefenseChain extends SingleTaskChain {
    private Map<String, DamageTarget> damageTargets = new HashMap<>();

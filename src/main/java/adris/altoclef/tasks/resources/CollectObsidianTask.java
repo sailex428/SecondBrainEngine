@@ -13,14 +13,15 @@ import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import adris.altoclef.util.time.TimerGame;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.RaycastContext.FluidHandling;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class CollectObsidianTask extends ResourceTask {
    private final TimerGame placeWaterTimeout = new TimerGame(6.0);

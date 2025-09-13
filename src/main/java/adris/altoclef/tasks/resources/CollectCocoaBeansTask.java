@@ -6,14 +6,15 @@ import adris.altoclef.tasks.ResourceTask;
 import adris.altoclef.tasks.construction.DestroyBlockTask;
 import adris.altoclef.tasks.movement.SearchWithinBiomeTask;
 import adris.altoclef.tasksystem.Task;
-import java.util.HashSet;
-import java.util.function.Predicate;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CocoaBlock;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.BiomeKeys;
+
+import java.util.HashSet;
+import java.util.function.Predicate;
 
 public class CollectCocoaBeansTask extends ResourceTask {
    private final int count;

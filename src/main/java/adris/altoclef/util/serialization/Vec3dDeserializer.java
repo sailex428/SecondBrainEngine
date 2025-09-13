@@ -1,8 +1,9 @@
 package adris.altoclef.util.serialization;
 
 import com.fasterxml.jackson.core.JsonToken;
-import java.util.List;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.List;
 
 public class Vec3dDeserializer extends AbstractVectorDeserializer<Vec3d, Double> {
    @Override

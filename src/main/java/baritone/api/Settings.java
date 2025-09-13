@@ -2,7 +2,16 @@ package baritone.api;
 
 import baritone.api.utils.SettingsUtil;
 import baritone.api.utils.TypeUtils;
-import java.awt.Color;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3i;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -12,14 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.Identifier;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.item.Item;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import org.jetbrains.annotations.Nullable;
 
 public final class Settings {
     public final Settings.Setting<Boolean> allowBreak = new Settings.Setting<>(true);

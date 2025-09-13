@@ -6,9 +6,6 @@ import adris.altoclef.tasks.movement.GetToBlockTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.ItemHelper;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Stream;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
@@ -17,6 +14,10 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class StoreInContainerTask extends Task {
    public static final Block[] CONTAINER_BLOCKS = Stream.concat(

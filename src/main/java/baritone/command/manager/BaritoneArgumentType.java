@@ -17,7 +17,6 @@
 
 package baritone.command.manager;
 
-import baritone.api.IBaritone;
 import baritone.api.command.argument.ICommandArgument;
 import baritone.api.command.exception.CommandNotEnoughArgumentsException;
 import baritone.api.command.helpers.TabCompleteHelper;
@@ -29,9 +28,6 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -7,13 +7,14 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.MiningRequirement;
 import adris.altoclef.util.helpers.ItemHelper;
-import java.util.Arrays;
-import java.util.HashSet;
 import net.minecraft.block.Block;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.DyeColor;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class CollectWoolTask extends ResourceTask {
    private final int count;

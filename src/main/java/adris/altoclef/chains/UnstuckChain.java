@@ -9,7 +9,6 @@ import adris.altoclef.tasks.movement.SafeRandomShimmyTask;
 import adris.altoclef.tasksystem.TaskRunner;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.input.Input;
-import java.util.LinkedList;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EndPortalFrameBlock;
@@ -17,6 +16,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.LinkedList;
 
 public class UnstuckChain extends SingleTaskChain {
    private final LinkedList<Vec3d> posHistory = new LinkedList<>();

@@ -6,8 +6,6 @@ import baritone.api.utils.IEntityContext;
 import baritone.api.utils.RayTraceUtils;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.RotationUtils;
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -24,6 +22,9 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.RaycastContext.FluidHandling;
 import net.minecraft.world.RaycastContext.ShapeType;
 import net.minecraft.world.World;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public interface LookHelper {
    static Optional<Rotation> getReach(AltoClefController controller, BlockPos target, Direction side) {

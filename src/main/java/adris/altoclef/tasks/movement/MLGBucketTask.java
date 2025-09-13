@@ -5,7 +5,11 @@ import adris.altoclef.Debug;
 import adris.altoclef.control.InputControls;
 import adris.altoclef.multiversion.DamageSourceVer;
 import adris.altoclef.tasksystem.Task;
-import adris.altoclef.util.helpers.*;
+import adris.altoclef.util.helpers.ConfigHelper;
+import adris.altoclef.util.helpers.EntityHelper;
+import adris.altoclef.util.helpers.LookHelper;
+import adris.altoclef.util.helpers.MathsHelper;
+import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.serialization.ItemDeserializer;
 import adris.altoclef.util.serialization.ItemSerializer;
 import baritone.api.IBaritone;
@@ -15,10 +19,6 @@ import baritone.api.utils.RotationUtils;
 import baritone.api.utils.input.Input;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -35,6 +35,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.RaycastContext.FluidHandling;
 import net.minecraft.world.World;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class MLGBucketTask extends Task {
    private static MLGClutchConfig config;

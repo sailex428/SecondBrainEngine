@@ -8,12 +8,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemDeserializer extends StdDeserializer<Object> {
    public ItemDeserializer() {

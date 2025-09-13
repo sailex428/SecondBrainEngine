@@ -1,6 +1,14 @@
 package adris.altoclef;
 
-import adris.altoclef.chains.*;
+import adris.altoclef.chains.FoodChain;
+import adris.altoclef.chains.MLGBucketFallChain;
+import adris.altoclef.chains.MobDefenseChain;
+import adris.altoclef.chains.PlayerDefenseChain;
+import adris.altoclef.chains.PlayerInteractionFixChain;
+import adris.altoclef.chains.PreEquipItemChain;
+import adris.altoclef.chains.UnstuckChain;
+import adris.altoclef.chains.UserTaskChain;
+import adris.altoclef.chains.WorldSurvivalChain;
 import adris.altoclef.commands.BlockScanner;
 import adris.altoclef.commandsystem.CommandExecutor;
 import adris.altoclef.control.InputControls;
@@ -8,7 +16,13 @@ import adris.altoclef.control.PlayerExtraController;
 import adris.altoclef.control.SlotHandler;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.tasksystem.TaskRunner;
-import adris.altoclef.trackers.*;
+import adris.altoclef.trackers.CraftingRecipeTracker;
+import adris.altoclef.trackers.EntityStuckTracker;
+import adris.altoclef.trackers.EntityTracker;
+import adris.altoclef.trackers.MiscBlockTracker;
+import adris.altoclef.trackers.SimpleChunkTracker;
+import adris.altoclef.trackers.TrackerManager;
+import adris.altoclef.trackers.UserBlockRangeTracker;
 import adris.altoclef.trackers.storage.ContainerSubTracker;
 import adris.altoclef.trackers.storage.ItemStorageTracker;
 import baritone.Baritone;
@@ -101,7 +115,7 @@ public class AltoClefController implements ServerTickable {
             this.getExtraBaritoneSettings().avoidBlockPlace(this.entityStuckTracker::isBlockedByEntity);
          }
       );
-      Playground.IDLE_TEST_INIT_FUNCTION(this);
+      Playground.TEMP_TEST_FUNCTION(this, "iron");
       registerTickListener();
    }
 

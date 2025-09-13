@@ -9,8 +9,6 @@ import adris.altoclef.util.Dimension;
 import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.time.TimerGame;
-import java.util.List;
-import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EyeOfEnderEntity;
 import net.minecraft.entity.LivingEntity;
@@ -26,6 +24,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.GameEvent.Emitter;
+
+import java.util.List;
+import java.util.Optional;
 
 public class LocateStrongholdCoordinatesTask extends Task {
    private static final int EYE_RETHROW_DISTANCE = 10;

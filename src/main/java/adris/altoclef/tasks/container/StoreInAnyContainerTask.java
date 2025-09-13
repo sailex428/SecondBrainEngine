@@ -7,13 +7,14 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.trackers.storage.ContainerCache;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.WorldHelper;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.function.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class StoreInAnyContainerTask extends Task {
    private final ItemTarget[] toStore;

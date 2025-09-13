@@ -8,11 +8,11 @@ import adris.altoclef.util.CraftingRecipe;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.RecipeTarget;
 import adris.altoclef.util.helpers.StorageHelper;
+import net.minecraft.item.Item;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import net.minecraft.item.Item;
 
 public class CollectRecipeCataloguedResourcesTask extends Task {
    private final RecipeTarget[] targets;

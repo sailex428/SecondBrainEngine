@@ -1,10 +1,11 @@
 package adris.altoclef.tasks.speedrun.beatgame;
 
 import adris.altoclef.tasks.speedrun.BeatMinecraftConfig;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UselessItems {
    public final Item[] uselessItems;

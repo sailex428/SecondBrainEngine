@@ -17,11 +17,8 @@
 
 package baritone.render;
 
-import baritone.api.IBaritone;
-import baritone.api.behavior.IPathingBehavior;
 import baritone.api.pathing.calc.IPathFinder;
 import baritone.api.pathing.goals.Goal;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 
 import java.util.Optional;

@@ -8,9 +8,10 @@ import adris.altoclef.util.helpers.WorldHelper;
 import adris.altoclef.util.progresscheck.MovementProgressChecker;
 import baritone.api.pathing.goals.Goal;
 import baritone.api.pathing.goals.GoalRunAway;
-import java.util.HashSet;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.HashSet;
 
 public class DragonBreathTracker {
    private final HashSet<BlockPos> breathBlocks = new HashSet<>();

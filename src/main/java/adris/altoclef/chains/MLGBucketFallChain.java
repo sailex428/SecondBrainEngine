@@ -9,7 +9,6 @@ import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.time.TimerGame;
 import baritone.api.utils.Rotation;
 import baritone.api.utils.input.Input;
-import java.util.Optional;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -17,6 +16,8 @@ import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.RaycastContext.FluidHandling;
+
+import java.util.Optional;
 
 public class MLGBucketFallChain extends SingleTaskChain implements ITaskOverridesGrounded {
    private final TimerGame tryCollectWaterTimer = new TimerGame(4.0);

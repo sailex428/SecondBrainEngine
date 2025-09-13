@@ -5,13 +5,14 @@ import adris.altoclef.tasks.movement.GetToBlockTask;
 import adris.altoclef.tasks.slot.EnsureFreeInventorySlotTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
-import java.util.Arrays;
-import java.util.Objects;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class PickupFromContainerTask extends Task {
    private final BlockPos containerPos;

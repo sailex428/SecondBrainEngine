@@ -5,8 +5,9 @@ import adris.altoclef.util.helpers.BaritoneHelper;
 import baritone.api.pathing.goals.Goal;
 import baritone.api.pathing.goals.GoalXZ;
 import baritone.api.pathing.goals.GoalYLevel;
-import java.util.List;
 import net.minecraft.entity.Entity;
+
+import java.util.List;
 
 public abstract class GoalRunAwayFromEntities implements Goal {
    private final AltoClefController mod;

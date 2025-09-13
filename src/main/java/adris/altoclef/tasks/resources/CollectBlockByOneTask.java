@@ -4,11 +4,12 @@ import adris.altoclef.AltoClefController;
 import adris.altoclef.tasks.ResourceTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.MiningRequirement;
-import java.util.Arrays;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+
+import java.util.Arrays;
 
 public class CollectBlockByOneTask extends ResourceTask {
    private final Item item;

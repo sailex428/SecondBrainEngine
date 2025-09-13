@@ -5,12 +5,13 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.baritone.GoalRunAwayFromEntities;
 import adris.altoclef.util.helpers.BaritoneHelper;
 import baritone.api.pathing.goals.Goal;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.SkeletonEntity;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RunAwayFromHostilesTask extends CustomBaritoneGoalTask {
    private final double distanceToRun;

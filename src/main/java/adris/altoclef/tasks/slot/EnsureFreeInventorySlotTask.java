@@ -5,9 +5,10 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.helpers.LookHelper;
 import adris.altoclef.util.helpers.StorageHelper;
 import adris.altoclef.util.slots.Slot;
-import java.util.Optional;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.SlotActionType;
+
+import java.util.Optional;
 
 public class EnsureFreeInventorySlotTask extends Task {
    @Override

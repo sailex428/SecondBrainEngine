@@ -4,8 +4,9 @@ import adris.altoclef.AltoClefController;
 import adris.altoclef.Debug;
 import adris.altoclef.util.MiningRequirement;
 import adris.altoclef.util.helpers.StorageHelper;
-import java.util.HashMap;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.HashMap;
 
 public abstract class AbstractObjectBlacklist<T> {
    private final HashMap<T, BlacklistEntry> entries = new HashMap<>();

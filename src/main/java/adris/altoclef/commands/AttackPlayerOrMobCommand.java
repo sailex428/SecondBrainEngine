@@ -13,11 +13,12 @@ import adris.altoclef.tasks.entity.KillEntitiesTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.time.TimerGame;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 
 public class AttackPlayerOrMobCommand extends Command {
    public AttackPlayerOrMobCommand() throws CommandException {

@@ -1,8 +1,9 @@
 package adris.altoclef.util.baritone;
 
 import adris.altoclef.util.time.TimerGame;
-import java.lang.reflect.Type;
 import net.minecraft.util.math.Vec3d;
+
+import java.lang.reflect.Type;
 
 public class CachedProjectile {
    private final TimerGame lastCache = new TimerGame(2.0);

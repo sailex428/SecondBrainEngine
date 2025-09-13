@@ -7,10 +7,11 @@ import adris.altoclef.tasksystem.Task;
 import adris.altoclef.trackers.storage.ContainerCache;
 import adris.altoclef.util.BlockRange;
 import adris.altoclef.util.ItemTarget;
+import net.minecraft.util.math.BlockPos;
+
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
-import net.minecraft.util.math.BlockPos;
 
 public class StoreInStashTask extends Task {
    private final ItemTarget[] toStore;

@@ -10,11 +10,12 @@ import adris.altoclef.tasks.squashed.CataloguedResourceTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.WorldHelper;
-import java.util.Optional;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Optional;
 
 public class CollectHoneycombTask extends ResourceTask {
    private final boolean campfire;

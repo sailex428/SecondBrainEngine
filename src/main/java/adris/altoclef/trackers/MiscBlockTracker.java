@@ -3,12 +3,13 @@ package adris.altoclef.trackers;
 import adris.altoclef.AltoClefController;
 import adris.altoclef.util.Dimension;
 import adris.altoclef.util.helpers.WorldHelper;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class MiscBlockTracker {
    private final AltoClefController mod;

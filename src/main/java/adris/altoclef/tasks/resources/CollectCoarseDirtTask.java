@@ -4,12 +4,17 @@ import adris.altoclef.AltoClefController;
 import adris.altoclef.tasks.CraftInInventoryTask;
 import adris.altoclef.tasks.ResourceTask;
 import adris.altoclef.tasksystem.Task;
-import adris.altoclef.util.*;
-import java.util.Optional;
+import adris.altoclef.util.CraftingRecipe;
+import adris.altoclef.util.Dimension;
+import adris.altoclef.util.ItemTarget;
+import adris.altoclef.util.MiningRequirement;
+import adris.altoclef.util.RecipeTarget;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Optional;
 
 public class CollectCoarseDirtTask extends ResourceTask {
    private static final float CLOSE_ENOUGH_COARSE_DIRT = 128.0F;

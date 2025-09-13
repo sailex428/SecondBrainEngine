@@ -1,13 +1,14 @@
 package adris.altoclef.trackers.storage;
 
 import adris.altoclef.util.Dimension;
-import java.util.HashMap;
-import java.util.function.Consumer;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.FurnaceScreenHandler;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class ContainerCache {
    private final BlockPos blockPos;

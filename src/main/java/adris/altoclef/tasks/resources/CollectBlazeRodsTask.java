@@ -13,8 +13,6 @@ import adris.altoclef.tasks.movement.SearchChunkForBlockTask;
 import adris.altoclef.tasksystem.Task;
 import adris.altoclef.util.Dimension;
 import adris.altoclef.util.helpers.WorldHelper;
-import java.util.Optional;
-import java.util.function.Predicate;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.BlazeEntity;
@@ -25,6 +23,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.RaycastContext.FluidHandling;
 import net.minecraft.world.RaycastContext.ShapeType;
+
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class CollectBlazeRodsTask extends ResourceTask {
    private static final double SPAWNER_BLAZE_RADIUS = 32.0;

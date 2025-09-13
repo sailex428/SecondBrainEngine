@@ -2,10 +2,11 @@ package adris.altoclef.util;
 
 import adris.altoclef.TaskCatalogue;
 import adris.altoclef.util.helpers.ItemHelper;
+import net.minecraft.item.Item;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import net.minecraft.item.Item;
 
 public class ItemTarget {
    private static final int BASICALLY_INFINITY = 99999999;

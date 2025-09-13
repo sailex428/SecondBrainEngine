@@ -10,7 +10,11 @@ import adris.altoclef.util.ItemTarget;
 import adris.altoclef.util.helpers.StorageHelper;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CataloguedResourceTask extends ResourceTask {
    private final TaskSquasher squasher = new TaskSquasher();

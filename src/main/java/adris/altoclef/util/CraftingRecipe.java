@@ -1,8 +1,9 @@
 package adris.altoclef.util;
 
 import adris.altoclef.Debug;
-import java.util.Arrays;
 import net.minecraft.item.Item;
+
+import java.util.Arrays;
 
 public class CraftingRecipe {
    private ItemTarget[] slots;

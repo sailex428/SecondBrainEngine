@@ -19,12 +19,6 @@ package baritone.utils.schematic.format;
 
 import baritone.api.schematic.IStaticSchematic;
 import baritone.api.schematic.format.ISchematicFormat;
-import baritone.utils.schematic.format.defaults.MCEditSchematic;
-import baritone.utils.schematic.format.defaults.SpongeSchematic;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtIo;
-//import net.minecraft.nbt.NbtSizeTracker;
-import net.minecraft.network.PacketByteBuf;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;

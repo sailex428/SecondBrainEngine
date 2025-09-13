@@ -4,12 +4,13 @@ import adris.altoclef.AltoClefController;
 import adris.altoclef.tasks.movement.GetToBlockTask;
 import adris.altoclef.tasks.movement.TimeoutWanderTask;
 import adris.altoclef.tasksystem.Task;
-import java.util.Optional;
-import java.util.function.Predicate;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class ExampleTask2 extends Task {
    private BlockPos target = null;

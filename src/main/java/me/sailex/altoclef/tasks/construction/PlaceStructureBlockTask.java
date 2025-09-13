@@ -1,0 +1,10 @@
+package me.sailex.altoclef.tasks.construction;
+
+import net.minecraft.block.Block;
+import net.minecraft.util.math.BlockPos;
+
+public class PlaceStructureBlockTask extends PlaceBlockTask {
+   public PlaceStructureBlockTask(BlockPos target) {
+      super(target, new Block[0], true, true);
+   }
+}

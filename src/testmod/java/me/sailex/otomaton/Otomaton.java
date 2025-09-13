@@ -17,12 +17,12 @@
 
 package me.sailex.otomaton;
 
-import adris.altoclef.AltoClefController;
-import adris.altoclef.tasks.construction.PlaceBlockNearbyTask;
-import baritone.api.BaritoneAPI;
-import baritone.api.IBaritone;
+import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.tasks.construction.PlaceBlockNearbyTask;
+import me.sailex.automatone.api.BaritoneAPI;
+import me.sailex.automatone.api.IBaritone;
 import com.mojang.authlib.GameProfile;
-import common.NPCSpawner;
+import me.sailex.common.NPCSpawner;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.block.Blocks;

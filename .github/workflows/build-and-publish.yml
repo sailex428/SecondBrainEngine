@@ -72,7 +72,7 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git tag -a "v${{ env.MOD_VERSION }}" -m "Release v${{ env.MOD_VERSION }}"
+          git tag -a "v${{ env.MOD_VERSION }}-alpha" -m "Release v${{ env.MOD_VERSION }}"
           git push origin "v${{ env.MOD_VERSION }}"
 
       - name: Create GitHub Release

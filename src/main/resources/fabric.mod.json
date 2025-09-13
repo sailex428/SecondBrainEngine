@@ -14,7 +14,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "baritone.Automatone"
+      "me.sailex.automatone.Automatone"
     ]
   },
   "depends": {

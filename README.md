@@ -20,3 +20,9 @@ Below a basic example of usage for spawning a NPC, initializing a Controller, an
     controller.runUserTask(new PlaceBlockNearbyTask(Blocks.CRAFTING_TABLE, Blocks.FURNACE));
  });
  ```
+
+## License
+
+This project is licensed under the LGPL-3.0.
+Includes code from the AltoClef and Automatone projects (LGPL-3.0).  
+Original authors are listed in their respective repositories.

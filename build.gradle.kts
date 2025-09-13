@@ -7,24 +7,20 @@ plugins {
 group = project.property("maven_group").toString()
 version = project.property("mod_version").toString()
 
-sourceSets {
-    create("testmod") {
-        compileClasspath += main.get().compileClasspath + main.get().output
-        runtimeClasspath += main.get().runtimeClasspath + main.get().output
-    }
-}
+val mcVersion = project.property("mc_version").toString()
+val fabricLoaderVersion = project.property("fabric_loader_version").toString()
+val jarName = "${project.property("mod_name").toString()}-$mcVersion"
 
 repositories {
     maven("https://api.modrinth.com/maven")
     mavenCentral()
 }
 
-
 dependencies {
-    minecraft("com.mojang:minecraft:${project.property("mc_version")}")
-    mappings("net.fabricmc:yarn:${project.property("mc_version")}+build.${project.property("yarn_build")}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${project.property("fabric_loader_version")}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fapi_version")}+${project.property("mc_version")}")
+    minecraft("com.mojang:minecraft:$mcVersion")
+    mappings("net.fabricmc:yarn:$mcVersion+build.${project.property("yarn_build")}:v2")
+    modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fapi_version")}+$mcVersion")
 
     modImplementation("maven.modrinth:carpet:${project.property("carpet_version")}")
 
@@ -36,26 +32,25 @@ dependencies {
     compileOnly("com.demonwav.mcdev:annotations:1.0")
 }
 
-tasks.register<Jar>("testmodJar") {
-    dependsOn(tasks.named("testmodClasses"))
-    archiveBaseName.set("Otomaton")
-    archiveClassifier.set("dev")
-    filesMatching("fabric.mod.json") {
-        expand("version" to version)
+sourceSets {
+    create("testmod") {
+        compileClasspath += main.get().compileClasspath + main.get().output
+        runtimeClasspath += main.get().runtimeClasspath + main.get().output
     }
-}
-
-tasks.register<RemapJarTask>("remapTestmodJar") {
-    dependsOn(tasks.named("testmodJar"))
-    archiveBaseName.set("Otomaton")
-    inputFile.set(tasks.named<Jar>("testmodJar").get().archiveFile)
-    addNestedDependencies.set(false)
 }
 
 tasks.processResources {
     inputs.property("version", version)
+    inputs.property("mcDep", mcVersion)
+    inputs.property("fabricLoader", fabricLoaderVersion)
+    filteringCharset = "UTF-8"
+
     filesMatching("fabric.mod.json") {
-        expand("version" to version)
+        expand(
+            "version" to version,
+            "mcDep" to mcVersion,
+            "fabricLoader" to fabricLoaderVersion
+        )
     }
 }
 
@@ -67,12 +62,26 @@ java {
     withSourcesJar()
 }
 
-tasks.jar {
-    manifest {
-        attributes(
-                "MixinConfigs" to "mixins.automatone.json",
-                "Implementation-Title" to "SecondBrainEngine",
-                "Implementation-Version" to version
-        )
+tasks.remapJar {
+    archiveBaseName.set(jarName)
+}
+
+tasks.remapSourcesJar {
+    archiveBaseName.set(jarName)
+}
+
+tasks.register<Jar>("testmodJar") {
+    dependsOn(tasks.named("testmodClasses"))
+    archiveBaseName.set("otomaton")
+    archiveClassifier.set("dev")
+    filesMatching("fabric.mod.json") {
+        expand("version" to version)
     }
+}
+
+tasks.register<RemapJarTask>("remapTestmodJar") {
+    dependsOn(tasks.named("testmodJar"))
+    archiveBaseName.set("otomaton")
+    inputFile.set(tasks.named<Jar>("testmodJar").get().archiveFile)
+    addNestedDependencies.set(false)
 }

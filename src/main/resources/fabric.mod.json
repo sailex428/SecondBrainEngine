@@ -1,30 +1,25 @@
 {
   "schemaVersion": 1,
-  "id": "automatone",
-  "version": "0.12.6",
-  "name": "Automatone",
+  "id": "secondbrainengine",
+  "version": "${version}",
+  "name": "SecondBrainEngine",
   "description": "A serverside Minecraft pathfinder bot.",
   "license": "LGPL-3.0",
-  "icon": "assets/automatone/icon.png",
-  "authors": [
-    "Pyrofab",
-    "leijurv",
-    "Brady",
-    "sailex"
-  ],
+  "icon": "assets/secondbrainengine/icon.png",
+  "authors": ["sailex"],
   "contact": {
     "sources": "https://github.com/sailex428/SecondBrainEngine",
     "issues": "https://github.com/sailex428/SecondBrainEngine/issues"
   },
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
     "main": [
       "baritone.Automatone"
     ]
   },
   "depends": {
-    "fabric": "*",
-    "fabricloader": ">=0.16.9"
+    "minecraft": "${mcDep}",
+    "fabricloader": ">=${fabricLoader}"
   },
   "mixins": [
     "mixins.automatone.json",

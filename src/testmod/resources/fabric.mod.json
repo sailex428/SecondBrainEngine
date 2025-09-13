@@ -4,12 +4,11 @@
   "version": "1.0.0",
   "name": "SecondBrainEngine Test Mod",
   "description": "It's just a test... Or is it ?",
-  "license": "LGPL-3.0-or-later",
-  "icon": "assets/icon.png",
+  "license": "LGPL-3.0",
   "authors": [
     "sailex"
   ],
-  "environment": "*",
+  "environment": "server",
   "entrypoints": {
     "main": [
       "me.sailex.otomaton.Otomaton"
@@ -17,10 +16,5 @@
   },
   "depends": {
     "fabric": "*"
-  },
-  "mixins": [
-    {
-      "config": "mixins.otomaton.json"
-    }
-  ]
+  }
 }

@@ -1,9 +1,9 @@
 pluginManagement {
     repositories {
+        gradlePluginPortal()
         maven("https://maven.fabricmc.net/") {
             name = "Fabric"
         }
-        gradlePluginPortal()
         maven("https://maven.kikugie.dev/snapshots") {
             name = "KikuGie Snapshots"
         }

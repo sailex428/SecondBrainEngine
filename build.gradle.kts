@@ -22,14 +22,13 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.property("fapi_version")}+$mcVersion")
 
-    modImplementation("maven.modrinth:carpet:${project.property("carpet_version")}")
+    include(modImplementation("maven.modrinth:carpet:${project.property("carpet_version")}")!!)
 
-    implementation("com.fasterxml.jackson.core:jackson-core:2.16.0")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.16.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.0")
+    include(implementation("com.fasterxml.jackson.core:jackson-core:2.16.0")!!)
+    include(implementation("com.fasterxml.jackson.core:jackson-annotations:2.16.0")!!)
+    include(implementation("com.fasterxml.jackson.core:jackson-databind:2.16.0")!!)
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
-    compileOnly("com.demonwav.mcdev:annotations:1.0")
 }
 
 sourceSets {

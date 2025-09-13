@@ -68,6 +68,7 @@ public class AltoClefController implements ServerTickable {
    private final PlayerExtraController extraController;
    private Settings settings;
    private boolean paused = false;
+   private boolean isEnabled = true;
    private Task storedTask;
    private PlayerEntity owner;
    private final CommandStatusLogger commandStatusLogger;
@@ -171,8 +172,8 @@ public class AltoClefController implements ServerTickable {
    private void initializeCommands() {
       try {
          AltoClefCommands.init(this);
-      } catch (Exception var2) {
-         var2.printStackTrace();
+      } catch (Exception e) {
+         this.log(e.getMessage());
       }
    }
 
@@ -317,9 +318,16 @@ public class AltoClefController implements ServerTickable {
       return this.extraController;
    }
 
-   public void setEnabled(boolean enabled) {
-      if (!enabled) {
-         this.getUserTaskChain().cancel(this);
+   @Override
+   public boolean isEnabled() {
+      return this.isEnabled;
+   }
+
+   @Override
+   public void setIsEnabled(boolean isEnabled) {
+      this.isEnabled =  isEnabled;
+      if (!isEnabled) {
+         cancelUserTask();
          this.getTaskRunner().disable();
       }
    }

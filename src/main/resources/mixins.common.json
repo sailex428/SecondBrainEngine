@@ -7,6 +7,7 @@
     "maxShiftBy": 2
   },
   "mixins": [
+    "EntityPlayerMPFakeMixin",
     "PlayerEntityAccessor"
   ]
 }

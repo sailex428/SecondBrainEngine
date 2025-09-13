@@ -8,13 +8,18 @@ public interface ServerTickable {
      */
     void onTick();
 
+    boolean isEnabled();
+    void setIsEnabled(boolean enabled);
+
     /**
      * Default implementation to register the tick handler
      */
     default void registerTickListener() {
-        ServerTickEvents.END_SERVER_TICK.register((server ->
-                onTick()
-        ));
+        ServerTickEvents.END_SERVER_TICK.register((server -> {
+            if (isEnabled()) {
+                onTick();
+            }
+        }));
     }
 
 }

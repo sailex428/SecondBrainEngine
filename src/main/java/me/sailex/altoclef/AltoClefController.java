@@ -115,7 +115,6 @@ public class AltoClefController implements ServerTickable {
             this.getExtraBaritoneSettings().avoidBlockPlace(this.entityStuckTracker::isBlockedByEntity);
          }
       );
-      Playground.TEMP_TEST_FUNCTION(this, "iron");
       registerTickListener();
    }
 

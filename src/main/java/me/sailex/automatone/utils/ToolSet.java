@@ -21,7 +21,6 @@ import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.IBaritone;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -34,6 +33,16 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+//? if >=1.21.1 {
+/*
+import net.minecraft.enchantment.Enchantment;
+import java.util.Optional;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+*///?} else {
+import net.minecraft.enchantment.EnchantmentHelper;
 //?}
 
 /**

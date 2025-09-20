@@ -5,6 +5,8 @@ import me.sailex.altoclef.eventbus.EventBus;
 import me.sailex.altoclef.eventbus.events.BlockBreakingCancelEvent;
 import me.sailex.altoclef.eventbus.events.BlockBreakingEvent;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.message.MessageType;
+import net.minecraft.network.message.SignedMessage;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 
@@ -37,6 +39,17 @@ public class PlayerExtraController {
    public boolean inRange(Entity entity) {
       return this.mod.getPlayer().isInRange(entity, this.mod.getModSettings().getEntityReachRange());
    }
+
+    /**
+     * Sends a chat message to all players.
+     * @param message the message to send
+     */
+    public void chat(String message) {
+        mod.getPlayer().server.getPlayerManager().broadcast(
+                SignedMessage.ofUnsigned(message), mod.getPlayer(),
+                MessageType.params(MessageType.CHAT, mod.getPlayer())
+        );
+    }
 
    public void attack(Entity entity) {
       if (this.inRange(entity)) {

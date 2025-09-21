@@ -1,8 +1,8 @@
-package me.sailex.common.mixin;
+package me.sailex.otomaton.mixin;
 
 import carpet.patches.EntityPlayerMPFake;
 import com.mojang.authlib.GameProfile;
-import me.sailex.common.callback.NPCEvents;
+import me.sailex.otomaton.callback.NPCEvents;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;

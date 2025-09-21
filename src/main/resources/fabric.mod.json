@@ -24,7 +24,6 @@
   },
   "mixins": [
     "mixins.automatone.json",
-    "mixins.common.json",
     "mixins.altoclef.json"
   ]
 }

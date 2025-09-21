@@ -1,7 +1,7 @@
 {
   "required": true,
   "compatibilityLevel": "JAVA_17",
-  "package": "me.sailex.common.mixin",
+  "package": "me.sailex.otomaton.mixin",
   "verbose": false,
   "injectors": {
     "maxShiftBy": 2

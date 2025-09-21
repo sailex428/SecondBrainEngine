@@ -1,4 +1,4 @@
-package me.sailex.common.mixin;
+package me.sailex.otomaton.mixin;
 
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.player.PlayerEntity;

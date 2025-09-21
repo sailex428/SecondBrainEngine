@@ -22,7 +22,6 @@ import me.sailex.altoclef.tasks.construction.compound.ConstructIronGolemTask;
 import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.IBaritone;
 import com.mojang.authlib.GameProfile;
-import me.sailex.common.NPCSpawner;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
@@ -36,7 +35,6 @@ public class Otomaton implements ModInitializer {
     @Override
     public void onInitialize() {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-
             if (!init) {
                 init = true;
                 NPCSpawner.spawn(new GameProfile(UUID.randomUUID(), "minusaura"), server, handler.player.getBlockPos(), npc -> {

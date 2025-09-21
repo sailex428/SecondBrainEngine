@@ -8,7 +8,7 @@
   "authors": [
     "sailex"
   ],
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
     "main": [
       "me.sailex.otomaton.Otomaton"
@@ -16,5 +16,8 @@
   },
   "depends": {
     "fabric": "*"
-  }
+  },
+  "mixins": [
+    "mixins.otomaton.json"
+  ]
 }

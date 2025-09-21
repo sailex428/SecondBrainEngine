@@ -1,4 +1,4 @@
-package me.sailex.common.callback;
+package me.sailex.otomaton.callback;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

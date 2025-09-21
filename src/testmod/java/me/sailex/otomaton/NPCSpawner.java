@@ -1,9 +1,9 @@
-package me.sailex.common;
+package me.sailex.otomaton;
 
 import carpet.patches.EntityPlayerMPFake;
 import carpet.patches.FakeClientConnection;
 import com.mojang.authlib.GameProfile;
-import me.sailex.common.mixin.PlayerEntityAccessor;
+import me.sailex.otomaton.mixin.PlayerEntityAccessor;
 import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;

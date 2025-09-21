@@ -7,21 +7,7 @@ These fake players behave like normal players and can be directed through the ta
 
 ## Usage
 
-Below a basic example of usage for spawning an NPC, initializing a Controller, and then executing a Task.
-
- ```java
- GameProfile npcProfile = new GameProfile(UUID.randomUUID(), "minusaura");
- 
- NPCSpawner.spawn(npcProfile, server, spawnPos, npcEntity -> {
-    IBaritone automatone = BaritoneAPI.getProvider().getBaritone(npcEntity);
-    
-    AltoClefController controller = new AltoClefController(automatone);
-    
-    controller.runUserTask(new PlaceBlockNearbyTask(Blocks.CRAFTING_TABLE, Blocks.FURNACE));
-
-    NPCEvents.ON_DEATH.register(npcEntity -> controller.setIsEnabled(false)); // disable controller if NPC is dead
- });
- ```
+A basic usage example can be found in the [Otomaton TestMod](src/testmod/java/me/sailex/otomaton/Otomaton.java).
 
 ## License
 

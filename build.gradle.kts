@@ -24,17 +24,17 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fapiVersion")
 
-    include(modImplementation("maven.modrinth:carpet:${project.property("carpet_version")}")!!)
+    modImplementation("maven.modrinth:carpet:${project.property("carpet_version")}")
 
-    include(implementation("com.fasterxml.jackson.core:jackson-core:2.16.0")!!)
-    include(implementation("com.fasterxml.jackson.core:jackson-annotations:2.16.0")!!)
-    include(implementation("com.fasterxml.jackson.core:jackson-databind:2.16.0")!!)
+    implementation("com.fasterxml.jackson.core:jackson-core:2.18.0")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.18.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.0")
 
     implementation("com.google.code.findbugs:jsr305:3.0.2")
 }
 
 sourceSets {
-    create("testmod") {
+    val testmod by creating {
         compileClasspath += main.get().compileClasspath + main.get().output
         runtimeClasspath += main.get().runtimeClasspath + main.get().output
     }

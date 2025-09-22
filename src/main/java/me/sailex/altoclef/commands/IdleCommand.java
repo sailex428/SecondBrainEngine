@@ -3,7 +3,7 @@ package me.sailex.altoclef.commands;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.commandsystem.ArgParser;
 import me.sailex.altoclef.commandsystem.Command;
-import me.sailex.altoclef.tasks.movement.IdleTask;
+import me.sailex.altoclef.tasks.LookAtOwnerTask;
 
 public class IdleCommand extends Command {
    public IdleCommand() {
@@ -12,6 +12,7 @@ public class IdleCommand extends Command {
 
    @Override
    protected void call(AltoClefController mod, ArgParser parser) {
-      mod.runUserTask(new IdleTask(), () -> this.finish());
+       mod.runUserTask(new LookAtOwnerTask(), () -> this.finish());
+       //mod.runUserTask(new IdleTask(), () -> this.finish());
    }
 }

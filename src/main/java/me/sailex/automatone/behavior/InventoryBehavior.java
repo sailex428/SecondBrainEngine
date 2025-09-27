@@ -113,7 +113,7 @@ public final class InventoryBehavior extends Behavior {
     private int firstValidThrowaway(PlayerInventory inventory) { // TODO offhand idk
         DefaultedList<ItemStack> invy = inventory.main;
         for (int i = 0; i < invy.size(); i++) {
-            if ( /*? >=1.21.1  {*/ /*invy.get(i).isIn(baritone.settings().acceptableThrowawayItems.get()*/ /*?} else {*/ baritone.settings().acceptableThrowawayItems.get().contains(invy.get(i).getItem()) /*?}*/) {
+            if ( /*? >=1.21.1  {*/ /*invy.get(i).isIn(baritone.settings().acceptableThrowawayItems.get())*/ /*?} else {*/ baritone.settings().acceptableThrowawayItems.get().contains(invy.get(i).getItem()) /*?}*/) {
                 return i;
             }
         }

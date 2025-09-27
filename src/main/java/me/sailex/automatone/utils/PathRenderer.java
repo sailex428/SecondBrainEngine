@@ -268,7 +268,7 @@ public final class PathRenderer implements IRenderer {
                         player.getWorld().getTime(),
                         0,
                         player.getWorld().getHeight(),
-                        /*? =1.20.1 {*/ color.getColorComponents(null), /*?} elif =1.21.1 {*//* color.getRGB() *//*?}*/
+                        /*? =1.20.1 {*/ color.getColorComponents(null), /*?} elif =1.21.1 {*//* color.getRGB(), *//*?}*/
                         // Arguments filled by the private method lol
                         0.2F,
                         0.25F

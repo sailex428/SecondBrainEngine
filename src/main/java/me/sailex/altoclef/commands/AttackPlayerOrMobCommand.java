@@ -24,7 +24,7 @@ public class AttackPlayerOrMobCommand extends Command {
    public AttackPlayerOrMobCommand() throws CommandException {
       super(
          "attack",
-         "Attacks a specified player or mob. Example usages: @attack zombie 5 to attack and kill 5 zombies, @attack Player to attack a player with username=Player",
+         "Attacks a specified player or mob. Example usages: attack zombie 5 to attack and kill 5 zombies, attack Player to attack a player with username=Player",
          new Arg<>(String.class, "name"),
          new Arg<>(Integer.class, "count", 1, 1)
       );

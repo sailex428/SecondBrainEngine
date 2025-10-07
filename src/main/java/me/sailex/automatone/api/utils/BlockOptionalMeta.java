@@ -47,11 +47,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-//? if =1.20.1 {
+//? if >=1.21 {
+/*
+import net.minecraft.registry.RegistryKey;
+*///?} elif >= 1.20 {
 import net.minecraft.util.Identifier;
-//?} elif =1.21.1 {
-/*import net.minecraft.registry.RegistryKey;
- *///?}
+//?}
 
 public final class BlockOptionalMeta {
 
@@ -142,14 +143,14 @@ public final class BlockOptionalMeta {
     // TODO check if erasing the metadata of both the block and the drops is a good idea
     private static synchronized List<Item> drops(ServerWorld world, Block b) {
         return drops.computeIfAbsent(b, block -> {
-            //? if =1.20.1 {
-            Identifier lootTableLocation = block.getLootTableId();
-            LootTable table = world.getServer().getLootManager().getLootTable(lootTableLocation);
-            //?} elif =1.21.1 {
+            //? if >=1.21 {
             /*
             RegistryKey<LootTable> lootTableLocation = block.getLootTableKey();
             LootTable table = world.getServer().getReloadableRegistries().getLootTable(lootTableLocation);
-             *///?}
+            *///?} elif >=1.20 {
+            Identifier lootTableLocation = block.getLootTableId();
+            LootTable table = world.getServer().getLootManager().getLootTable(lootTableLocation);
+            //?}
             if (lootTableLocation == LootTables.EMPTY) {
                 return Collections.emptyList();
             } else {

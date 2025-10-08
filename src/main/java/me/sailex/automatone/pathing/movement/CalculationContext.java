@@ -147,10 +147,10 @@ public class CalculationContext {
         this.worldTop = world.getTopY();
         this.worldBottom = world.getBottomY();
         EntityDimensions dimensions = player.getDimensions(EntityPose.STANDING);
-        this.width = MathHelper.ceil(/*? =1.20.1 {*/ dimensions.width /*?} elif =1.21.1 {*//* dimensions.width() *//*?}*/);
+        this.width = MathHelper.ceil(/*? >=1.21 {*/ /*dimensions.width() */ /*?} elif >=1.20 {*/ dimensions.width /*?}*/);
         // Note: if width is less than 1 (but not negative), we get side space of 0
         this.requiredSideSpace = getRequiredSideSpace(dimensions);
-        this.height = MathHelper.ceil(/*? =1.20.1 {*/ dimensions.height /*?} elif =1.21.1 {*//* dimensions.height() *//*?}*/);
+        this.height = MathHelper.ceil(/*? >=1.21 {*/ /*dimensions.height() *//*?} elif >=1.20 {*/ dimensions.height /*?}*/);
         this.blockPos = new BlockPos.Mutable();
         this.allowSwimming = baritone.settings().allowSwimming.get();
         this.breathTime = baritone.settings().ignoreBreath.get() ? Integer.MAX_VALUE : player.getMaxAir();
@@ -160,7 +160,7 @@ public class CalculationContext {
     }
 
     public static int getRequiredSideSpace(EntityDimensions dimensions) {
-        return MathHelper.ceil((/*? =1.20.1 {*/ dimensions.width /*?} elif =1.21.1 {*//* dimensions.width() *//*?}*/ - 1) * 0.5f);
+        return MathHelper.ceil((/*? >=1.21 {*//*dimensions.width() *//*?} elif >=1.20 {*/ dimensions.width /*?}*/ - 1) * 0.5f);
     }
 
     public final IBaritone getBaritone() {

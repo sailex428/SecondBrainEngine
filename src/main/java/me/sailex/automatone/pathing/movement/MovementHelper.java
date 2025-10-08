@@ -146,16 +146,9 @@ public interface MovementHelper extends ActionCosts {
                 || block == Blocks.END_ROD) {
             return false;
         }
-        //? if =1.20.1 {
         if (settings.blocksToAvoid.get().contains(block)) {
             return false;
         }
-        //?} elif =1.21.1 {
-        /*
-        if (state.isIn(settings.blocksToAvoid.get())) {
-            return false;
-        }
-        *///?}
         if (block instanceof DoorBlock || block instanceof FenceGateBlock) {
             // Because there's no nice method in vanilla to check if a door is openable or not, we just have to assume
             // that all wooden doors are openable and vice versa.

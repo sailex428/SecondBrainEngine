@@ -167,7 +167,7 @@ public class SettingsUtil {
         ),
         ITEM(
                 Item.class,
-                str -> Registries.ITEM.get(/*? >=1.21 {*//* Identifier.of(str.trim()) *//*?} elif >=1.20 {*/ new Identifier(str.trim()) /*?}*/), // TODO this now returns AIR on failure instead of null, is that
+                str -> Registries.ITEM.get(/*? >=1.21 {*/ /*Identifier.of(str.trim()) *//*?} elif >=1.20 {*/ new Identifier(str.trim()) /*?}*/), // TODO this now returns AIR on failure instead of null, is that
                 // an issue?
                 item -> Registries.ITEM.getKey(item).toString()
         ),

@@ -48,8 +48,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 //? if >=1.21 {
-/*
-import net.minecraft.registry.RegistryKey;
+
+/*import net.minecraft.registry.RegistryKey;
 *///?} elif >= 1.20 {
 import net.minecraft.util.Identifier;
 //?}
@@ -144,8 +144,8 @@ public final class BlockOptionalMeta {
     private static synchronized List<Item> drops(ServerWorld world, Block b) {
         return drops.computeIfAbsent(b, block -> {
             //? if >=1.21 {
-            /*
-            RegistryKey<LootTable> lootTableLocation = block.getLootTableKey();
+            
+            /*RegistryKey<LootTable> lootTableLocation = block.getLootTableKey();
             LootTable table = world.getServer().getReloadableRegistries().getLootTable(lootTableLocation);
             *///?} elif >=1.20 {
             Identifier lootTableLocation = block.getLootTableId();

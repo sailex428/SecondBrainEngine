@@ -61,7 +61,7 @@ import static org.lwjgl.opengl.GL11.glPushAttrib;
  */
 public final class PathRenderer implements IRenderer {
 
-    private static final Identifier TEXTURE_BEACON_BEAM = /*? =1.20.1 {*/ new Identifier("textures/entity/beacon_beam.png"); /*?} elif =1.21.1 {*//* Identifier.of("textures/entity/beacon_beam.png"); *//*?}*/
+    private static final Identifier TEXTURE_BEACON_BEAM = /*? >=1.21 {*/ /*Identifier.of("textures/entity/beacon_beam.png"); *//*?} else {*/ new Identifier("textures/entity/beacon_beam.png");  /*?}*/
 
     private PathRenderer() {}
 
@@ -268,7 +268,7 @@ public final class PathRenderer implements IRenderer {
                         player.getWorld().getTime(),
                         0,
                         player.getWorld().getHeight(),
-                        /*? =1.20.1 {*/ color.getColorComponents(null), /*?} elif =1.21.1 {*//* color.getRGB(), *//*?}*/
+                        /*? >=1.21 {*/ /*color.getRGB(), *//*?} elif >=1.20 {*/ color.getColorComponents(null), /*?}*/
                         // Arguments filled by the private method lol
                         0.2F,
                         0.25F

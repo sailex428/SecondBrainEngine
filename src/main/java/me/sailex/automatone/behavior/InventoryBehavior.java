@@ -54,9 +54,7 @@ public final class InventoryBehavior extends Behavior {
         if (!baritone.settings().allowInventory.get()) {
             return;
         }
-        if (!(ctx.entity() instanceof PlayerEntity player)) {
-            return;
-        }
+        PlayerEntity player = ctx.entity();
         if (player.playerScreenHandler != player.currentScreenHandler) {
             // we have a crafting table or a chest or something open
             return;
@@ -149,7 +147,7 @@ public final class InventoryBehavior extends Behavior {
     }
 
     public boolean selectThrowawayForLocation(boolean select, int x, int y, int z) {
-        if (!(ctx.entity() instanceof PlayerEntity player)) return false;
+        PlayerEntity player = ctx.entity();
 
         BlockState maybe = baritone.getBuilderProcess().placeAt(x, y, z, baritone.bsi.get0(x, y, z));
         if (maybe != null && throwaway(select, stack -> stack.getItem() instanceof BlockItem && maybe.equals(((BlockItem) stack.getItem()).getBlock().getPlacementState(new ItemPlacementContext(new ItemUsageContext(ctx.world(), player, Hand.MAIN_HAND, stack, new BlockHitResult(new Vec3d(player.getX(), player.getY(), player.getZ()), Direction.UP, ctx.feetPos(), false)) {}))))) {
@@ -163,7 +161,7 @@ public final class InventoryBehavior extends Behavior {
     }
 
     public boolean throwaway(boolean select, Predicate<? super ItemStack> desired) {
-        if (!(ctx.entity() instanceof PlayerEntity p)) return false;
+        PlayerEntity p = ctx.entity();
 
         DefaultedList<ItemStack> inv = p.getInventory().main;
         for (int i = 0; i < 9; i++) {

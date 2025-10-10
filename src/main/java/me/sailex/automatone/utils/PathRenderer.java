@@ -78,11 +78,11 @@ public final class PathRenderer implements IRenderer {
     }
 
     public static void render(WorldRenderContext event, ClientPathingBehaviour behavior) {
-        //? if =1.20.1 {
-        float partialTicks = event.tickDelta();
-        //?} elif =1.21.1 {
+        //? if >=1.21 {
         /*float partialTicks = event.tickCounter().getTickDelta(true);
-         *///?}
+        *///?} elif >=1.20 {
+        float partialTicks = event.tickDelta();
+         //?}
         Goal goal = behavior.getGoal();
         MinecraftClient mc = MinecraftClient.getInstance();
 

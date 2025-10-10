@@ -320,7 +320,7 @@ public final class BuilderProcess extends BaritoneProcessHelper implements IBuil
     }
 
     private OptionalInt hasAnyItemThatWouldPlace(BlockState desired, HitResult result, Rotation rot) {
-        if (!(ctx.entity() instanceof PlayerEntity player)) return OptionalInt.empty();
+        PlayerEntity player = ctx.entity();
 
         for (int i = 0; i < 9; i++) {
             ItemStack stack = player.getInventory().main.get(i);

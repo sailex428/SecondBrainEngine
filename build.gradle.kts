@@ -1,4 +1,5 @@
 import net.fabricmc.loom.task.RemapJarTask
+import org.gradle.api.JavaVersion
 
 plugins {
     id("fabric-loom") version "1.11-SNAPSHOT"
@@ -12,6 +13,8 @@ val mcDep = project.property("mc_dep").toString()
 val fabricLoaderVersion = project.property("fabric_loader_version").toString()
 val jarName = "${project.property("mod_name").toString()}-$mcVersion"
 val fapiVersion = "${project.property("fapi_version")}+$mcVersion"
+
+val javaVersion = if (stonecutter.eval(mcVersion, ">=1.20.6")) JavaVersion.VERSION_21 else JavaVersion.VERSION_17
 
 repositories {
     maven("https://api.modrinth.com/maven")
@@ -61,6 +64,8 @@ tasks.withType<JavaCompile> {
 
 java {
     withSourcesJar()
+    targetCompatibility = javaVersion
+    sourceCompatibility = javaVersion
 }
 
 tasks.remapJar {

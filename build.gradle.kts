@@ -59,7 +59,7 @@ tasks.processResources {
 }
 
 tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8" // allow emoji in comments :^)
+    options.encoding = "UTF-8"
 }
 
 java {
@@ -78,7 +78,7 @@ tasks.remapSourcesJar {
 
 tasks.register<Jar>("testmodJar") {
     dependsOn(tasks.named("testmodClasses"))
-    archiveBaseName.set("otomaton")
+    archiveBaseName.set("testmod")
     archiveClassifier.set("dev")
     filesMatching("fabric.mod.json") {
         expand("version" to version)
@@ -87,7 +87,7 @@ tasks.register<Jar>("testmodJar") {
 
 tasks.register<RemapJarTask>("remapTestmodJar") {
     dependsOn(tasks.named("testmodJar"))
-    archiveBaseName.set("otomaton")
+    archiveBaseName.set("testmod")
     inputFile.set(tasks.named<Jar>("testmodJar").get().archiveFile)
     addNestedDependencies.set(false)
 }

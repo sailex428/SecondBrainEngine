@@ -36,6 +36,12 @@ dependencies {
     implementation("com.google.code.findbugs:jsr305:3.0.2")
 }
 
+loom {
+    mixin {
+        defaultRefmapName = "${project.property("mod_name").toString()}-$mcVersion-refmap.json"
+    }
+}
+
 sourceSets {
     val testmod by creating {
         compileClasspath += main.get().compileClasspath + main.get().output

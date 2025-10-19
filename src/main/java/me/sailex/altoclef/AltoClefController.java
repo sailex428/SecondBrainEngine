@@ -135,6 +135,7 @@ public class AltoClefController implements ServerTickable {
    }
 
    public void stop() {
+       this.setIsEnabled(false);
       this.getUserTaskChain().cancel(this);
       if (this.taskRunner.getCurrentTaskChain() != null) {
          this.taskRunner.getCurrentTaskChain().stop();

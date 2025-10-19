@@ -15,26 +15,25 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.sailex.automatone.mixins;
+package me.sailex.mixins;
 
-import me.sailex.automatone.api.utils.IEntityAccessor;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import me.sailex.automatone.Automatone;
+import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Entity.class)
-public abstract class MixinEntity implements IEntityAccessor {
-    @Shadow public abstract World getWorld();
+import java.util.concurrent.ExecutorService;
 
-    @Inject(method = "setRemoved", at = @At("RETURN"))
-    private void shutdownPathingOnUnloading(Entity.RemovalReason reason, CallbackInfo ci) {
-        if (!getWorld().isClient()) {
-//            System.out.println("is this still used???");
-//            IBaritone.KEY.maybeGet(this).ifPresent(b -> ((PathingBehavior) b.getPathingBehavior()).shutdown());
-        }
+@Mixin(Util.class)
+public abstract class MixinUtil {
+    @Shadow
+    private static void attemptShutdown(ExecutorService service) {}
+
+    @Inject(method = "shutdownExecutors", at = @At("RETURN"))
+    private static void shutdownBaritoneExecutor(CallbackInfo ci) {
+        attemptShutdown(Automatone.getExecutor());
     }
 }

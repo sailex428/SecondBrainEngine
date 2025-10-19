@@ -1,6 +1,11 @@
 package me.sailex.altoclef.multiversion;
 
+//? >=1.21 {
+/*import net.minecraft.component.type.FoodComponent;
+*///?} elif >= 1.20 {
 import net.minecraft.item.FoodComponent;
+//?}
+
 
 public class FoodComponentWrapper {
    private final FoodComponent component;

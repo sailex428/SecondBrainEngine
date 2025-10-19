@@ -15,7 +15,7 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.sailex.automatone.mixins;
+package me.sailex.mixins;
 
 import me.sailex.automatone.api.utils.accessor.IItemStack;
 import net.minecraft.item.Item;

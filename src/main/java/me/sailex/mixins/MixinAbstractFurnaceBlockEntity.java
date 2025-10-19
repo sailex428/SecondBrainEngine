@@ -1,4 +1,4 @@
-package me.sailex.altoclef.mixins;
+package me.sailex.mixins;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.screen.PropertyDelegate;

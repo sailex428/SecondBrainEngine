@@ -15,25 +15,25 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.sailex.automatone.mixins;
+package me.sailex.mixins;
 
-import me.sailex.automatone.Automatone;
-import net.minecraft.util.Util;
+import me.sailex.automatone.utils.accessor.ServerChunkManagerAccessor;
+import net.minecraft.server.world.ChunkHolder;
+import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.chunk.WorldChunk;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.concurrent.ExecutorService;
+@Mixin(ServerChunkManager.class)
+public abstract class MixinServerChunkManager implements ServerChunkManagerAccessor {
 
-@Mixin(Util.class)
-public abstract class MixinUtil {
-    @Shadow
-    private static void attemptShutdown(ExecutorService service) {}
+    @Shadow @Nullable protected abstract ChunkHolder getChunkHolder(long pos);
 
-    @Inject(method = "shutdownExecutors", at = @At("RETURN"))
-    private static void shutdownBaritoneExecutor(CallbackInfo ci) {
-        attemptShutdown(Automatone.getExecutor());
+    @Override
+    public @Nullable WorldChunk automatone$getChunkNow(int chunkX, int chunkZ) {
+        ChunkHolder chunkHolder = this.getChunkHolder(ChunkPos.toLong(chunkX, chunkZ));
+        return chunkHolder == null ? null : chunkHolder.getWorldChunk();
     }
 }

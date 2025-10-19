@@ -147,7 +147,7 @@ public class CalculationContext {
         this.worldTop = world.getTopY();
         this.worldBottom = world.getBottomY();
         EntityDimensions dimensions = player.getDimensions(EntityPose.STANDING);
-        this.width = MathHelper.ceil(/*? >=1.21 {*/ /*dimensions.width() */ /*?} elif >=1.20 {*/ dimensions.width /*?}*/);
+        this.width = MathHelper.ceil(/*? >=1.21 {*/ /*dimensions.width()  *//*?} elif >=1.20 {*/ dimensions.width /*?}*/);
         // Note: if width is less than 1 (but not negative), we get side space of 0
         this.requiredSideSpace = getRequiredSideSpace(dimensions);
         this.height = MathHelper.ceil(/*? >=1.21 {*/ /*dimensions.height() *//*?} elif >=1.20 {*/ dimensions.height /*?}*/);

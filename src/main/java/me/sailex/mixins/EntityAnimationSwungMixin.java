@@ -1,4 +1,4 @@
-package me.sailex.altoclef.mixins;
+package me.sailex.mixins;
 
 import me.sailex.altoclef.eventbus.EventBus;
 import me.sailex.altoclef.eventbus.events.EntitySwungEvent;

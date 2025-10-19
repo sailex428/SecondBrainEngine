@@ -15,20 +15,17 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.sailex.automatone.mixins;
+package me.sailex.mixins;
 
-import me.sailex.automatone.utils.accessor.ILivingEntityAccessor;
-import net.minecraft.entity.LivingEntity;
+import me.sailex.automatone.utils.accessor.ServerCommandSourceAccessor;
+import net.minecraft.server.command.CommandOutput;
+import net.minecraft.server.command.ServerCommandSource;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(LivingEntity.class)
-public abstract class MixinLivingEntity implements ILivingEntityAccessor {
-    @Invoker("getNextAirUnderwater")
+@Mixin(ServerCommandSource.class)
+public abstract class MixinServerCommandSource implements ServerCommandSourceAccessor {
     @Override
-    public abstract int automatone$getNextAirUnderwater(int air);
-
-    @Invoker("getNextAirOnLand")
-    @Override
-    public abstract int automatone$getNextAirOnLand(int air);
+    @Accessor("output")
+    public abstract CommandOutput automatone$getOutput();
 }

@@ -3,7 +3,7 @@ package me.sailex.altoclef.tasks.container;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
-import me.sailex.altoclef.mixins.MixinAbstractFurnaceBlockEntity;
+import me.sailex.mixins.MixinAbstractFurnaceBlockEntity;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.PlaceBlockNearbyTask;
 import me.sailex.altoclef.tasks.movement.GetCloseToBlockTask;

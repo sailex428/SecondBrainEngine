@@ -2,7 +2,7 @@ package me.sailex.altoclef.tasks.speedrun;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
-import me.sailex.altoclef.mixins.LivingEntityMixin;
+import me.sailex.mixins.LivingEntityMixin;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.tasks.DoToClosestBlockTask;
 import me.sailex.altoclef.tasks.entity.AbstractKillEntityTask;

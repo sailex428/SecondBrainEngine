@@ -1,7 +1,7 @@
 package me.sailex.altoclef.util.helpers;
 
 import me.sailex.altoclef.AltoClefController;
-import me.sailex.altoclef.mixins.EntityAccessor;
+import me.sailex.mixins.EntityAccessor;
 import me.sailex.altoclef.multiversion.MethodWrapper;
 import me.sailex.altoclef.multiversion.world.WorldVer;
 import me.sailex.altoclef.util.Dimension;

@@ -1,4 +1,4 @@
-package me.sailex.altoclef.mixins;
+package me.sailex.mixins;
 
 import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;

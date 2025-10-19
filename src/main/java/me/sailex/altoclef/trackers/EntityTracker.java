@@ -3,7 +3,7 @@ package me.sailex.altoclef.trackers;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.eventbus.EventBus;
 import me.sailex.altoclef.eventbus.events.PlayerCollidedWithEntityEvent;
-import me.sailex.altoclef.mixins.PersistentProjectileEntityAccessor;
+import me.sailex.mixins.PersistentProjectileEntityAccessor;
 import me.sailex.altoclef.trackers.blacklisting.EntityLocateBlacklist;
 import me.sailex.altoclef.util.ItemTarget;
 import me.sailex.altoclef.util.baritone.CachedProjectile;

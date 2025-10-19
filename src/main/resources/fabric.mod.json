@@ -23,7 +23,6 @@
     "fabric-api": "*"
   },
   "mixins": [
-    "mixins.automatone.json",
-    "mixins.altoclef.json"
+    "mixins.secondbrainengine.json"
   ]
 }

@@ -15,7 +15,7 @@
  * along with Baritone.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.sailex.automatone.mixins;
+package me.sailex.mixins;
 
 import me.sailex.automatone.utils.accessor.IServerPlayerInteractionManager;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;

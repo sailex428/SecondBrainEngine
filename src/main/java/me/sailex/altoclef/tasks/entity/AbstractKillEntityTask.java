@@ -2,7 +2,7 @@ package me.sailex.altoclef.tasks.entity;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.chains.MobDefenseChain;
-import me.sailex.altoclef.mixins.LivingEntityMixin;
+import me.sailex.mixins.LivingEntityMixin;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.helpers.LookHelper;
 import me.sailex.altoclef.util.helpers.StorageHelper;

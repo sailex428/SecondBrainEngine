@@ -12,11 +12,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//? >=1.21 {
+/*import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
+*///?}
+
 @Mixin(EntityPlayerMPFake.class)
 public abstract class EntityPlayerMPFakeMixin extends ServerPlayerEntity {
 
     protected EntityPlayerMPFakeMixin(MinecraftServer server, ServerWorld world, GameProfile profile) {
-        super(server, world, profile);
+        super(server, world, profile /*? >=1.21 {*//*, SyncedClientOptions.createDefault()  *//*?}*/);
     }
 
     @Inject(method = "onDeath", at = @At("TAIL"))

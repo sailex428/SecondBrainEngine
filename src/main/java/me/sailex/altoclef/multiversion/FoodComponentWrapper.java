@@ -19,10 +19,18 @@ public class FoodComponentWrapper {
    }
 
    public int getHunger() {
-      return this.component.getHunger();
+       //? >=1.21 {
+       /*return this.component.nutrition();
+        *///?} elif >= 1.20 {
+       return this.component.getHunger();
+        //?}
    }
 
    public float getSaturationModifier() {
-      return this.component.getSaturationModifier();
+       //? >=1.21 {
+       /*return component.nutrition() == 0 ? 0.0f : component.saturation() / (component.nutrition() * 2.0f);
+       *///?} elif >= 1.20 {
+       return this.component.getSaturationModifier();
+       //?}
    }
 }

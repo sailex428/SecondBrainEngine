@@ -123,7 +123,10 @@ public class MineAndCollectTask extends ResourceTask {
          ItemStack cursorStack = StorageHelper.getItemStackInCursorSlot(this.controller);
          if (cursorStack != null && !cursorStack.isEmpty()) {
             Item item = cursorStack.getItem();
-            if (item.isSuitableFor(mod.getWorld().getBlockState(this.subtask.miningPos()))) {
+            //? >=1.21 {
+            /*ItemStack stack = new ItemStack(item);
+            *///?}
+            if (/*? >=1.21 {*/ /*stack.isSuitableFor(mod.getWorld().getBlockState(this.subtask.miningPos())) *//*?} else {*/ item.isSuitableFor(mod.getWorld().getBlockState(this.subtask.miningPos())) /*?}*/) {
                Item currentlyEquipped = StorageHelper.getItemStackInSlot(PlayerSlot.getEquipSlot(mod.getInventory())).getItem();
                if (item instanceof MiningToolItem) {
                   if (currentlyEquipped instanceof MiningToolItem currentPick) {

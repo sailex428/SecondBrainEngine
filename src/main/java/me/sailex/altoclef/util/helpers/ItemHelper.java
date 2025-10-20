@@ -1262,7 +1262,7 @@ public class ItemHelper {
    public static boolean areShearsEffective(Block b) {
       return b instanceof LeavesBlock
          || b == Blocks.COBWEB
-         || b == Blocks.GRASS
+         || b == /*? >=1.21 {*/ /*Blocks.SHORT_GRASS *//*?} else {*/ Blocks.GRASS /*?}*/
          || b == Blocks.TALL_GRASS
          || b == Blocks.LILY_PAD
          || b == Blocks.FERN

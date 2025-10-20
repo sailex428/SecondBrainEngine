@@ -23,7 +23,7 @@ public class RecipeManagerWrapper {
       List<WrappedRecipeEntry> result = new ArrayList<>();
 
       for (Identifier id : this.recipeManager.keys().toList()) {
-         result.add(new WrappedRecipeEntry(id, (Recipe<?>)this.recipeManager.get(id).get()));
+         result.add(new WrappedRecipeEntry(id, /*? >=1.21 {*/ /*this.recipeManager.get(id).get().value() *//*?} else {*/ (Recipe<?>) this.recipeManager.get(id).get() /*?}*/));
       }
 
       return result;

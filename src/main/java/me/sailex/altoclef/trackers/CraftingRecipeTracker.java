@@ -93,7 +93,11 @@ public class CraftingRecipeTracker extends Tracker {
                if (recipe1 instanceof CraftingRecipe) {
                   net.minecraft.recipe.CraftingRecipe craftingRecipe = (net.minecraft.recipe.CraftingRecipe)recipe1;
                   if (!(craftingRecipe instanceof SpecialCraftingRecipe)) {
-                     ItemStack result = new ItemStack(craftingRecipe.getOutput(null).getItem(), craftingRecipe.getOutput(null).getCount());
+                      //? >=1.21 {
+                      /*ItemStack result = new ItemStack(craftingRecipe.getResult(null).getItem(), craftingRecipe.getResult(null).getCount());
+                      *///?} elif >= 1.20 {
+                      ItemStack result = new ItemStack(craftingRecipe.getOutput(null).getItem(), craftingRecipe.getOutput(null).getCount());
+                       //?}
                      Item[][] altoclefRecipeItems = getShapedCraftingRecipe(craftingRecipe.getIngredients());
                      CraftingRecipe altoclefRecipe = CraftingRecipe.newShapedRecipe(altoclefRecipeItems, result.getCount());
                      if (this.itemRecipeMap.containsKey(result.getItem())) {

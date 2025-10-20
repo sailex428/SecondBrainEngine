@@ -4,6 +4,7 @@ import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
 import me.sailex.altoclef.commands.BlockScanner;
+import me.sailex.altoclef.multiversion.EnchantmentVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.tasks.CraftInInventoryTask;
 import me.sailex.altoclef.tasks.DoToClosestBlockTask;
@@ -71,7 +72,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EndPortalFrameBlock;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.EndermanEntity;
@@ -86,6 +89,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -111,7 +117,7 @@ public class BeatMinecraftTask extends Task {
    private static final ItemTarget[] COLLECT_EYE_GEAR_MIN = combine(ItemTarget.of(Items.DIAMOND_SWORD), ItemTarget.of(Items.DIAMOND_PICKAXE));
    private static final int END_PORTAL_FRAME_COUNT = 12;
    private static final double END_PORTAL_BED_SPAWN_RANGE = 8.0;
-   private static final Predicate<ItemStack> noCurseOfBinding = stack -> !EnchantmentHelper.hasBindingCurse(stack);
+   private final Predicate<ItemStack> noCurseOfBinding;
    private static BeatMinecraftConfig config;
    private static GoToStrongholdPortalTask locateStrongholdTask;
    private static boolean openingEndPortal = false;
@@ -170,6 +176,11 @@ public class BeatMinecraftTask extends Task {
 
    public BeatMinecraftTask(AltoClefController mod) {
       this.mod = mod;
+      //? >=1.21 {
+      /*noCurseOfBinding = stack -> !(EnchantmentVer.getEnchantmentLevel(Enchantments.BINDING_CURSE, stack, mod.getWorld().getServer()) > 0);
+      *///?} elif >= 1.20 {
+      noCurseOfBinding = stack -> !EnchantmentHelper.hasBindingCurse(stack);
+      //?}
       locateStrongholdTask = new GoToStrongholdPortalTask(config.targetEyes);
       this.buildMaterialsTask = new GetBuildingMaterialsTask(config.buildMaterialCount);
       this.uselessItems = new UselessItems(config);

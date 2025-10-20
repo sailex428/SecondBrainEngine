@@ -18,6 +18,7 @@ import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class EntityHelper {
    public static final double ENTITY_GRAVITY = 0.08;
@@ -55,7 +56,7 @@ public class EntityHelper {
       return false;
    }
 
-   public static double calculateResultingPlayerDamage(LivingEntity player, DamageSource src, double damageAmount) {
+   public static double calculateResultingPlayerDamage(ServerPlayerEntity player, DamageSource src, double damageAmount) {
       DamageSourceWrapper source = DamageSourceWrapper.of(src);
       if (player.isInvulnerableTo(src)) {
          return 0.0;
@@ -77,7 +78,7 @@ public class EntityHelper {
             if (damageAmount <= 0.0) {
                damageAmount = 0.0;
             } else {
-               float k = EnchantmentHelper.getProtectionAmount(player.getArmorItems(), src);
+               float k = EnchantmentHelper.getProtectionAmount(/*? >=1.21 {*/ /*player.getServerWorld(), player, src *//*?} else {*/ player.getArmorItems(), src /*?}*/);
                if (k > 0.0F) {
                   damageAmount = DamageUtil.getInflictedDamage((float)damageAmount, k);
                }

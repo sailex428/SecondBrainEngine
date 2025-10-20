@@ -31,7 +31,12 @@ public final class PlayerSlot {
             }
 
             return getOffhandSlot(inventory);
-         case ARMOR:
+          //? >=1.21 {
+          /*case HUMANOID_ARMOR:
+          case ANIMAL_ARMOR:
+          *///?} elif >= 1.20 {
+          case ARMOR:
+           //?}
             return getArmorSlot(inventory, equipSlot.getEntitySlotId());
          default:
             return Slot.UNDEFINED;

@@ -208,7 +208,11 @@ public interface WorldHelper {
 
    static boolean isInNetherPortal(AltoClefController controller) {
       LivingEntity player = controller.getPlayer();
-      return player == null ? false : ((EntityAccessor)player).isInNetherPortal();
+       //? >=1.21 {
+       /*return player.portalManager != null && player.portalManager.isInPortal();
+       *///?} elif >= 1.20 {
+        return player == null ? false : ((EntityAccessor)player).isInNetherPortal();
+        //?}
    }
 
    static boolean canPlace(AltoClefController controller, BlockPos pos) {

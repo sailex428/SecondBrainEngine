@@ -152,7 +152,7 @@ public class StoreInContainerTask extends Task {
 
       for (int i = 0; i < inventory.size() && !stack.isEmpty(); i++) {
          ItemStack slotStack = inventory.getStack(i);
-         if (ItemStack.canCombine(stack, slotStack)) {
+         if (/*? >=1.21 {*/ /*ItemStack.areItemsAndComponentsEqual(stack, slotStack) *//*?} else {*/ ItemStack.canCombine(stack, slotStack) /*?}*/) {
             int space = slotStack.getMaxCount() - slotStack.getCount();
             int toTransfer = Math.min(stack.getCount(), space);
             if (toTransfer > 0) {

@@ -65,10 +65,10 @@ public final class Settings {
             new ArrayList<>(List.of(Blocks.CRAFTING_TABLE, Blocks.FURNACE, Blocks.CAMPFIRE, Blocks.SMOKER, Blocks.BLAST_FURNACE, Blocks.CHEST, Blocks.TRAPPED_CHEST))
     );
     public final Settings.Setting<TagKey<Block>> buildIgnoreBlocks = new Settings.Setting<>(
-            TagKey.of(Registries.BLOCK.getKey(), new Identifier("automatone", "build/ignored_blocks"))
+            TagKey.of(Registries.BLOCK.getKey(), /*? >=1.21 {*/ /*Identifier.of("automatone", "build/ignored_blocks") *//*?} else {*/ new Identifier("automatone", "build/ignored_blocks") /*?}*/)
     );
     public final Settings.Setting<TagKey<Block>> okIfAir = new Settings.Setting<>(
-            TagKey.of(Registries.BLOCK.getKey(), new Identifier("automatone", "build/ok_if_air"))
+            TagKey.of(Registries.BLOCK.getKey(), /*? >=1.21 {*/ /*Identifier.of("automatone", "build/ok_if_air") *//*?} else {*/ new Identifier("automatone", "build/ok_if_air") /*?}*/)
     );
     public final Settings.Setting<Boolean> buildIgnoreExisting = new Settings.Setting<>(false);
     public final Settings.Setting<Boolean> avoidUpdatingFallingBlocks = new Settings.Setting<>(true);

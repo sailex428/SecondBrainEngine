@@ -51,7 +51,7 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
       Blocks.BIG_DRIPLEAF_STEM,
       Blocks.SMALL_DRIPLEAF,
       Blocks.TALL_GRASS,
-      Blocks.GRASS
+       /*? >=1.21 {*/ /*Blocks.SHORT_GRASS, *//*?} else {*/ Blocks.GRASS, /*?}*/
    };
    private Task unstuckTask = null;
    private AltoClefController mod;

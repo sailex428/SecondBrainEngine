@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Hand;
 
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public class ShearSheepTask extends AbstractDoToEntityTask {
       } else {
          if (mod.getSlotHandler().forceEquipItem(Items.SHEARS)) {
             ((SheepEntity)entity).sheared(SoundCategory.PLAYERS);
-            mod.getPlayer().getMainHandStack().damage(1, mod.getPlayer(), e -> {});
+            mod.getPlayer().getMainHandStack().damage(1, mod.getPlayer(), /*? >=1.21 {*/ /*SheepEntity.getSlotForHand(Hand.MAIN_HAND) *//*?} else {*/ e -> {} /*?}*/ );
          }
 
          return null;

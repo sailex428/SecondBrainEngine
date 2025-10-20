@@ -29,7 +29,7 @@ public class CollectWheatSeedsTask extends ResourceTask {
    protected Task onResourceTick(AltoClefController mod) {
       return (Task)(mod.getBlockScanner().anyFound(Blocks.WHEAT)
          ? new CollectCropTask(Items.AIR, 999, Blocks.WHEAT, Items.WHEAT_SEEDS)
-         : new MineAndCollectTask(Items.WHEAT_SEEDS, this.count, new Block[]{Blocks.GRASS, Blocks.TALL_GRASS}, MiningRequirement.HAND));
+         : new MineAndCollectTask(Items.WHEAT_SEEDS, this.count, new Block[]{/*? >=1.21 {*/ /*Blocks.SHORT_GRASS *//*?} else {*/ Blocks.GRASS /*?}*/, Blocks.TALL_GRASS}, MiningRequirement.HAND));
    }
 
    @Override

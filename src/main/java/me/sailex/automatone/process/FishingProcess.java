@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.process;
 
+import me.sailex.altoclef.multiversion.EnchantmentVer;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.pathing.goals.Goal;
 import me.sailex.automatone.api.pathing.goals.GoalBlock;
@@ -29,6 +30,8 @@ import me.sailex.automatone.pathing.movement.MovementHelper;
 import me.sailex.automatone.utils.BaritoneProcessHelper;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.projectile.FishingBobberEntity;
@@ -298,7 +301,7 @@ public final class FishingProcess extends BaritoneProcessHelper implements IBari
         if (bobber != null) {
             if (!world.isClient) {
                 int i = bobber.use(itemStack);
-                itemStack.damage(i, user, (p) -> p.sendToolBreakStatus(hand));
+                itemStack.damage(/*? >=1.21 {*/ /*i, user, EquipmentSlot.MAINHAND *//*?} else {*/ i, user, (p) -> p.sendToolBreakStatus(hand) /*?}*/);
             }
 
             world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.NEUTRAL, 1.0F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
@@ -306,8 +309,14 @@ public final class FishingProcess extends BaritoneProcessHelper implements IBari
         } else {
             world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_FISHING_BOBBER_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
             if (!world.isClient) {
+                //? >=1.21 {
+                /*int i = EnchantmentVer.getEnchantmentLevel(Enchantments.LURE, itemStack, world.getServer());
+                int j = EnchantmentVer.getEnchantmentLevel(Enchantments.LUCK_OF_THE_SEA, itemStack, world.getServer());
+                *///?} elif >= 1.20 {
+                
                 int i = EnchantmentHelper.getLure(itemStack);
                 int j = EnchantmentHelper.getLuckOfTheSea(itemStack);
+                //?}
                 world.spawnEntity(new FishingBobberEntity(user, world, j, i));
             }
 

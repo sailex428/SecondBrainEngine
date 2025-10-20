@@ -3,6 +3,7 @@ package me.sailex.altoclef.util;
 import me.sailex.altoclef.Debug;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
 public enum MiningRequirement implements Comparable<MiningRequirement> {
@@ -22,7 +23,11 @@ public enum MiningRequirement implements Comparable<MiningRequirement> {
       if (block.getDefaultState().isToolRequired()) {
          for (MiningRequirement req : values()) {
             if (req != HAND) {
-               Item pick = req.getMinimumPickaxe();
+                //? >=1.21 {
+                /*ItemStack pick = new ItemStack(req.getMinimumPickaxe());
+                *///?} elif >= 1.20 {
+                Item pick = req.getMinimumPickaxe();
+                 //?}
                if (pick.isSuitableFor(block.getDefaultState())) {
                   return req;
                }

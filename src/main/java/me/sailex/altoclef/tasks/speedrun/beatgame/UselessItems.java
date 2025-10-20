@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.speedrun.beatgame;
 
 import me.sailex.altoclef.tasks.speedrun.BeatMinecraftConfig;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 
@@ -61,7 +62,7 @@ public class UselessItems {
             Items.BOW,
             Items.EMERALD,
             Items.IRON_NUGGET,
-            Items.GRASS,
+            /*? >=1.21 {*/ /*Items.SHORT_GRASS, *//*?} else {*/ Items.GRASS, /*?}*/
             Items.COBBLESTONE_WALL,
             Items.COBBLESTONE_STAIRS,
             Items.COBBLESTONE_SLAB,

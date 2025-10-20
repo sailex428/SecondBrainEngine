@@ -141,7 +141,7 @@ public class MobDefenseChain extends SingleTaskChain {
       for (LivingEntity toDealWith : toDealWithList) {
          if (toDealWith instanceof EndermanEntity || toDealWith instanceof SlimeEntity || toDealWith instanceof BlazeEntity) {
             numberOfProblematicEntities++;
-         } else if (toDealWith instanceof DrownedEntity && toDealWith.getItemsEquipped() == Items.TRIDENT) {
+         } else if (toDealWith instanceof DrownedEntity && /*? >=1.21 {*/ /*toDealWith.getEquippedItems() *//*?} else {*/ toDealWith.getItemsEquipped() /*?}*/ == Items.TRIDENT) {
             numberOfProblematicEntities += 5;
          }
       }

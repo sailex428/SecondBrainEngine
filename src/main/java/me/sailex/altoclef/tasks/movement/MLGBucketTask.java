@@ -25,6 +25,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult.Type;
 import net.minecraft.util.math.BlockPos;
@@ -108,7 +109,7 @@ public class MLGBucketTask extends Task {
 
    private static double calculateFallDamageToLandOn(AltoClefController controller, BlockPos pos) {
       World world = controller.getWorld();
-      LivingEntity clientPlayerEntity = controller.getPlayer();
+      ServerPlayerEntity clientPlayerEntity = controller.getPlayer();
 
       assert clientPlayerEntity != null;
 

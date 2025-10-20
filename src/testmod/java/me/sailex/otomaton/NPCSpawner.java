@@ -104,7 +104,7 @@ public class NPCSpawner {
         return future;
         //?} else {
         
-        /*return SkullBlockEntity.fetchProfileByName(name);
+        /*return SkullBlockEntity.fetchProfileByName(profile.getName());
         *///?}
     }
 

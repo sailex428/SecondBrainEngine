@@ -17,8 +17,9 @@ val fapiVersion = "${project.property("fapi_version")}+$mcVersion"
 val javaVersion = if (stonecutter.eval(mcVersion, ">=1.20.6")) JavaVersion.VERSION_21 else JavaVersion.VERSION_17
 
 repositories {
-    maven("https://api.modrinth.com/maven")
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
+    flatDir { dirs("./libs") }
 }
 
 dependencies {
@@ -27,7 +28,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fapiVersion")
 
-    modImplementation("maven.modrinth:carpet:${project.property("carpet_version")}")
+    modImplementation("com.github.gnembon:fabric-carpet:${project.property("carpet_version")}")
 
     implementation("com.fasterxml.jackson.core:jackson-core:2.18.0")
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.18.0")

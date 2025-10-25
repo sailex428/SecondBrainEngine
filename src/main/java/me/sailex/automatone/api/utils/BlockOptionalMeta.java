@@ -155,7 +155,7 @@ public final class BlockOptionalMeta {
             *///?} elif >=1.20 {
             Identifier lootTableLocation = block.getLootTableId();
             //?}
-            if (/*? >=1.21 {*/ /*lootTableLocation.isPresent()*//*?} else {*/ lootTableLocation == LootTables.EMPTY /*?}*/) {
+            if (/*? >=1.21 {*/ /*lootTableLocation.isEmpty()*//*?} else {*/ lootTableLocation == LootTables.EMPTY /*?}*/) {
                 return Collections.emptyList();
             } else {
                 List<Item> items = new ArrayList<>();

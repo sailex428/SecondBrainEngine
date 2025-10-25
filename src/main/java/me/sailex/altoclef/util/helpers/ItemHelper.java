@@ -8,7 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.MapColor;
-import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,6 +19,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import net.minecraft.server.world.ServerWorld;
+
+//? >=1.21.8 {
+/*import net.minecraft.item.FuelRegistry;
+*///?} else {
+
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+ //?}
+
+
 
 public class ItemHelper {
    public static final Item[] SAPLINGS = new Item[]{
@@ -1174,7 +1183,12 @@ public class ItemHelper {
    };
    public static final Item[] RAW_FOODS = cookableFoodMap.keySet().toArray(Item[]::new);
    public static final Item[] COOKED_FOODS = cookableFoodMap.values().toArray(Item[]::new);
-   private static Map<Item, Integer> fuelTimeMap = null;
+    //? >=1.21.8 {
+    /*private static FuelRegistry fuelTimeMap = null;
+    *///?} else {
+    
+    private static Map<Item, Integer> fuelTimeMap = null;
+    //?}
 
    public static String stripItemName(Item item) {
       String[] possibilities = new String[]{"item.minecraft.", "block.minecraft."};
@@ -1297,34 +1311,52 @@ public class ItemHelper {
          : to.getItem().equals(from.getItem()) && from.getCount() + to.getCount() < to.getMaxCount();
    }
 
-   private static Map<Item, Integer> getFuelTimeMap() {
+    //? >=1.21.8 {
+    /*private static FuelRegistry getFuelTimeMap(ServerWorld world) {
+        if (fuelTimeMap == null) {
+            fuelTimeMap = world.getFuelRegistry();
+        }
+        return fuelTimeMap;
+    }
+    *///?} else {
+    
+    private static Map<Item, Integer> getFuelTimeMap(ServerWorld world) {
       if (fuelTimeMap == null) {
          fuelTimeMap = AbstractFurnaceBlockEntity.createFuelTimeMap();
       }
 
       return fuelTimeMap;
-   }
+    }
+    //?}
 
-   public static double getFuelAmount(Item... items) {
+   public static double getFuelAmount(ServerWorld world, Item... items) {
       double total = 0.0;
 
       for (Item item : items) {
-         if (getFuelTimeMap().containsKey(item)) {
-            int timeTicks = getFuelTimeMap().get(item);
+          //? >=1.21.8 {
+          /*if (getFuelTimeMap(world).isFuel(item.getDefaultStack())) {
+              int timeTicks = getFuelTimeMap(world).getFuelTicks(item.getDefaultStack());
+              total += timeTicks / 200.0;
+          }
+          *///?} else {
+          
+          if (getFuelTimeMap(world).containsKey(item)) {
+            int timeTicks = getFuelTimeMap(world).get(item);
             total += timeTicks / 200.0;
-         }
+          }
+          //?}
       }
 
       return total;
    }
 
-   public static double getFuelAmount(ItemStack stack) {
-      return getFuelAmount(stack.getItem()) * stack.getCount();
+   public static double getFuelAmount(ServerWorld world, ItemStack stack) {
+      return getFuelAmount(world, stack.getItem()) * stack.getCount();
    }
 
-   public static boolean isFuel(Item item) {
-      return getFuelTimeMap().containsKey(item);
-   }
+//   public static boolean isFuel(ServerWorld world, Item item) {
+//      return getFuelTimeMap(world).containsKey(item);
+//   }
 
    public boolean isRawFood(Item item) {
       return cookableFoodMap.containsKey(item);

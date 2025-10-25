@@ -27,9 +27,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -41,17 +41,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-//? if >=1.21 {
+//? if >=1.21.8 {
+/*import net.minecraft.loot.context.LootWorldContext;
+*///?} elif >=1.21 {
 
 /*import net.minecraft.registry.RegistryKey;
+import net.minecraft.loot.context.LootContextParameterSet;
 *///?} elif >= 1.20 {
 import net.minecraft.util.Identifier;
+import net.minecraft.loot.context.LootContextParameterSet;
 //?}
 
 public final class BlockOptionalMeta {
@@ -143,20 +148,25 @@ public final class BlockOptionalMeta {
     // TODO check if erasing the metadata of both the block and the drops is a good idea
     private static synchronized List<Item> drops(ServerWorld world, Block b) {
         return drops.computeIfAbsent(b, block -> {
-            //? if >=1.21 {
-            
-            /*RegistryKey<LootTable> lootTableLocation = block.getLootTableKey();
-            LootTable table = world.getServer().getReloadableRegistries().getLootTable(lootTableLocation);
+            //? if >=1.21.8 {
+            /*Optional<RegistryKey<LootTable>> lootTableLocation = block.getLootTableKey();
+            *///?} elif >=1.21 {
+            /*Optional<RegistryKey<LootTable>> lootTableLocation = Optional.of(block.getLootTableKey());
             *///?} elif >=1.20 {
             Identifier lootTableLocation = block.getLootTableId();
-            LootTable table = world.getServer().getLootManager().getLootTable(lootTableLocation);
             //?}
-            if (lootTableLocation == LootTables.EMPTY) {
+            if (/*? >=1.21 {*/ /*lootTableLocation.isEmpty()*//*?} else {*/ lootTableLocation == LootTables.EMPTY /*?}*/) {
                 return Collections.emptyList();
             } else {
                 List<Item> items = new ArrayList<>();
+                //? if >=1.21 {
+                /*LootTable table = world.getServer().getReloadableRegistries().getLootTable(lootTableLocation.get());
+                *///?} elif >=1.20 {
+                
+                LootTable table = world.getServer().getLootManager().getLootTable(lootTableLocation);
+                //?}
                 table.generateLoot(
-                    new LootContext.Builder(new LootContextParameterSet.Builder(world)
+                    new LootContext.Builder(/*? >=1.21.8 {*//*new LootWorldContext*//*?} else {*/new LootContextParameterSet/*?}*/.Builder(world)
                             .add(LootContextParameters.ORIGIN, Vec3d.of(BlockPos.ZERO))
                             .add(LootContextParameters.TOOL, ItemStack.EMPTY)
                             .addOptional(LootContextParameters.BLOCK_ENTITY, null)

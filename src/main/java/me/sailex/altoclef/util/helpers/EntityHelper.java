@@ -20,6 +20,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.List;
+
 public class EntityHelper {
    public static final double ENTITY_GRAVITY = 0.08;
 
@@ -31,7 +33,7 @@ public class EntityHelper {
    public static boolean isProbablyHostileToPlayer(AltoClefController mod, Entity entity) {
       if (entity instanceof MobEntity mob) {
          if (mob instanceof SlimeEntity slime) {
-            return slime.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) > 0.0;
+            return slime.getAttributeValue(/*? >=1.21.8 {*/ /*EntityAttributes.ATTACK_DAMAGE *//*?} else {*/ EntityAttributes.GENERIC_ATTACK_DAMAGE /*?}*/) > 0.0;
          } else if (mob instanceof PiglinEntity piglin) {
             return piglin.isAttacking() && !isTradingPiglin(mob) && piglin.isAdult();
          } else if (mob instanceof EndermanEntity enderman) {
@@ -45,8 +47,14 @@ public class EntityHelper {
    }
 
    public static boolean isTradingPiglin(Entity entity) {
-      if (entity instanceof PiglinEntity pig && pig.getHandItems() != null) {
-         for (ItemStack stack : pig.getHandItems()) {
+      if (entity instanceof PiglinEntity pig) {
+          //? >=1.21.8 {
+          /*List<ItemStack> items = List.of(pig.getMainHandStack(), pig.getOffHandStack());
+          *///?} else {
+          
+          Iterable<ItemStack> items = pig.getHandItems();
+          //?}
+         for (ItemStack stack : items) {
             if (stack.getItem().equals(Items.GOLD_INGOT)) {
                return true;
             }
@@ -58,12 +66,12 @@ public class EntityHelper {
 
    public static double calculateResultingPlayerDamage(ServerPlayerEntity player, DamageSource src, double damageAmount) {
       DamageSourceWrapper source = DamageSourceWrapper.of(src);
-      if (player.isInvulnerableTo(src)) {
+      if (player.isInvulnerableTo(/*? >=1.21.8 {*/ /*player.getWorld(), src *//*?} else {*/ src /*?}*/)) {
          return 0.0;
       } else {
          if (!source.bypassesArmor()) {
             damageAmount = MethodWrapper.getDamageLeft(
-               player, damageAmount, src, (double)player.getArmor(), player.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)
+               player, damageAmount, src, (double)player.getArmor(), player.getAttributeValue(/*? >=1.21.8 {*/ /*EntityAttributes.ARMOR_TOUGHNESS *//*?} else {*/ EntityAttributes.GENERIC_ARMOR_TOUGHNESS /*?}*/)
             );
          }
 
@@ -78,7 +86,7 @@ public class EntityHelper {
             if (damageAmount <= 0.0) {
                damageAmount = 0.0;
             } else {
-               float k = EnchantmentHelper.getProtectionAmount(/*? >=1.21 {*/ /*player.getServerWorld(), player, src *//*?} else {*/ player.getArmorItems(), src /*?}*/);
+               float k = EnchantmentHelper.getProtectionAmount(/*? >=1.21.8 {*/ /*player.getWorld(), player, src *//*?} elif >=1.21 {*//* player.getServerWorld(), player, src *//*?} else {*/ player.getArmorItems(), src /*?}*/);
                if (k > 0.0F) {
                   damageAmount = DamageUtil.getInflictedDamage((float)damageAmount, k);
                }

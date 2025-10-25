@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.process;
 
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.automatone.Automatone;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.pathing.goals.Goal;
@@ -95,7 +96,7 @@ public final class MineProcess extends BaritoneProcessHelper implements IMinePro
     public PathingCommand onTick(boolean calcFailed, boolean isSafeToCancel) {
         if (desiredQuantity > 0) {
             PlayerInventory inventory = ctx.inventory();
-            int curr = inventory == null ? -1 : inventory.main.stream()
+            int curr = inventory == null ? -1 : PlayerInventoryVer.getMainInventory(inventory).stream()
                     .filter(stack -> filter.has(stack))
                     .mapToInt(ItemStack::getCount).sum();
             Automatone.LOGGER.debug("Currently have " + curr + " valid items");

@@ -15,7 +15,9 @@ public class EnchantmentVer {
 
     //? >=1.21 {
     /*public static int getEnchantmentLevel(RegistryKey<Enchantment> enchantment, ItemStack stack, MinecraftServer server) {
-        Registry<Enchantment> enchantmentRegistry = server.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
+        Registry<Enchantment> enchantmentRegistry = /^? >=1.21.8 {^/
+                /^server.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
+                ^//^?} else {^/ server.getRegistryManager().get(RegistryKeys.ENCHANTMENT); /^?}^/
         Optional<RegistryEntry.Reference<Enchantment>> entry = enchantmentRegistry.getEntry(enchantment.getValue());
         return EnchantmentHelper.getLevel(entry.get(), stack);
     }

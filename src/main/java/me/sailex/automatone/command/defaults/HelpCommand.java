@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.command.defaults;
 
+import me.sailex.altoclef.multiversion.CommandVer;
 import me.sailex.automatone.api.IBaritone;
 import me.sailex.automatone.api.command.Command;
 import me.sailex.automatone.api.command.ICommand;
@@ -78,8 +79,8 @@ public class HelpCommand extends Command {
                         component.setStyle(component.getStyle().withFormatting(Formatting.GRAY));
                         component.append(shortDescComponent);
                         component.setStyle(component.getStyle()
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverComponent))
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand)));
+                                .withHoverEvent(CommandVer.getShowText(hoverComponent))
+                                .withClickEvent(CommandVer.getRunCommand(clickCommand)));
                         return component;
                     },
                     FORCE_COMMAND_PREFIX + label
@@ -95,8 +96,7 @@ public class HelpCommand extends Command {
             command.getLongDesc().forEach(message -> logDirect(source, message));
             logDirect(source, "");
             MutableText returnComponent = Text.literal("Click to return to the help menu");
-            returnComponent.setStyle(returnComponent.getStyle().withClickEvent(new ClickEvent(
-                    ClickEvent.Action.RUN_COMMAND,
+            returnComponent.setStyle(returnComponent.getStyle().withClickEvent(CommandVer.getRunCommand(
                     FORCE_COMMAND_PREFIX + label
             )));
             logDirect(source, returnComponent);

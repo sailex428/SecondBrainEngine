@@ -18,6 +18,7 @@
 
 package me.sailex.automatone.pathing.movement;
 
+import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import me.sailex.automatone.Automatone;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.IBaritone;
@@ -126,7 +127,9 @@ public class CalculationContext {
         this.maxFallHeightNoWater = baritone.settings().maxFallHeightNoWater.get();
         this.maxFallHeightBucket = baritone.settings().maxFallHeightBucket.get();
 
-        //? if >=1.21.1 {
+        //? if >=1.21.8 {
+        /*int depth = (int) player.getAttributeValue(EntityAttributes.WATER_MOVEMENT_EFFICIENCY);
+        *///?} elif >=1.21.1 {
         /*int depth = (int) player.getAttributeValue(EntityAttributes.GENERIC_WATER_MOVEMENT_EFFICIENCY);
         *///?} else {
         int depth = EnchantmentHelper.getDepthStrider(player);
@@ -144,7 +147,7 @@ public class CalculationContext {
         // why cache these things here, why not let the movements just get directly from settings?
         // because if some movements are calculated one way and others are calculated another way,
         // then you get a wildly inconsistent path that isn't optimal for either scenario.
-        this.worldTop = world.getTopY();
+        this.worldTop = HeightLimitViewVer.getTopY(world);
         this.worldBottom = world.getBottomY();
         EntityDimensions dimensions = player.getDimensions(EntityPose.STANDING);
         this.width = MathHelper.ceil(/*? >=1.21 {*/ /*dimensions.width()  *//*?} elif >=1.20 {*/ dimensions.width /*?}*/);
@@ -221,7 +224,7 @@ public class CalculationContext {
 
     public boolean isProtected(int x, int y, int z) {
         this.blockPos.set(x, y, z);
-        return this.player != null && !world.canPlayerModifyAt(this.player, this.blockPos);
+        return this.player != null &&  /*? >=1.21.8 {*/ /*!world.canEntityModifyAt(this.player, this.blockPos); *//*?} else {*/ !world.canPlayerModifyAt(this.player, this.blockPos); /*?}*/
     }
 
     public double oxygenCost(double baseCost, BlockState headState) {

@@ -3,7 +3,10 @@ package me.sailex.altoclef.chains;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.control.KillAura;
+import me.sailex.altoclef.multiversion.MobEntityVer;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.multiversion.item.ItemVer;
+import me.sailex.altoclef.multiversion.item.ToolItemVer;
 import me.sailex.altoclef.tasks.construction.ProjectileProtectionWallTask;
 import me.sailex.altoclef.tasks.entity.KillEntitiesTask;
 import me.sailex.altoclef.tasks.movement.CustomBaritoneGoalTask;
@@ -28,6 +31,7 @@ import me.sailex.automatone.behavior.PathingBehavior;
 import net.minecraft.block.AbstractFireBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.effect.StatusEffects;
@@ -60,7 +64,6 @@ import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.ToolItem;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -108,7 +111,7 @@ public class MobDefenseChain extends SingleTaskChain {
 
    public static double getCreeperSafety(Vec3d pos, CreeperEntity creeper) {
       double distance = creeper.squaredDistanceTo(pos);
-      float fuse = creeper.getClientFuseTime(1.0F);
+      float fuse = MobEntityVer.getClientFuseTime(creeper, 1.0F);
       return fuse <= 0.001F ? distance : distance * 0.2;
    }
 
@@ -141,7 +144,11 @@ public class MobDefenseChain extends SingleTaskChain {
       for (LivingEntity toDealWith : toDealWithList) {
          if (toDealWith instanceof EndermanEntity || toDealWith instanceof SlimeEntity || toDealWith instanceof BlazeEntity) {
             numberOfProblematicEntities++;
-         } else if (toDealWith instanceof DrownedEntity && /*? >=1.21 {*/ /*toDealWith.getEquippedItems() *//*?} else {*/ toDealWith.getItemsEquipped() /*?}*/ == Items.TRIDENT) {
+         } else if (toDealWith instanceof DrownedEntity &&
+             /*? >=1.21 {*/
+                 /*(toDealWith.getEquippedStack(EquipmentSlot.MAINHAND).getItem() == Items.TRIDENT
+                         || toDealWith.getEquippedStack(EquipmentSlot.OFFHAND).getItem() == Items.TRIDENT)
+             *//*?} else {*/ toDealWith.getItemsEquipped() == Items.TRIDENT/*?}*/) {
             numberOfProblematicEntities += 5;
          }
       }
@@ -233,12 +240,12 @@ public class MobDefenseChain extends SingleTaskChain {
                      || !hasShield(mod)
                      || mod.getEntityTracker().entityFound(PotionEntity.class)
                      || !mod.getBaritone().getPathingBehavior().isSafeToCancel()
-                     || !(blowingUp.getClientFuseTime(blowingUp.getFuseSpeed()) > 0.5)) {
+                     || !(MobEntityVer.getClientFuseTime(blowingUp, blowingUp.getFuseSpeed()) > 0.5)) {
                      this.doingFunkyStuff = true;
                      this.runAwayTask = new RunAwayFromCreepersTask(10.0);
                      this.runAwayTask.controller = this.controller;
                      this.setTask(this.runAwayTask);
-                     return 50.0F + blowingUp.getClientFuseTime(1.0F) * 50.0F;
+                     return 50.0F + MobEntityVer.getClientFuseTime(blowingUp, 1.0F) * 50.0F;
                   }
 
                   LookHelper.lookAt(mod, blowingUp.getEyePos());
@@ -256,7 +263,7 @@ public class MobDefenseChain extends SingleTaskChain {
                      && mod.getBaritone().getPathingBehavior().isSafeToCancel()
                      && !mod.getEntityTracker().entityFound(PotionEntity.class)
                      && this.isProjectileClose(mod)) {
-                     ItemStack shieldSlot = StorageHelper.getItemStackInSlot(new Slot(mod.getInventory().offHand, 0));
+                     ItemStack shieldSlot = StorageHelper.getItemStackInSlot(new Slot(PlayerInventoryVer.getOffHandStack(mod.getInventory()), 0));
                      if (shieldSlot.getItem() != Items.SHIELD) {
                         mod.getSlotHandler().forceEquipItemToOffhand(Items.SHIELD);
                      } else {
@@ -342,9 +349,9 @@ public class MobDefenseChain extends SingleTaskChain {
 
                         toDealWithList.sort(Comparator.comparingDouble(entity -> mod.getPlayer().distanceTo(entity)));
                         if (!toDealWithList.isEmpty()) {
-                           ToolItem bestWeapon = getBestWeapon(mod);
+                           Item bestWeapon = getBestWeapon(mod);
                            int armor = mod.getPlayer().getArmor();
-                           float damage = bestWeapon == null ? 0.0F : bestWeapon.getMaterial().getAttackDamage() + 1.0F;
+                           float damage = bestWeapon == null ? 0.0F : ToolItemVer.getAttackDamage(bestWeapon) + 1.0F;
                            int shield = hasShield(mod) && bestWeapon != null ? 3 : 0;
                            int canDealWith = (int)Math.ceil(armor * 3.6 / 20.0 + damage * 0.8 + shield);
                            if (canDealWith < getDangerousnessScore(toDealWithList) && !this.needsChangeOnAttack) {
@@ -400,7 +407,7 @@ public class MobDefenseChain extends SingleTaskChain {
       return mod.getItemStorage().hasItem(Items.SHIELD) || mod.getItemStorage().hasItemInOffhand(mod, Items.SHIELD);
    }
 
-   public static ToolItem getBestWeapon(AltoClefController mod) {
+   public static Item getBestWeapon(AltoClefController mod) {
       Item[] WEAPONS = new Item[]{
          Items.NETHERITE_SWORD,
          Items.NETHERITE_AXE,
@@ -415,11 +422,11 @@ public class MobDefenseChain extends SingleTaskChain {
          Items.WOODEN_SWORD,
          Items.WOODEN_AXE
       };
-      ToolItem bestSword = null;
+      Item bestSword = null;
 
       for (Item item : WEAPONS) {
          if (mod.getItemStorage().hasItem(item)) {
-            bestSword = (ToolItem)item;
+            bestSword = item;
             break;
          }
       }
@@ -506,7 +513,7 @@ public class MobDefenseChain extends SingleTaskChain {
 
       try {
          for (CreeperEntity creeper : mod.getEntityTracker().getTrackedEntities(CreeperEntity.class)) {
-            if (creeper != null && !(creeper.getClientFuseTime(1.0F) < 0.04)) {
+            if (creeper != null && !(MobEntityVer.getClientFuseTime(creeper, 1.0F) < 0.04)) {
                double safety = getCreeperSafety(mod.getPlayer().getPos(), creeper);
                if (safety < worstSafety) {
                   target = creeper;

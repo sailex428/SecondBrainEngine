@@ -20,17 +20,32 @@ package me.sailex.mixins;
 import me.sailex.automatone.Automatone;
 import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Mixin(Util.class)
 public abstract class MixinUtil {
-    @Shadow
-    private static void attemptShutdown(ExecutorService service) {}
+
+    @Unique
+    private static void attemptShutdown(ExecutorService service) {
+        service.shutdown();
+
+        boolean flag;
+        try {
+            flag = service.awaitTermination(3L, TimeUnit.SECONDS);
+        } catch (InterruptedException var3) {
+            flag = false;
+        }
+
+        if (!flag) {
+            service.shutdownNow();
+        }
+    }
 
     @Inject(method = "shutdownExecutors", at = @At("RETURN"))
     private static void shutdownBaritoneExecutor(CallbackInfo ci) {

@@ -8,7 +8,7 @@ public class BlockTagVer {
    public static boolean isWool(Block block) {
       return Registries.BLOCK
          .getKey(block)
-         .map(e -> Registries.BLOCK.entryOf(e).streamTags().anyMatch(t -> t == BlockTags.WOOL))
+         .map(e -> /*? >=1.21.8 {*/ /*Registries.BLOCK.get(e).getDefaultState() *//*?} else {*/ Registries.BLOCK.entryOf(e) /*?}*/.streamTags().anyMatch(t -> t == BlockTags.WOOL))
          .orElse(Boolean.FALSE);
    }
 }

@@ -6,6 +6,7 @@ import me.sailex.altoclef.commandsystem.ArgParser;
 import me.sailex.altoclef.commandsystem.Command;
 import me.sailex.altoclef.commandsystem.CommandException;
 import me.sailex.altoclef.commandsystem.ItemList;
+import me.sailex.altoclef.multiversion.item.ToolItemVer;
 import me.sailex.altoclef.tasks.container.StoreInAnyContainerTask;
 import me.sailex.altoclef.util.ItemTarget;
 import me.sailex.altoclef.util.helpers.ItemHelper;
@@ -14,7 +15,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ToolItem;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class DepositCommand extends Command {
             ItemStack stack = StorageHelper.getItemStackInSlot(slot);
             if (!stack.isEmpty()) {
                Item item = stack.getItem();
-               return !(item instanceof ToolItem);
+               return !(ToolItemVer.isToolItem(item));
             } else {
                return false;
             }

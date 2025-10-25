@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.utils;
 
+import me.sailex.altoclef.multiversion.ActionResultVer;
 import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.utils.IEntityContext;
 import net.minecraft.entity.player.PlayerEntity;
@@ -47,12 +48,12 @@ public class BlockPlaceHelper {
         }
 
         rightClickTimer = BaritoneAPI.getGlobalSettings().rightClickSpeed.get();
-        PlayerEntity player = (PlayerEntity) ctx.entity();
+        PlayerEntity player = ctx.entity();
 
         for (Hand hand : Hand.values()) {
             ActionResult actionResult = ctx.interactionController().processRightClickBlock(player, ctx.world(), hand, (BlockHitResult) mouseOver);
             if (actionResult.isAccepted()) {
-                if (actionResult.shouldSwingHand()) {
+                if (ActionResultVer.shouldSwingHand(actionResult)) {
                     player.swingHand(hand);
                 }
                 return;

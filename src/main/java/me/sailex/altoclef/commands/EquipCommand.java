@@ -6,10 +6,10 @@ import me.sailex.altoclef.commandsystem.ArgParser;
 import me.sailex.altoclef.commandsystem.Command;
 import me.sailex.altoclef.commandsystem.CommandException;
 import me.sailex.altoclef.commandsystem.ItemList;
+import me.sailex.altoclef.multiversion.item.ToolItemVer;
 import me.sailex.altoclef.tasks.misc.EquipArmorTask;
 import me.sailex.altoclef.util.ItemTarget;
 import me.sailex.altoclef.util.helpers.ItemHelper;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 
 public class EquipCommand extends Command {
@@ -47,7 +47,7 @@ public class EquipCommand extends Command {
 
       for (ItemTarget target : items) {
          for (Item item : target.getMatches()) {
-            if (!(item instanceof ArmorItem)) {
+            if (!(ToolItemVer.isArmorItem(item))) {
                throw new CommandException("'" + item.toString().toUpperCase() + "' cannot be equipped!");
             }
          }

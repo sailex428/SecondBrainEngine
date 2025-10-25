@@ -2,12 +2,14 @@ package me.sailex.altoclef.control;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
+import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
+import me.sailex.altoclef.multiversion.item.ToolItemVer;
 import me.sailex.altoclef.util.ItemTarget;
 import me.sailex.altoclef.util.slots.PlayerSlot;
 import me.sailex.altoclef.util.slots.Slot;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.EmptyMapItem;
 import net.minecraft.item.EnderEyeItem;
@@ -19,7 +21,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.OnAStickItem;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.item.ToolItem;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -75,7 +76,7 @@ public class SlotHandler {
          }
       } else {
          if (!this.cursorStack.isEmpty()) {
-            this.controller.getEntity().dropStack(this.cursorStack.copy());
+            ServerPlayerEntityVer.dropStack(this.controller.getEntity(), this.cursorStack.copy());
             this.setCursorStack(ItemStack.EMPTY);
             this.registerSlotAction();
          }
@@ -86,11 +87,11 @@ public class SlotHandler {
       PlayerInventory inventory = this.controller.getEntity().getInventory();
       ItemStack offhandStack = inventory.getStack(0);
       if (!offhandStack.isOf(toEquip)) {
-         for (int i = 0; i < inventory.main.size(); i++) {
-            ItemStack potential = (ItemStack)inventory.main.get(i);
+         for (int i = 0; i < PlayerInventoryVer.getMainInventory(inventory).size(); i++) {
+            ItemStack potential = PlayerInventoryVer.getMainInventory(inventory).get(i);
             if (potential.isOf(toEquip)) {
                inventory.setStack(0, potential);
-               inventory.main.set(i, offhandStack);
+                PlayerInventoryVer.getMainInventory(inventory).set(i, offhandStack);
                this.registerSlotAction();
                return;
             }
@@ -100,23 +101,23 @@ public class SlotHandler {
 
    public boolean forceEquipItem(Item[] toEquip) {
       PlayerInventory inventory = this.controller.getEntity().getInventory();
-      if (Arrays.stream(toEquip).allMatch(ix -> ix == inventory.getMainHandStack().getItem())) {
+      if (Arrays.stream(toEquip).allMatch(ix -> ix == PlayerInventoryVer.getMainHandStack(inventory).getItem())) {
          return true;
       } else {
          for (int i = 0; i < 9; i++) {
             int finalI = i;
             if (Arrays.stream(toEquip).allMatch(it -> it == inventory.getStack(finalI).getItem())) {
-               inventory.selectedSlot = i;
+                PlayerInventoryVer.setSelectedSlot(inventory, i);
                this.registerSlotAction();
                return true;
             }
          }
 
-         for (int ix = 9; ix < inventory.main.size(); ix++) {
+         for (int ix = 9; ix < PlayerInventoryVer.getMainInventory(inventory).size(); ix++) {
             int finalI = ix;
             if (Arrays.stream(toEquip).allMatch(it -> it == inventory.getStack(finalI).getItem())) {
-               ItemStack handStack = inventory.getMainHandStack();
-               inventory.setStack(inventory.selectedSlot, inventory.getStack(ix));
+               ItemStack handStack = PlayerInventoryVer.getMainHandStack(inventory);
+               inventory.setStack(PlayerInventoryVer.getSelectedSlot(inventory), inventory.getStack(ix));
                inventory.setStack(ix, handStack);
                this.registerSlotAction();
                return true;
@@ -129,21 +130,21 @@ public class SlotHandler {
 
    public boolean forceEquipItem(Item toEquip) {
       PlayerInventory inventory = this.controller.getEntity().getInventory();
-      if (inventory.getMainHandStack().isOf(toEquip)) {
+      if (PlayerInventoryVer.getMainHandStack(inventory).isOf(toEquip)) {
          return true;
       } else {
          for (int i = 0; i < 9; i++) {
             if (inventory.getStack(i).isOf(toEquip)) {
-               inventory.selectedSlot = i;
+               PlayerInventoryVer.setSelectedSlot(inventory, i);
                this.registerSlotAction();
                return true;
             }
          }
 
-         for (int ix = 9; ix < inventory.main.size(); ix++) {
+         for (int ix = 9; ix < PlayerInventoryVer.getMainInventory(inventory).size(); ix++) {
             if (inventory.getStack(ix).isOf(toEquip)) {
-               ItemStack handStack = inventory.getMainHandStack();
-               inventory.setStack(inventory.selectedSlot, inventory.getStack(ix));
+               ItemStack handStack = PlayerInventoryVer.getMainHandStack(inventory);
+               inventory.setStack(PlayerInventoryVer.getSelectedSlot(inventory), inventory.getStack(ix));
                inventory.setStack(ix, handStack);
                this.registerSlotAction();
                return true;
@@ -156,15 +157,15 @@ public class SlotHandler {
 
    public boolean forceDeequip(Predicate<ItemStack> isBad) {
       PlayerInventory inventory = this.controller.getEntity().getInventory();
-      ItemStack equip = inventory.getMainHandStack();
+      ItemStack equip = PlayerInventoryVer.getMainHandStack(inventory);
       if (isBad.test(equip)) {
          int emptySlot = inventory.getEmptySlot();
          if (emptySlot != -1) {
             if (PlayerInventory.isValidHotbarIndex(emptySlot)) {
-               inventory.selectedSlot = emptySlot;
+                PlayerInventoryVer.setSelectedSlot(inventory, emptySlot);
             } else {
                inventory.setStack(emptySlot, equip);
-               inventory.setStack(inventory.selectedSlot, ItemStack.EMPTY);
+               inventory.setStack(PlayerInventoryVer.getSelectedSlot(inventory), ItemStack.EMPTY);
             }
 
             this.registerSlotAction();
@@ -178,7 +179,7 @@ public class SlotHandler {
    }
 
    public boolean forceDeequipHitTool() {
-      return this.forceDeequip(stack -> stack.getItem() instanceof ToolItem);
+      return this.forceDeequip(stack -> ToolItemVer.isToolItem(stack.getItem()));
    }
 
    public boolean forceEquipItem(ItemTarget toEquip, boolean unInterruptable) {
@@ -225,7 +226,7 @@ public class SlotHandler {
                || item instanceof OnAStickItem
                || item == Items.COMPASS
                || item instanceof EmptyMapItem
-               || item instanceof ArmorItem
+               || ToolItemVer.isArmorItem(item)
                || item == Items.LEAD
                || item == Items.SHIELD;
          }
@@ -248,8 +249,8 @@ public class SlotHandler {
       PlayerInventory inventory = this.controller.getEntity().getInventory();
 
       for (Item item : target.getMatches()) {
-         if (item instanceof ArmorItem armorItem) {
-            EquipmentSlot slotType = armorItem.getType().getEquipmentSlot();
+         if (ToolItemVer.isArmorItem(item)) {
+            EquipmentSlot slotType = ToolItemVer.getArmorEquipmentSlot(item);
             if (!controller.getEntity().getEquippedStack(slotType).isOf(item)) {
                for (int i = 0; i < inventory.size(); i++) {
                   ItemStack stackInSlot = inventory.getStack(i);

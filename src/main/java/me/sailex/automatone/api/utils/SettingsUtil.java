@@ -175,11 +175,11 @@ public class SettingsUtil {
             @Override
             public Object parse(ParserContext context, String raw) {
                 Type type = ((ParameterizedType) context.getSetting().getType()).getActualTypeArguments()[0];
-                //? if =1.20.1 {
-                Identifier id = new Identifier(raw);
-                //?} elif =1.21.1 {
+                //? if >=1.21 {
                 /*Identifier id = Identifier.of(raw);
-                 *///?}
+                *///?} else {
+                Identifier id = new Identifier(raw);
+                 //?}
                 if (type == Block.class) {
                     return TagKey.of(RegistryKeys.BLOCK, id);
                 } else if (type == Item.class) {

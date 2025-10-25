@@ -2,6 +2,7 @@ package me.sailex.altoclef.trackers;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents.Load;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents.Unload;
@@ -53,7 +54,7 @@ public class SimpleChunkTracker {
          return false;
       } else {
          int bottomY = this.mod.getWorld().getBottomY();
-         int topY = this.mod.getWorld().getTopY();
+         int topY = HeightLimitViewVer.getTopY(this.mod.getWorld());
 
          for (int xx = chunk.getStartX(); xx <= chunk.getEndX(); xx++) {
             for (int yy = bottomY; yy <= topY; yy++) {

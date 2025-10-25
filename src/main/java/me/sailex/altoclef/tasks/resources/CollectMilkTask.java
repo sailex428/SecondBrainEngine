@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.resources;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.entity.AbstractDoToEntityTask;
 import me.sailex.altoclef.tasksystem.Task;
@@ -72,7 +73,7 @@ public class CollectMilkTask extends ResourceTask {
             return null;
          } else {
             if (mod.getSlotHandler().forceEquipItem(Items.BUCKET)) {
-               mod.getInventory().setStack(mod.getInventory().selectedSlot, new ItemStack(Items.MILK_BUCKET));
+               mod.getInventory().setStack(PlayerInventoryVer.getSelectedSlot(mod.getInventory()), new ItemStack(Items.MILK_BUCKET));
             }
 
             return null;

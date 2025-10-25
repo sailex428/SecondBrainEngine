@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.entity;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.chains.MobDefenseChain;
+import me.sailex.altoclef.multiversion.item.ToolItemVer;
 import me.sailex.mixins.LivingEntityMixin;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.helpers.LookHelper;
@@ -11,7 +12,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ToolItem;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
@@ -33,21 +33,23 @@ public abstract class AbstractKillEntityTask extends AbstractDoToEntityTask {
    }
 
    public static Item bestWeapon(AltoClefController mod) {
-      ToolItem toolItem1 = null;
+      Item toolItem1 = null;
       List<ItemStack> invStacks = mod.getItemStorage().getItemStacksPlayerInventory(true);
-      ToolItem toolItem2 = MobDefenseChain.getBestWeapon(mod);
+      Item toolItem2 = MobDefenseChain.getBestWeapon(mod);
       if (toolItem2 != null) {
          return toolItem2;
       } else {
          Item item = StorageHelper.getItemStackInSlot(PlayerSlot.getEquipSlot(mod.getInventory())).getItem();
          float bestDamage = Float.NEGATIVE_INFINITY;
-         if (item instanceof ToolItem handToolItem) {
-            bestDamage = handToolItem.getMaterial().getAttackDamage();
+
+         if (ToolItemVer.isToolItem(item)) {
+            bestDamage = ToolItemVer.getAttackDamage(item);
          }
 
          for (ItemStack invStack : invStacks) {
-            if (invStack.getItem() instanceof ToolItem toolItem) {
-               float itemDamage = toolItem.getMaterial().getAttackDamage();
+             Item toolItem = invStack.getItem();
+            if (ToolItemVer.isToolItem(toolItem)) {
+               float itemDamage = ToolItemVer.getAttackDamage(toolItem);
                if (itemDamage > bestDamage) {
                   toolItem1 = toolItem;
                   bestDamage = itemDamage;

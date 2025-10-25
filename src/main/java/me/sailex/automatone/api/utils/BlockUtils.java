@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.api.utils;
 
+import me.sailex.altoclef.multiversion.RegistriesVer;
 import net.minecraft.block.Block;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -57,7 +58,7 @@ public class BlockUtils {
         if (resourceCache.containsKey(name)) {
             return null; // cached as null
         }
-        block = Registries.BLOCK.getOrEmpty(Identifier.tryParse(name.contains(":") ? name : "minecraft:" + name)).orElse(null);
+        block = RegistriesVer.get(Registries.BLOCK, Identifier.tryParse(name.contains(":") ? name : "minecraft:" + name));
         Map<String, Block> copy = new HashMap<>(resourceCache); // read only copy is safe, wont throw concurrentmodification
         copy.put(name, block);
         resourceCache = copy;

@@ -1,6 +1,7 @@
 package me.sailex.altoclef.trackers;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.recipemanager.CraftingRecipeVer;
 import me.sailex.altoclef.multiversion.recipemanager.RecipeManagerWrapper;
 import me.sailex.altoclef.multiversion.recipemanager.WrappedRecipeEntry;
 import me.sailex.altoclef.util.CraftingRecipe;
@@ -93,12 +94,8 @@ public class CraftingRecipeTracker extends Tracker {
                if (recipe1 instanceof CraftingRecipe) {
                   net.minecraft.recipe.CraftingRecipe craftingRecipe = (net.minecraft.recipe.CraftingRecipe)recipe1;
                   if (!(craftingRecipe instanceof SpecialCraftingRecipe)) {
-                      //? >=1.21 {
-                      /*ItemStack result = new ItemStack(craftingRecipe.getResult(null).getItem(), craftingRecipe.getResult(null).getCount());
-                      *///?} elif >= 1.20 {
-                      ItemStack result = new ItemStack(craftingRecipe.getOutput(null).getItem(), craftingRecipe.getOutput(null).getCount());
-                       //?}
-                     Item[][] altoclefRecipeItems = getShapedCraftingRecipe(craftingRecipe.getIngredients());
+                     ItemStack result = new ItemStack(CraftingRecipeVer.getResult(craftingRecipe).getItem(), CraftingRecipeVer.getResult(craftingRecipe).getCount());
+                     Item[][] altoclefRecipeItems = getShapedCraftingRecipe(CraftingRecipeVer.getIngredients(craftingRecipe));
                      CraftingRecipe altoclefRecipe = CraftingRecipe.newShapedRecipe(altoclefRecipeItems, result.getCount());
                      if (this.itemRecipeMap.containsKey(result.getItem())) {
                         this.itemRecipeMap.get(result.getItem()).add(altoclefRecipe);
@@ -124,19 +121,9 @@ public class CraftingRecipeTracker extends Tracker {
       int x = 0;
 
       for (Ingredient ingredient : ingredients) {
-         ItemStack[] stacks = ingredient.getMatchingStacks();
-         Item[] items = new Item[stacks.length];
+         Item[] items = CraftingRecipeVer.getMatchingStacks(ingredient);
 
-         for (int i = 0; i < stacks.length; i++) {
-            ItemStack stack = stacks[i];
-            if (stack.getCount() > 1) {
-               throw new IllegalStateException("recipe needs more then one item on a slot... well... shit (ingredients: " + ingredient + ")");
-            }
-
-            items[i] = stack.getItem();
-         }
-
-         if (stacks.length != 0) {
+         if (items.length != 0) {
             Item[] var10000 = new Item[]{items[0]};
             result[x] = new Item[1];
          } else {

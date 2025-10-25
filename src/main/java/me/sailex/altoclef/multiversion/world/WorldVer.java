@@ -21,7 +21,7 @@ public class WorldVer {
    }
 
    public static int getTopY(World world) {
-      return world.getTopY();
+      return HeightLimitViewVer.getTopY(world);
    }
 
    private static boolean isOutOfHeightLimit(World world, BlockPos pos) {

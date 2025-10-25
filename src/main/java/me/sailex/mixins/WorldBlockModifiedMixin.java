@@ -18,10 +18,18 @@ public class WorldBlockModifiedMixin {
       return !state.isAir() && state.isSolidBlock((World)(Object)this, pos);
    }
 
+   //? >=1.21.8 {
+   /*@Inject(
+      method = {"onBlockStateChanged"},
+      at = {@At("HEAD")}
+   )
+   *///?} else {
+   
    @Inject(
       method = {"onBlockChanged"},
       at = {@At("HEAD")}
    )
+   //?}
    public void onBlockWasChanged(BlockPos pos, BlockState oldBlock, BlockState newBlock, CallbackInfo ci) {
       if (!((World)(Object)this).isClient && !this.hasBlock(oldBlock, pos) && this.hasBlock(newBlock, pos)) {
          BlockPlaceEvent evt = new BlockPlaceEvent(pos, newBlock);

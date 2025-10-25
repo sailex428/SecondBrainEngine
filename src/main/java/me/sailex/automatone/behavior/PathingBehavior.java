@@ -151,7 +151,7 @@ public final class PathingBehavior extends Behavior implements IPathingBehavior 
                     queuePathEvent(PathEvent.AT_GOAL);
                     next = null;
                     if (baritone.settings().disconnectOnArrival.get()) {
-                        ctx.world().disconnect();
+//                        ctx.world().disconnect(); will only work client side
                     }
                     return;
                 }

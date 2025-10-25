@@ -12,7 +12,7 @@ public class MeatCommand extends Command {
    public MeatCommand() throws CommandException {
       super(
          "meat",
-         "Collects a certain amount of food units of meat. ex. `@meat 10` collects 10 units of food (half of the entire hunger bar)",
+         "Collects a certain amount of food units of meat. ex. `meat 10` collects 10 units of food (half of the entire hunger bar)",
          new Arg<>(Integer.class, "count")
       );
    }

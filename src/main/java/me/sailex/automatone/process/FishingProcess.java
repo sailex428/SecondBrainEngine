@@ -18,6 +18,7 @@
 package me.sailex.automatone.process;
 
 import me.sailex.altoclef.multiversion.EnchantmentVer;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.pathing.goals.Goal;
 import me.sailex.automatone.api.pathing.goals.GoalBlock;
@@ -40,7 +41,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -282,7 +282,7 @@ public final class FishingProcess extends BaritoneProcessHelper implements IBari
     private void equipFishingRod() {
         int slot = findFishingRodSlot();
         if (slot != -1) {
-            ctx.inventory().selectedSlot = slot;
+            PlayerInventoryVer.setSelectedSlot(ctx.inventory(), slot);
         }
     }
 
@@ -295,7 +295,7 @@ public final class FishingProcess extends BaritoneProcessHelper implements IBari
                 .orElse(null);
     }
 
-    public TypedActionResult<ItemStack> useFishingRod(World world, PlayerEntity user, Hand hand) {
+    public void useFishingRod(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         FishingBobberEntity bobber = findOurBobber();
         if (bobber != null) {
@@ -323,6 +323,6 @@ public final class FishingProcess extends BaritoneProcessHelper implements IBari
             user.emitGameEvent(GameEvent.ITEM_INTERACT_START);
         }
 
-        return TypedActionResult.success(itemStack, world.isClient());
+//        return TypedActionResult.success(itemStack, world.isClient());
     }
 }

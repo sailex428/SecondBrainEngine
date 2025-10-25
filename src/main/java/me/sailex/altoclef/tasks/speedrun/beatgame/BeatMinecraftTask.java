@@ -5,7 +5,9 @@ import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
 import me.sailex.altoclef.commands.BlockScanner;
 import me.sailex.altoclef.multiversion.EnchantmentVer;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
+import me.sailex.altoclef.multiversion.item.ToolItemVer;
 import me.sailex.altoclef.tasks.CraftInInventoryTask;
 import me.sailex.altoclef.tasks.DoToClosestBlockTask;
 import me.sailex.altoclef.tasks.GetRidOfExtraWaterBucketTask;
@@ -88,10 +90,6 @@ import net.minecraft.item.EnderEyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.SwordItem;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -360,7 +358,7 @@ public class BeatMinecraftTask extends Task {
    public static boolean hasItem(AltoClefController mod, Item item) {
       PlayerInventory inv = mod.getInventory();
 
-      for (List<ItemStack> list : List.of(inv.main, inv.armor, inv.offHand)) {
+      for (List<ItemStack> list : List.of(PlayerInventoryVer.getMainInventory(inv), PlayerInventoryVer.getArmorSlots(inv), PlayerInventoryVer.getOffHandStack(inv))) {
          for (ItemStack itemStack : list) {
             if (itemStack.getItem().equals(item)) {
                return true;
@@ -1074,7 +1072,7 @@ public class BeatMinecraftTask extends Task {
       if (this.mod.getPlayer().getMainHandStack().getItem() instanceof EnderEyeItem && !openingEndPortal) {
          for (ItemStack itemStack : itemStorage.getItemStacksPlayerInventory(true)) {
             Item item = itemStack.getItem();
-            if (item instanceof SwordItem || item instanceof AxeItem) {
+            if (ToolItemVer.isSwordItem(item) || item instanceof AxeItem) {
                this.mod.getSlotHandler().forceEquipItem(item);
             }
          }

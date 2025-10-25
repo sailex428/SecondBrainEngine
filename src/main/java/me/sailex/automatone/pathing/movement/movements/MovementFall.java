@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.pathing.movement.movements;
 
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.automatone.Automatone;
 import me.sailex.automatone.api.IBaritone;
 import me.sailex.automatone.api.Settings;
@@ -113,7 +114,7 @@ public class MovementFall extends Movement {
             }
 
             if (ctx.entity().getY() - dest.getY() < ctx.interactionController().getBlockReachDistance() && !ctx.entity().isOnGround()) {
-                inventory.selectedSlot = InventoryBehavior.getSlotWithStack(inventory, Automatone.WATER_BUCKETS);
+                PlayerInventoryVer.setSelectedSlot(inventory, InventoryBehavior.getSlotWithStack(inventory, Automatone.WATER_BUCKETS));
 
                 targetRotation = new Rotation(toDest.getYaw(), 90.0F);
 
@@ -135,7 +136,7 @@ public class MovementFall extends Movement {
                 PlayerInventory inventory = ctx.inventory();
 
                 if (inventory != null && PlayerInventory.isValidHotbarIndex(InventoryBehavior.getSlotWithStack(inventory, Automatone.EMPTY_BUCKETS))) {
-                    inventory.selectedSlot = InventoryBehavior.getSlotWithStack(inventory, Automatone.EMPTY_BUCKETS);
+                    PlayerInventoryVer.setSelectedSlot(inventory, InventoryBehavior.getSlotWithStack(inventory, Automatone.EMPTY_BUCKETS));
                     if (ctx.entity().getVelocity().y >= 0) {
                         return state.setInput(Input.CLICK_RIGHT, true);
                     } else {

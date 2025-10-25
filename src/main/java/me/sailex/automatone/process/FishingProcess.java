@@ -18,6 +18,7 @@
 package me.sailex.automatone.process;
 
 import me.sailex.altoclef.multiversion.EnchantmentVer;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.pathing.goals.Goal;
 import me.sailex.automatone.api.pathing.goals.GoalBlock;
@@ -281,7 +282,7 @@ public final class FishingProcess extends BaritoneProcessHelper implements IBari
     private void equipFishingRod() {
         int slot = findFishingRodSlot();
         if (slot != -1) {
-            ctx.inventory().selectedSlot = slot;
+            PlayerInventoryVer.setSelectedSlot(ctx.inventory(), slot);
         }
     }
 

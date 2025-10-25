@@ -4,6 +4,7 @@ import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.multiversion.ToolMaterialVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
+import me.sailex.altoclef.multiversion.item.ToolItemVer;
 import me.sailex.altoclef.tasks.AbstractDoToClosestObjectTask;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.DestroyBlockTask;
@@ -22,7 +23,6 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.MiningToolItem;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -128,10 +128,10 @@ public class MineAndCollectTask extends ResourceTask {
             *///?}
             if (/*? >=1.21 {*/ /*stack.isSuitableFor(mod.getWorld().getBlockState(this.subtask.miningPos())) *//*?} else {*/ item.isSuitableFor(mod.getWorld().getBlockState(this.subtask.miningPos())) /*?}*/) {
                Item currentlyEquipped = StorageHelper.getItemStackInSlot(PlayerSlot.getEquipSlot(mod.getInventory())).getItem();
-               if (item instanceof MiningToolItem) {
-                  if (currentlyEquipped instanceof MiningToolItem currentPick) {
-                     MiningToolItem swapPick = (MiningToolItem)item;
-                     if (ToolMaterialVer.getMiningLevel(swapPick) > ToolMaterialVer.getMiningLevel(currentPick)) {
+               if (ToolItemVer.isToolItem(item)) {
+                  if (ToolItemVer.isToolItem(currentlyEquipped)) {
+                     Item swapPick = item;
+                     if (ToolMaterialVer.getMiningLevel(swapPick) > ToolMaterialVer.getMiningLevel(currentlyEquipped)) {
                         mod.getSlotHandler().forceEquipSlot(this.controller, CursorSlot.SLOT);
                      }
                   } else {

@@ -24,7 +24,6 @@ import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.ToolItem;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -41,7 +40,7 @@ public class KillAura {
    public boolean attackedLastTick = false;
 
    public static void equipWeapon(AltoClefController mod) {
-      ToolItem toolItem = MobDefenseChain.getBestWeapon(mod);
+      Item toolItem = MobDefenseChain.getBestWeapon(mod);
       if (toolItem != null) {
          mod.getSlotHandler().forceEquipItem(toolItem);
       }

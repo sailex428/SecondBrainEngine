@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.utils.player;
 
+import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import me.sailex.automatone.api.utils.InteractionController;
 import me.sailex.automatone.utils.accessor.IServerPlayerInteractionManager;
 import net.minecraft.block.BlockState;
@@ -58,7 +59,7 @@ public class PlayerEntityInteractionController implements InteractionController 
         if (interactionManager.isMining()) {
             int progress = interactionManager.getBlockBreakingProgress();
             if (progress >= 10) {
-                this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, side, this.player.getWorld().getTopY(), sequence++);
+                this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, side, HeightLimitViewVer.getTopY(this.player.getWorld()), sequence++);
             }
             return true;
         }
@@ -69,7 +70,7 @@ public class PlayerEntityInteractionController implements InteractionController 
     public void resetBlockRemoving() {
         IServerPlayerInteractionManager interactionManager = (IServerPlayerInteractionManager) this.player.interactionManager;
         if (interactionManager.isMining()) {
-            this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, Direction.UP, this.player.getWorld().getTopY(), sequence++);
+            this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, Direction.UP, HeightLimitViewVer.getTopY(this.player.getWorld()), sequence++);
         }
     }
 
@@ -93,7 +94,7 @@ public class PlayerEntityInteractionController implements InteractionController 
         BlockState state = this.player.getWorld().getBlockState(loc);
         if (state.isAir()) return false;
 
-        this.player.interactionManager.processBlockBreakingAction(loc, PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, face, this.player.getWorld().getTopY(), sequence++);
+        this.player.interactionManager.processBlockBreakingAction(loc, PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, face, HeightLimitViewVer.getTopY(this.player.getWorld()), sequence++);
         // Success = starting the mining process or insta-mining
         return ((IServerPlayerInteractionManager) this.player.interactionManager).isMining() || this.player.getWorld().isAir(loc);
     }

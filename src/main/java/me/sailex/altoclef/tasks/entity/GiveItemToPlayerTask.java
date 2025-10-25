@@ -3,6 +3,9 @@ package me.sailex.altoclef.tasks.entity;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.BotBehaviour;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.MobEntityVer;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
+import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
 import me.sailex.altoclef.tasks.movement.FollowPlayerTask;
 import me.sailex.altoclef.tasks.movement.RunAwayFromPositionTask;
 import me.sailex.altoclef.tasks.squashed.CataloguedResourceTask;
@@ -13,6 +16,7 @@ import me.sailex.altoclef.util.helpers.StorageHelper;
 import me.sailex.altoclef.util.helpers.WorldHelper;
 import me.sailex.altoclef.util.slots.Slot;
 import me.sailex.altoclef.util.time.TimerGame;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
@@ -84,8 +88,8 @@ public class GiveItemToPlayerTask extends Task {
                            ItemStack stack = StorageHelper.getItemStackInSlot(slot);
                            int amountToThrow = Math.min(neededToThrow, stack.getCount());
                            mod.getSlotHandler().forceEquipSlot(mod, slot);
-                           mod.getPlayer().dropStack(mod.getPlayer().getMainHandStack(), amountToThrow).setPickupDelay(40);
-                           mod.getInventory().setStack(mod.getInventory().selectedSlot, ItemStack.EMPTY);
+                           ServerPlayerEntityVer.dropStack(mod.getPlayer(), mod.getPlayer().getMainHandStack(), amountToThrow).setPickupDelay(40);
+                           mod.getInventory().setStack(PlayerInventoryVer.getSelectedSlot(mod.getInventory()), ItemStack.EMPTY);
                            this.throwTarget.set(i, new ItemTarget(target, neededToThrow - amountToThrow));
                            return null;
                         }

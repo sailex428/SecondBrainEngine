@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.command.defaults;
 
+import me.sailex.altoclef.multiversion.CommandVer;
 import me.sailex.automatone.Automatone;
 import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.IBaritone;
@@ -115,12 +116,10 @@ public final class DefaultCommands {
                 MutableText component = Text.literal(String.format("> %s", toDisplay));
                 component.setStyle(component.getStyle()
                         .withFormatting(Formatting.WHITE)
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
+                        .withHoverEvent(CommandVer.getShowText(
                                 Text.literal("Click to rerun command")
                         ))
-                        .withClickEvent(new ClickEvent(
-                                ClickEvent.Action.RUN_COMMAND,
+                        .withClickEvent(CommandVer.getRunCommand(
                                 FORCE_COMMAND_PREFIX + msg
                         )));
                 return component;

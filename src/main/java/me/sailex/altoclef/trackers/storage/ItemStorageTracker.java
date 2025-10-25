@@ -1,6 +1,7 @@
 package me.sailex.altoclef.trackers.storage;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.trackers.Tracker;
 import me.sailex.altoclef.trackers.TrackerManager;
 import me.sailex.altoclef.util.ItemTarget;
@@ -64,7 +65,7 @@ public class ItemStorageTracker extends Tracker {
    }
 
    public boolean hasItemInOffhand(AltoClefController controller, Item item) {
-      ItemStack offhand = StorageHelper.getItemStackInSlot(new Slot(controller.getInventory().offHand, 0));
+      ItemStack offhand = StorageHelper.getItemStackInSlot(new Slot(PlayerInventoryVer.getOffHandStack(controller.getInventory()), 0));
       return offhand.getItem() == item;
    }
 

@@ -7,6 +7,7 @@ import me.sailex.altoclef.eventbus.events.BlockBreakingEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.message.SignedMessage;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 
@@ -45,15 +46,22 @@ public class PlayerExtraController {
      * @param message the message to send
      */
     public void chat(String message) {
+        //? >=1.21.8 {
+        /*mod.getPlayer().getServer().getPlayerManager().broadcast(
+                SignedMessage.ofUnsigned(message), mod.getPlayer(),
+                MessageType.params(MessageType.CHAT, mod.getPlayer())
+        );
+        *///?} else {
         mod.getPlayer().server.getPlayerManager().broadcast(
                 SignedMessage.ofUnsigned(message), mod.getPlayer(),
                 MessageType.params(MessageType.CHAT, mod.getPlayer())
         );
+         //?}
     }
 
    public void attack(Entity entity) {
       if (this.inRange(entity)) {
-         this.mod.getPlayer().tryAttack(entity);
+         this.mod.getPlayer().tryAttack(/*? >=1.21.8 {*/ /*mod.getWorld(), *//*?}*/ entity);
          this.mod.getPlayer().swingHand(Hand.MAIN_HAND);
       }
    }

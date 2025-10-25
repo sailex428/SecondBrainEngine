@@ -308,7 +308,7 @@ public class MovementAscend extends Movement {
     public boolean headBonkClear() {
         BetterBlockPos startUp = src.up(MathHelper.ceil(ctx.entity().getHeight()));
         for (int i = 0; i < 4; i++) {
-            BetterBlockPos check = startUp.offset(Direction.fromHorizontal(i));
+            BetterBlockPos check = startUp.offset(/*? >=1.21.8 {*/ /*Direction.fromHorizontalQuarterTurns(i) *//*?} else {*/ Direction.fromHorizontal(i) /*?}*/);
             if (!MovementHelper.canWalkThrough(ctx, check)) {
                 // We might bonk our head
                 return false;

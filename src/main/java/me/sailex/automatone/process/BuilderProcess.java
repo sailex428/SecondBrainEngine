@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.process;
 
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.automatone.Automatone;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.pathing.goals.Goal;
@@ -323,7 +324,7 @@ public final class BuilderProcess extends BaritoneProcessHelper implements IBuil
         PlayerEntity player = ctx.entity();
 
         for (int i = 0; i < 9; i++) {
-            ItemStack stack = player.getInventory().main.get(i);
+            ItemStack stack = PlayerInventoryVer.getMainInventory(player.getInventory()).get(i);
             if (stack.isEmpty() || !(stack.getItem() instanceof BlockItem)) {
                 continue;
             }
@@ -501,7 +502,7 @@ public final class BuilderProcess extends BaritoneProcessHelper implements IBuil
         if (toPlace.isPresent() && isSafeToCancel && ctx.entity().isOnGround() && ticks <= 0) {
             Rotation rot = toPlace.get().rot;
             baritone.getLookBehavior().updateTarget(rot, true);
-            inventory.selectedSlot = toPlace.get().hotbarSelection;
+            PlayerInventoryVer.setSelectedSlot(inventory, toPlace.get().hotbarSelection);
             baritone.getInputOverrideHandler().setInputForceState(Input.SNEAK, true);
             if ((ctx.isLookingAt(toPlace.get().placeAgainst) && ((BlockHitResult) ctx.objectMouseOver()).getSide().equals(toPlace.get().side)) || ctx.entityRotations().isReallyCloseTo(rot)) {
                 baritone.getInputOverrideHandler().setInputForceState(Input.CLICK_RIGHT, true);
@@ -844,7 +845,7 @@ public final class BuilderProcess extends BaritoneProcessHelper implements IBuil
         List<BlockState> result = new ArrayList<>();
         PlayerEntity player = (PlayerEntity) ctx.entity();
         for (int i = 0; i < size; i++) {
-            ItemStack stack = player.getInventory().main.get(i);
+            ItemStack stack = PlayerInventoryVer.getMainInventory(player.getInventory()).get(i);
             if (stack.isEmpty() || !(stack.getItem() instanceof BlockItem)) {
                 result.add(Blocks.AIR.getDefaultState());
                 continue;

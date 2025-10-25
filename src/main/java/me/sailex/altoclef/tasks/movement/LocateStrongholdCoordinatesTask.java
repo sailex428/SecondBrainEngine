@@ -180,7 +180,7 @@ public class LocateStrongholdCoordinatesTask extends Task {
       if (blockPos != null) {
          EyeOfEnderEntity eyeOfEnderEntity = new EyeOfEnderEntity(world, user.getX(), user.getBodyY(0.5), user.getZ());
          eyeOfEnderEntity.setItem(user.getMainHandStack());
-         eyeOfEnderEntity.initTargetPos(blockPos);
+         eyeOfEnderEntity.initTargetPos(/*? >=1.21.8 {*/ /*blockPos.toCenterPos() *//*?} else {*/ blockPos /*?}*/);
          world.emitGameEvent(GameEvent.PROJECTILE_SHOOT, eyeOfEnderEntity.getPos(), Emitter.of(user));
          world.spawnEntity(eyeOfEnderEntity);
          world.playSound(

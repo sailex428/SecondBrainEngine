@@ -1,6 +1,7 @@
 package me.sailex.altoclef.util.helpers;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import me.sailex.mixins.EntityAccessor;
 import me.sailex.altoclef.multiversion.MethodWrapper;
 import me.sailex.altoclef.multiversion.world.WorldVer;
@@ -151,7 +152,7 @@ public interface WorldHelper {
    static int getGroundHeight(AltoClefController controller, int x, int z) {
       World world = controller.getWorld();
 
-      for (int y = world.getTopY(); y >= world.getBottomY(); y--) {
+      for (int y = HeightLimitViewVer.getTopY(world); y >= world.getBottomY(); y--) {
          BlockPos check = new BlockPos(x, y, z);
          if (isSolidBlock(controller, check)) {
             return y;
@@ -185,7 +186,7 @@ public interface WorldHelper {
       World world = controller.getWorld();
       Set<Block> possibleBlocks = new HashSet<>(Arrays.asList(groundBlocks));
 
-      for (int y = world.getTopY(); y >= world.getBottomY(); y--) {
+      for (int y = HeightLimitViewVer.getTopY(world); y >= world.getBottomY(); y--) {
          BlockPos check = new BlockPos(x, y, z);
          if (possibleBlocks.contains(world.getBlockState(check).getBlock())) {
             return y;

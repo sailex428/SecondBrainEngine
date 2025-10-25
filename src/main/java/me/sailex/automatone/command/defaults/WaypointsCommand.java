@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.command.defaults;
 
+import me.sailex.altoclef.multiversion.CommandVer;
 import me.sailex.automatone.api.IBaritone;
 import me.sailex.automatone.api.cache.IWaypoint;
 import me.sailex.automatone.api.cache.Waypoint;
@@ -75,12 +76,10 @@ public class WaypointsCommand extends Command {
             component.append(nameComponent);
             component.append(timestamp);
             component.setStyle(component.getStyle()
-                    .withHoverEvent(new HoverEvent(
-                            HoverEvent.Action.SHOW_TEXT,
+                    .withHoverEvent(CommandVer.getShowText(
                             Text.literal("Click to select")
                     ))
-                    .withClickEvent(new ClickEvent(
-                            ClickEvent.Action.RUN_COMMAND,
+                    .withClickEvent(CommandVer.getRunCommand(
                             String.format(
                                     "%s%s %s %s @ %d",
                                     FORCE_COMMAND_PREFIX,
@@ -200,8 +199,7 @@ public class WaypointsCommand extends Command {
                     logDirect(source, transform.apply(waypoint));
                     logDirect(source, String.format("Position: %s", waypoint.getLocation()));
                     MutableText deleteComponent = Text.literal("Click to delete this waypoint");
-                    deleteComponent.setStyle(deleteComponent.getStyle().withClickEvent(new ClickEvent(
-                            ClickEvent.Action.RUN_COMMAND,
+                    deleteComponent.setStyle(deleteComponent.getStyle().withClickEvent(CommandVer.getRunCommand(
                             String.format(
                                     "%s%s delete %s @ %d",
                                     FORCE_COMMAND_PREFIX,
@@ -211,8 +209,7 @@ public class WaypointsCommand extends Command {
                             )
                     )));
                     MutableText goalComponent = Text.literal("Click to set goal to this waypoint");
-                    goalComponent.setStyle(goalComponent.getStyle().withClickEvent(new ClickEvent(
-                            ClickEvent.Action.RUN_COMMAND,
+                    goalComponent.setStyle(goalComponent.getStyle().withClickEvent(CommandVer.getRunCommand(
                             String.format(
                                     "%s%s goal %s @ %d",
                                     FORCE_COMMAND_PREFIX,
@@ -222,8 +219,7 @@ public class WaypointsCommand extends Command {
                             )
                     )));
                     MutableText backComponent = Text.literal("Click to return to the waypoints list");
-                    backComponent.setStyle(backComponent.getStyle().withClickEvent(new ClickEvent(
-                            ClickEvent.Action.RUN_COMMAND,
+                    backComponent.setStyle(backComponent.getStyle().withClickEvent(CommandVer.getRunCommand(
                             String.format(
                                     "%s%s list",
                                     FORCE_COMMAND_PREFIX,

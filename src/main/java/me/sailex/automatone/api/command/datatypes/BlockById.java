@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.api.command.datatypes;
 
+import me.sailex.altoclef.multiversion.RegistriesVer;
 import me.sailex.automatone.api.command.exception.CommandException;
 import me.sailex.automatone.api.command.helpers.TabCompleteHelper;
 import net.minecraft.block.Block;
@@ -30,13 +31,14 @@ public enum BlockById implements IDatatypeFor<Block> {
 
     @Override
     public Block get(IDatatypeContext ctx) throws CommandException {
-        //? if =1.20.1 {
-        Identifier id = new Identifier(ctx.getConsumer().getString());
-        //?} elif =1.21.1 {
+        //? if >=1.21 {
         /*Identifier id = Identifier.of(ctx.getConsumer().getString());
-         *///?}
-        Block block;
-        if ((block = Registries.BLOCK.getOrEmpty(id).orElse(null)) == null) {
+        *///?} else {
+        Identifier id = new Identifier(ctx.getConsumer().getString());
+         //?}
+
+        Block block = RegistriesVer.get(Registries.BLOCK, id);
+        if (block == null) {
             throw new IllegalArgumentException("no block found by that id");
         }
         return block;

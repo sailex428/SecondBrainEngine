@@ -1,5 +1,6 @@
 package me.sailex.altoclef.util.slots;
 
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 
@@ -12,22 +13,22 @@ public final class PlayerSlot {
    public static final int OFFHAND_SLOT_INDEX = 0;
 
    public static Slot getMainSlot(PlayerInventory inventory, int index) {
-      return new Slot(inventory.main, index);
+      return new Slot(PlayerInventoryVer.getMainInventory(inventory), index);
    }
 
    public static Slot getArmorSlot(PlayerInventory inventory, int armorIndex) {
-      return new Slot(inventory.armor, armorIndex);
+      return new Slot(PlayerInventoryVer.getArmorSlots(inventory), armorIndex);
    }
 
    public static Slot getOffhandSlot(PlayerInventory inventory) {
-      return new Slot(inventory.offHand, 0);
+      return new Slot(PlayerInventoryVer.getOffHandStack(inventory), 0);
    }
 
    public static Slot getEquipSlot(PlayerInventory inventory, EquipmentSlot equipSlot) {
       switch (equipSlot.getType()) {
          case HAND:
             if (equipSlot == EquipmentSlot.MAINHAND) {
-               return getMainSlot(inventory, inventory.selectedSlot);
+               return getMainSlot(inventory, PlayerInventoryVer.getSelectedSlot(inventory));
             }
 
             return getOffhandSlot(inventory);

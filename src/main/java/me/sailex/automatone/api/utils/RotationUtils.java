@@ -256,9 +256,9 @@ public final class RotationUtils {
 
     public static Vec3d getCameraPosVec(Entity entity) {
         float tickDelta = 1.0F;
-        double d = MathHelper.lerp(tickDelta, entity.prevX, entity.getX());
-        double e = MathHelper.lerp(tickDelta, entity.prevY, entity.getY()) + entity.getStandingEyeHeight();
-        double f = MathHelper.lerp(tickDelta, entity.prevZ, entity.getZ());
+        double d = MathHelper.lerp(tickDelta, /*? >=1.21.8 {*/ /*entity.lastX *//*?} else {*/ entity.prevX /*?}*/, entity.getX());
+        double e = MathHelper.lerp(tickDelta, /*? >=1.21.8 {*/ /*entity.lastY *//*?} else {*/ entity.prevY /*?}*/, entity.getY()) + entity.getStandingEyeHeight();
+        double f = MathHelper.lerp(tickDelta, /*? >=1.21.8 {*/ /*entity.lastZ *//*?} else {*/ entity.prevZ /*?}*/, entity.getZ());
         return new Vec3d(d, e, f);
     }
 }

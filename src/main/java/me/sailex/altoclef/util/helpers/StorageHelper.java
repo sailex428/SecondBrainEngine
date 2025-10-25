@@ -2,7 +2,9 @@ package me.sailex.altoclef.util.helpers;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.multiversion.item.ItemVer;
+import me.sailex.altoclef.multiversion.item.ToolItemVer;
 import me.sailex.altoclef.util.ItemTarget;
 import me.sailex.altoclef.util.MiningRequirement;
 import me.sailex.altoclef.util.Pair;
@@ -13,12 +15,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.ShieldItem;
+import net.minecraft.util.collection.DefaultedList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,8 +42,8 @@ public class StorageHelper {
 
    public static boolean isArmorEquipped(AltoClefController controller, Item... any) {
       for (Item item : any) {
-         if (item instanceof ArmorItem armor) {
-            ItemStack equippedStack = controller.getEntity().getEquippedStack(armor.getType().getEquipmentSlot());
+         if (ToolItemVer.isArmorItem(item)) {
+            ItemStack equippedStack = controller.getEntity().getEquippedStack(ToolItemVer.getArmorEquipmentSlot(item));
             if (equippedStack.isOf(item)) {
                return true;
             }
@@ -66,7 +68,7 @@ public class StorageHelper {
 
    public static boolean isEquipped(AltoClefController controller, Item... items) {
       PlayerInventory inv = controller.getEntity().getInventory();
-      return Arrays.stream(items).anyMatch(item -> inv.getMainHandStack().isOf(item));
+      return Arrays.stream(items).anyMatch(item -> PlayerInventoryVer.getMainHandStack(inv).isOf(item));
    }
 
    public static MiningRequirement getCurrentMiningRequirement(AltoClefController controller) {
@@ -121,7 +123,7 @@ public class StorageHelper {
 
    public static Optional<Slot> getBestToolSlot(AltoClefController controller, BlockState state) {
       int bestSlot = new ToolSet(controller.getPlayer()).getBestSlot(state.getBlock(), false);
-      return Optional.of(new Slot(controller.getInventory().main, bestSlot));
+      return Optional.of(new Slot(PlayerInventoryVer.getMainInventory(controller.getInventory()), bestSlot));
    }
 
    public static boolean shouldSaveStack(AltoClefController controller, Block block, ItemStack stack) {
@@ -133,7 +135,8 @@ public class StorageHelper {
       int bestScore = Integer.MIN_VALUE;
       Slot bestSlot = null;
 
-      for (int i = 0; i < inventory.main.size(); i++) {
+       DefaultedList<ItemStack> main = PlayerInventoryVer.getMainInventory(controller.getInventory());
+      for (int i = 0; i < main.size(); i++) {
          ItemStack stack = inventory.getStack(i);
          if (!stack.isEmpty() && ItemHelper.canThrowAwayStack(controller, stack)) {
             int score = 0;
@@ -148,7 +151,7 @@ public class StorageHelper {
             score -= stack.getCount();
             if (score > bestScore) {
                bestScore = score;
-               bestSlot = new Slot(inventory.main, i);
+               bestSlot = new Slot(main, i);
             }
          }
       }
@@ -221,7 +224,7 @@ public class StorageHelper {
 
       for (ItemStack stack : controller.getItemStorage().getItemStacksPlayerInventory(true)) {
          if (controller.getModSettings().isSupportedFuel(stack.getItem())) {
-            result += ItemHelper.getFuelAmount(stack.getItem()) * stack.getCount();
+            result += ItemHelper.getFuelAmount(controller.getWorld(), stack.getItem()) * stack.getCount();
          }
       }
 
@@ -232,8 +235,9 @@ public class StorageHelper {
       HashMap<Item, Integer> counts = new HashMap<>();
       PlayerInventory inv = controller.getEntity().getInventory();
 
-      for (int i = 0; i < inv.main.size(); i++) {
-         Slot slot = new Slot(inv.main, i);
+      DefaultedList<ItemStack> main = PlayerInventoryVer.getMainInventory(inv);
+      for (int i = 0; i < main.size(); i++) {
+         Slot slot = new Slot(main, i);
          if (accept.test(slot)) {
             ItemStack stack = getItemStackInSlot(slot);
             if (!stack.isEmpty()) {
@@ -242,7 +246,8 @@ public class StorageHelper {
          }
       }
 
-      Slot offhandSlot = new Slot(inv.offHand, 0);
+      DefaultedList<ItemStack> offHand = PlayerInventoryVer.getOffHandStack(inv);
+      Slot offhandSlot = new Slot(offHand, 0);
       if (accept.test(offhandSlot)) {
          ItemStack stack = getItemStackInSlot(offhandSlot);
          if (!stack.isEmpty()) {
@@ -250,8 +255,9 @@ public class StorageHelper {
          }
       }
 
-      for (int ix = 0; ix < inv.armor.size(); ix++) {
-         Slot slot = new Slot(inv.armor, ix);
+      DefaultedList<ItemStack> armor = PlayerInventoryVer.getArmorSlots(inv);
+      for (int ix = 0; ix < armor.size(); ix++) {
+         Slot slot = new Slot(armor, ix);
          if (accept.test(slot)) {
             ItemStack stack = getItemStackInSlot(slot);
             if (!stack.isEmpty()) {

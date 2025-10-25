@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.api.command.helpers;
 
+import me.sailex.altoclef.multiversion.CommandVer;
 import me.sailex.automatone.api.command.argument.IArgConsumer;
 import me.sailex.automatone.api.command.exception.CommandException;
 import me.sailex.automatone.api.command.exception.CommandInvalidTypeException;
@@ -76,12 +77,10 @@ public class Paginator<E> {
         MutableText prevPageComponent = Text.literal("<<");
         if (hasPrevPage) {
             prevPageComponent.setStyle(prevPageComponent.getStyle()
-                    .withClickEvent(new ClickEvent(
-                            ClickEvent.Action.RUN_COMMAND,
+                    .withClickEvent(CommandVer.getRunCommand(
                             String.format("%s %d", commandPrefix, page - 1)
                     ))
-                    .withHoverEvent(new HoverEvent(
-                            HoverEvent.Action.SHOW_TEXT,
+                    .withHoverEvent(CommandVer.getShowText(
                             Text.literal("Click to view previous page")
                     )));
         } else {
@@ -90,12 +89,10 @@ public class Paginator<E> {
         MutableText nextPageComponent = Text.literal(">>");
         if (hasNextPage) {
             nextPageComponent.setStyle(nextPageComponent.getStyle()
-                    .withClickEvent(new ClickEvent(
-                            ClickEvent.Action.RUN_COMMAND,
+                    .withClickEvent(CommandVer.getRunCommand(
                             String.format("%s %d", commandPrefix, page + 1)
                     ))
-                    .withHoverEvent(new HoverEvent(
-                            HoverEvent.Action.SHOW_TEXT,
+                    .withHoverEvent(CommandVer.getShowText(
                             Text.literal("Click to view next page")
                     )));
         } else {

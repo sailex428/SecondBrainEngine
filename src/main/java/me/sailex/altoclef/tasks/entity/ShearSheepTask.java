@@ -28,7 +28,7 @@ public class ShearSheepTask extends AbstractDoToEntityTask {
          return null;
       } else {
          if (mod.getSlotHandler().forceEquipItem(Items.SHEARS)) {
-            ((SheepEntity)entity).sheared(SoundCategory.PLAYERS);
+            ((SheepEntity)entity).sheared(/*? >=1.21.8 {*/ /*mod.getWorld(), SoundCategory.PLAYERS, mod.getPlayer().getMainHandStack() *//*?} else {*/ SoundCategory.PLAYERS /*?}*/);
             mod.getPlayer().getMainHandStack().damage(1, mod.getPlayer(), /*? >=1.21 {*/ /*SheepEntity.getSlotForHand(Hand.MAIN_HAND) *//*?} else {*/ e -> {} /*?}*/ );
          }
 

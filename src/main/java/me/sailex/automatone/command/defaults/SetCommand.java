@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.command.defaults;
 
+import me.sailex.altoclef.multiversion.CommandVer;
 import me.sailex.automatone.Automatone;
 import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.IBaritone;
@@ -109,8 +110,8 @@ public class SetCommand extends Command {
                         component.setStyle(component.getStyle().withFormatting(Formatting.GRAY));
                         component.append(typeComponent);
                         component.setStyle(component.getStyle()
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverComponent))
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandSuggestion)));
+                                .withHoverEvent(CommandVer.getShowText(hoverComponent))
+                                .withClickEvent(CommandVer.getSuggestCommand(commandSuggestion)));
                         return component;
                     },
                     FORCE_COMMAND_PREFIX + "set " + arg + " " + search
@@ -182,14 +183,8 @@ public class SetCommand extends Command {
             MutableText oldValueComponent = Text.literal(String.format("Old value: %s", oldValue));
             oldValueComponent.setStyle(oldValueComponent.getStyle()
                     .withFormatting(Formatting.GRAY)
-                    .withHoverEvent(new HoverEvent(
-                            HoverEvent.Action.SHOW_TEXT,
-                            Text.literal("Click to set the setting back to this value")
-                    ))
-                    .withClickEvent(new ClickEvent(
-                            ClickEvent.Action.RUN_COMMAND,
-                            FORCE_COMMAND_PREFIX + String.format("set %s %s", setting.getName(), oldValue)
-                    )));
+                    .withHoverEvent(CommandVer.getShowText(Text.literal("Click to set the setting back to this value")))
+                    .withClickEvent(CommandVer.getRunCommand(FORCE_COMMAND_PREFIX + String.format("set %s %s", setting.getName(), oldValue))));
             logDirect(source, oldValueComponent);
         }
         SettingsLoader.save(settings);

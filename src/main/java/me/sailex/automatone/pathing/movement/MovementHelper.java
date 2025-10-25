@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.pathing.movement;
 
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.IBaritone;
 import me.sailex.automatone.api.Settings;
@@ -495,7 +496,7 @@ public interface MovementHelper extends ActionCosts {
         PlayerInventory inventory = ctx.inventory();
 
         if (inventory != null && !ctx.baritone().settings().disableAutoTool.get() && !ctx.baritone().settings().assumeExternalAutoTool.get()) {
-            inventory.selectedSlot = ts.getBestSlot(b.getBlock(), preferSilkTouch);
+            PlayerInventoryVer.setSelectedSlot(inventory, ts.getBestSlot(b.getBlock(), preferSilkTouch));
         }
     }
 

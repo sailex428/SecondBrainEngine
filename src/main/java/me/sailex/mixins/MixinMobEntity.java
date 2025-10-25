@@ -41,7 +41,7 @@ public abstract class MixinMobEntity extends LivingEntity {
     private void cancelAiTick(CallbackInfo ci) {
         if (BaritoneProvider.INSTANCE.isPathing(this)) {
             // mobs tend to set their movement speed to 0, preventing any movement
-            this.setMovementSpeed((float) this.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED));
+            this.setMovementSpeed((float) this.getAttributeValue(/*? >=1.21.8 {*/ /*EntityAttributes.MOVEMENT_SPEED *//*?} else {*/ EntityAttributes.GENERIC_MOVEMENT_SPEED /*?}*/));
             ci.cancel();
         }
     }

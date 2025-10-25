@@ -5,6 +5,7 @@ import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.eventbus.EventBus;
 import me.sailex.altoclef.eventbus.events.BlockPlaceEvent;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
+import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import me.sailex.altoclef.trackers.blacklisting.WorldLocateBlacklist;
 import me.sailex.altoclef.util.Dimension;
 import me.sailex.altoclef.util.helpers.BaritoneHelper;
@@ -16,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
 
@@ -385,7 +387,7 @@ public class BlockScanner {
       boolean isPriorityChunk = this.getChunkDist(chunkPos, playerChunkPos) <= 2;
 
       for (int x = chunkPos.getStartX(); x <= chunkPos.getEndX(); x++) {
-         for (int y = world.getBottomY(); y < world.getTopY(); y++) {
+         for (int y = world.getBottomY(); y < HeightLimitViewVer.getTopY(world); y++) {
             for (int z = chunkPos.getStartZ(); z <= chunkPos.getEndZ(); z++) {
                BlockPos p = new BlockPos(x, y, z);
                if (!this.isUnreachable(p) && !world.isOutOfHeightLimit(p)) {

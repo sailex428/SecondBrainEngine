@@ -212,7 +212,7 @@ public class KillEnderDragonTask extends Task {
       }
 
       public float getAttackCooldownProgressPerTick(LivingEntity entity) {
-         return (float)(1.0 / entity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED) * 20.0);
+         return (float)(1.0 / entity.getAttributeValue(/*? >=1.21.8 {*/ /*EntityAttributes.ATTACK_SPEED *//*?} else {*/ EntityAttributes.GENERIC_ATTACK_SPEED /*?}*/) * 20.0);
       }
 
       public float getAttackCooldownProgress(LivingEntity entity, float baseTime) {

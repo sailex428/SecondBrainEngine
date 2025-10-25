@@ -17,6 +17,8 @@
 
 package me.sailex.automatone.utils;
 
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
+import me.sailex.altoclef.multiversion.item.ToolItemVer;
 import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.IBaritone;
 import net.minecraft.block.Block;
@@ -26,8 +28,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolItem;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
@@ -98,7 +98,7 @@ public class ToolSet {
      * @return Either 1 or -1
      */
     private int getMaterialCost(ItemStack itemStack) {
-        return itemStack.getItem() instanceof ToolItem ? 1 : -1;
+        return ToolItemVer.isToolItem(itemStack.getItem()) ? 1 : -1;
     }
 
     public boolean hasSilkTouch(ItemStack stack) {
@@ -106,9 +106,10 @@ public class ToolSet {
     }
 
     //? if >=1.21 {
-    
     /*private static int getEnchantmentLevel(RegistryKey<Enchantment> enchantmentKey, ItemStack stack, Entity entity) {
-        Enchantment enchantment = entity.getRegistryManager().get(RegistryKeys.ENCHANTMENT).get(enchantmentKey);
+        Enchantment enchantment = /^? >=1.21.8 {^/
+                /^entity.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).get(enchantmentKey);
+                ^//^?} else {^/ entity.getRegistryManager().get(RegistryKeys.ENCHANTMENT).get(enchantmentKey); /^?}^/
         ItemEnchantmentsComponent component = stack.getEnchantments();
         Optional<RegistryEntry<Enchantment>> enchantmentHolder = component.getEnchantments().stream().filter(holder -> holder.value().equals(enchantment)).findFirst();
         return enchantmentHolder.map(component::getLevel).orElse(0);
@@ -134,7 +135,7 @@ public class ToolSet {
         possible, this lets us make pathing depend on the actual tool to be used (if auto tool is disabled)
         */
         if (baritone.settings().disableAutoTool.get() && pathingCalculation) {
-            return player.getInventory().selectedSlot;
+            return PlayerInventoryVer.getSelectedSlot(player.getInventory());
         }
 
         int best = 0;
@@ -144,7 +145,7 @@ public class ToolSet {
         BlockState blockState = b.getDefaultState();
         for (int i = 0; i < 9; i++) {
             ItemStack itemStack = player.getInventory().getStack(i);
-            if (!baritone.settings().useSwordToMine.get() && itemStack.getItem() instanceof SwordItem) {
+            if (!baritone.settings().useSwordToMine.get() && ToolItemVer.isSwordItem(itemStack.getItem())) {
                 continue;
             }
 

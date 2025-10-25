@@ -1,6 +1,8 @@
 package me.sailex.altoclef.tasks.construction;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.ActionResultVer;
+import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.tasksystem.ITaskRequiresGrounded;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.helpers.EntityHelper;
@@ -168,7 +170,7 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
          .getPlayerContext()
          .interactionController()
          .processRightClickBlock(this.mod.getPlayer(), this.mod.getWorld(), hand, blockHitResult);
-      if (result.shouldSwingHand()) {
+      if (ActionResultVer.shouldSwingHand(result)) {
          this.mod.getPlayer().swingHand(hand);
       }
 
@@ -192,10 +194,10 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
    }
 
    public boolean swap(int slot) {
-      if (slot == this.mod.getBaritone().getPlayerContext().inventory().selectedSlot) {
+      if (slot == PlayerInventoryVer.getSelectedSlot(this.mod.getBaritone().getPlayerContext().inventory())) {
          return true;
       } else if (slot >= 0 && slot <= 8) {
-         this.mod.getBaritone().getPlayerContext().inventory().selectedSlot = slot;
+          PlayerInventoryVer.setSelectedSlot(this.mod.getBaritone().getPlayerContext().inventory(), slot);
          return true;
       } else {
          return false;

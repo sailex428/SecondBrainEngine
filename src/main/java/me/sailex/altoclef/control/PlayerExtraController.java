@@ -61,7 +61,7 @@ public class PlayerExtraController {
 
    public void attack(Entity entity) {
       if (this.inRange(entity)) {
-         this.mod.getPlayer().tryAttack(/*? >=1.21.8 {*/ /*mod.getWorld(), *//*?}*/ entity);
+         this.mod.getPlayer().attack(entity);
          this.mod.getPlayer().swingHand(Hand.MAIN_HAND);
       }
    }

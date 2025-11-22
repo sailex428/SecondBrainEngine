@@ -12,7 +12,6 @@
     "EntityAnimationSwungMixin",
     "LivingEntityMixin",
     "MixinAbstractFurnaceBlockEntity",
-    "MixinEntity",
     "MixinItemStack",
     "MixinLivingEntity",
     "MixinMobEntity",

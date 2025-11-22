@@ -40,7 +40,6 @@ import me.sailex.automatone.api.selection.ISelectionManager;
 import me.sailex.automatone.api.utils.BetterBlockPos;
 import me.sailex.automatone.api.utils.BlockOptionalMeta;
 import me.sailex.automatone.api.utils.BlockOptionalMetaLookup;
-import me.sailex.automatone.utils.IRenderer;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.ServerCommandSource;
@@ -253,22 +252,6 @@ public class SelCommand extends Command {
                 "> sel contract <target> <direction> <blocks> - Contract the targets.",
                 "> sel shift <target> <direction> <blocks> - Shift the targets (does not resize)."
         );
-    }
-
-    public void renderSelectionBox() {
-        Settings settings = BaritoneAPI.getGlobalSettings();
-        BetterBlockPos pos1 = this.pos1;
-        if (!settings.renderSelectionCorners.get() || pos1 == null) {
-            return;
-        }
-        Color color = settings.colorSelectionPos1.get();
-        float opacity = settings.selectionOpacity.get();
-        float lineWidth = settings.selectionLineWidth.get();
-        boolean ignoreDepth = settings.renderSelectionIgnoreDepth.get();
-        IRenderer.startLines(color, opacity, lineWidth, ignoreDepth);
-        BlockPos pos2 = pos1.add(1, 1, 1);
-        IRenderer.drawAABB(new Box(pos1.x, pos1.y, pos1.x, pos2.getX(), pos2.getY(), pos2.getZ()));
-        IRenderer.endLines(ignoreDepth);
     }
 
     enum Action {

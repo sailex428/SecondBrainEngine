@@ -4,6 +4,7 @@ import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.eventbus.EventBus;
 import me.sailex.altoclef.eventbus.events.EntitySwungEvent;
 import me.sailex.altoclef.eventbus.events.PlayerDamageEvent;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.entity.KillPlayerTask;
 import me.sailex.altoclef.tasksystem.TaskRunner;
 import me.sailex.altoclef.util.helpers.LookHelper;
@@ -48,7 +49,7 @@ public class PlayerDefenseChain extends SingleTaskChain {
             if (entity != this.mod.getOwner()) {
                if (entity != null && (!this.recentlySwung.containsKey(entity.getId()) || !this.recentlySwung.get(entity.getId()).elapsed())) {
                   if (!(entity.distanceTo(player) > 5.0F)) {
-                     Vec3d playerCenter = player.getPos().add(new Vec3d(0.0, player.getStandingEyeHeight(), 0.0));
+                     Vec3d playerCenter = EntityVer.getPos(player).add(new Vec3d(0.0, player.getStandingEyeHeight(), 0.0));
                      if (entity.isAlive() && LookHelper.isLookingAt(entity, playerCenter, 60.0)) {
                         this.recentlySwung.remove(entity.getId());
                         this.onPlayerDamage(entity);

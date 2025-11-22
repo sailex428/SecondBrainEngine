@@ -26,9 +26,11 @@ public class ServerPlayerEntityVer {
     public static ServerWorld getWorld(ServerPlayerEntity player) {
         //? >=1.21.10 {
         /*return player.getEntityWorld();
+        *///?} elif >=1.21.8 {
+        /*return player.getWorld();
         *///?} else {
         return player.getServerWorld();
-         //?}
+        //?}
     }
 
 }

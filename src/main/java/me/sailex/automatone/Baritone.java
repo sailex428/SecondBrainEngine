@@ -17,6 +17,7 @@
 
 package me.sailex.automatone;
 
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.IBaritone;
 import me.sailex.automatone.api.Settings;
@@ -125,7 +126,7 @@ public class Baritone implements IBaritone {
         this.commandManager = new BaritoneCommandManager(this);
         this.execControlProcess = DefaultCommands.controlCommands.registerProcess(this);
 
-        this.worldProvider = new WorldProvider(player.getWorld());
+        this.worldProvider = new WorldProvider(EntityVer.getWorld(player));
         this.selectionManager = new SelectionManager(player);
         this.altoClefSettings = new AltoClefSettings();
     }
@@ -249,7 +250,7 @@ public class Baritone implements IBaritone {
 
         MinecraftServer server = this.getPlayerContext().world().getServer();
         for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
-            if (server.getPlayerManager().isOperator(p.getGameProfile())) {
+            if (server.getPlayerManager().isOperator(/*? >=1.21.10 {*/ /*p.getPlayerConfigEntry() *//*?} else {*/ p.getGameProfile() /*?}*/)) {
                 logDirect(message);
             }
         }

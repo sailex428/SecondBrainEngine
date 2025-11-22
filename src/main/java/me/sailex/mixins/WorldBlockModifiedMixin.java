@@ -31,7 +31,7 @@ public class WorldBlockModifiedMixin {
    )
    //?}
    public void onBlockWasChanged(BlockPos pos, BlockState oldBlock, BlockState newBlock, CallbackInfo ci) {
-      if (!((World)(Object)this).isClient && !this.hasBlock(oldBlock, pos) && this.hasBlock(newBlock, pos)) {
+      if (!((World)(Object)this).isClient() && !this.hasBlock(oldBlock, pos) && this.hasBlock(newBlock, pos)) {
          BlockPlaceEvent evt = new BlockPlaceEvent(pos, newBlock);
          EventBus.publish(evt);
       }

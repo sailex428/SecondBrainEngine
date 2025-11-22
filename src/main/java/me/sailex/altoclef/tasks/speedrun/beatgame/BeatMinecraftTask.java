@@ -436,7 +436,7 @@ public class BeatMinecraftTask extends Task {
                return Double.NEGATIVE_INFINITY;
             } else {
                Optional<BlockPos> pos = mod.getBlockScanner().getNearestBlock(ItemHelper.itemsToBlocks(ItemHelper.BED));
-               return pos.isPresent() && pos.get().isWithinDistance(mod.getPlayer().getPos(), 30.0) ? 1000000.0 : Double.NEGATIVE_INFINITY;
+               return pos.isPresent() && pos.get().isWithinDistance(EntityVer.getPos(mod.getPlayer()), 30.0) ? 1000000.0 : Double.NEGATIVE_INFINITY;
             }
          }
       }));
@@ -1050,8 +1050,8 @@ public class BeatMinecraftTask extends Task {
          for (Entity entity : mod.getWorld().iterateEntities()) {
             if (!mod.getBlockScanner().isUnreachable(nearestTracking.get())
                && entity instanceof HostileEntity
-               && mod.getPlayer().squaredDistanceTo(entity.getPos()) < 150.0
-               && nearestTracking.get().isWithinDistance(entity.getPos(), 30.0)) {
+               && mod.getPlayer().squaredDistanceTo(EntityVer.getPos(entity)) < 150.0
+               && nearestTracking.get().isWithinDistance(EntityVer.getPos(entity), 30.0)) {
                Debug.logMessage("Blacklisting dangerous " + block.toString());
                mod.getBlockScanner().requestBlockUnreachable(nearestTracking.get(), 0);
             }
@@ -1119,7 +1119,7 @@ public class BeatMinecraftTask extends Task {
             BlockState craftingTablePosUp = this.mod.getWorld().getBlockState(craftingTable.up(2));
             if (this.mod.getEntityTracker().entityFound(WitchEntity.class)) {
                Optional<Entity> witch = this.mod.getEntityTracker().getClosestEntity(WitchEntity.class);
-               if (witch.isPresent() && craftingTable.isWithinDistance(witch.get().getPos(), 15.0)) {
+               if (witch.isPresent() && craftingTable.isWithinDistance(EntityVer.getPos(witch.get()), 15.0)) {
                   Debug.logMessage("Blacklisting witch crafting table.");
                   this.mod.getBlockScanner().requestBlockUnreachable(craftingTable, 0);
                }
@@ -1151,7 +1151,7 @@ public class BeatMinecraftTask extends Task {
 
       for (BlockPos log : this.mod.getBlockScanner().getKnownLocations(ItemHelper.itemsToBlocks(ItemHelper.LOG))) {
          for (Entity entity : this.mod.getWorld().iterateEntities()) {
-            if (entity instanceof PillagerEntity && !this.mod.getBlockScanner().isUnreachable(log) && log.isWithinDistance(entity.getPos(), 40.0)) {
+            if (entity instanceof PillagerEntity && !this.mod.getBlockScanner().isUnreachable(log) && log.isWithinDistance(EntityVer.getPos(entity), 40.0)) {
                Debug.logMessage("Blacklisting pillage log.");
                this.mod.getBlockScanner().requestBlockUnreachable(log, 0);
             }
@@ -2045,7 +2045,7 @@ public class BeatMinecraftTask extends Task {
                               }
 
                               if (WorldHelper.inRangeXZ(
-                                 mod.getPlayer().getPos(), WorldHelper.toVec3d(mod.getBlockScanner().getNearestBlock(Blocks.NETHER_BRICKS).get()), 2.0
+                                      EntityVer.getPos(mod.getPlayer()), WorldHelper.toVec3d(mod.getBlockScanner().getNearestBlock(Blocks.NETHER_BRICKS).get()), 2.0
                               )) {
                                  this.setDebugState("trying to get to fortress");
                                  return new GetToBlockTask(mod.getBlockScanner().getNearestBlock(Blocks.NETHER_BRICKS).get());
@@ -2055,15 +2055,15 @@ public class BeatMinecraftTask extends Task {
                               if ((
                                     this.cachedFortressTask != null
                                           && !this.fortressTimer.elapsed()
-                                          && mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos)) - 1.0
+                                          && EntityVer.getPos(mod.getPlayer()).distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos)) - 1.0
                                              > this.prevPos.getManhattanDistance(this.cachedFortressTask.blockPos) / 2.0
                                        || !mod.getBaritone().getPathingBehavior().isSafeToCancel()
                                  )
                                  && this.cachedFortressTask != null) {
                                  mod.log(
-                                    mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos))
+                                         EntityVer.getPos(mod.getPlayer()).distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos))
                                        + " : "
-                                       + mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos))
+                                       + EntityVer.getPos(mod.getPlayer()).distanceTo(WorldHelper.toVec3d(this.cachedFortressTask.blockPos))
                                  );
                                  return this.cachedFortressTask;
                               }
@@ -2078,7 +2078,7 @@ public class BeatMinecraftTask extends Task {
                               mod.log("new");
                               this.prevPos = mod.getPlayer().getBlockPos();
                               BlockPos p = mod.getBlockScanner().getNearestBlock(Blocks.NETHER_BRICKS).get();
-                              int distance = (int)(mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(p)) / 2.0);
+                              int distance = (int)(EntityVer.getPos(mod.getPlayer()).distanceTo(WorldHelper.toVec3d(p)) / 2.0);
                               if (this.cachedFortressTask != null) {
                                  distance = Math.min(this.cachedFortressTask.range - 1, distance);
                               }

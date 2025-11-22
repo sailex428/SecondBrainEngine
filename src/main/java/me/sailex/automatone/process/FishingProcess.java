@@ -299,7 +299,7 @@ public final class FishingProcess extends BaritoneProcessHelper implements IBari
         ItemStack itemStack = user.getStackInHand(hand);
         FishingBobberEntity bobber = findOurBobber();
         if (bobber != null) {
-            if (!world.isClient) {
+            if (!world.isClient()) {
                 int i = bobber.use(itemStack);
                 itemStack.damage(/*? >=1.21 {*/ /*i, user, EquipmentSlot.MAINHAND *//*?} else {*/ i, user, (p) -> p.sendToolBreakStatus(hand) /*?}*/);
             }
@@ -308,7 +308,7 @@ public final class FishingProcess extends BaritoneProcessHelper implements IBari
             user.emitGameEvent(GameEvent.ITEM_INTERACT_FINISH);
         } else {
             world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_FISHING_BOBBER_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
-            if (!world.isClient) {
+            if (!world.isClient()) {
                 //? >=1.21 {
                 /*int i = EnchantmentVer.getEnchantmentLevel(Enchantments.LURE, itemStack, world.getServer());
                 int j = EnchantmentVer.getEnchantmentLevel(Enchantments.LUCK_OF_THE_SEA, itemStack, world.getServer());

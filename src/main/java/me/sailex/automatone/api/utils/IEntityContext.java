@@ -118,7 +118,7 @@ public interface IEntityContext {
 
         MinecraftServer server = world().getServer();
         for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
-            if (server.getPlayerManager().isOperator(p.getGameProfile())) {
+            if (server.getPlayerManager().isOperator(/*? >=1.21.10 {*/ /*p.getPlayerConfigEntry() *//*?} else {*/ p.getGameProfile() /*?}*/)) {
                 BaritoneAPI.getProvider().getBaritone(this.entity()).logDirect(message);
             }
         }

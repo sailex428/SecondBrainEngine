@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.movement;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.multiversion.FoodComponentWrapper;
+import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
 import me.sailex.altoclef.multiversion.item.ItemVer;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.ItemTarget;
@@ -170,7 +171,7 @@ public class EscapeFromLavaTask extends CustomBaritoneGoalTask {
       Vec3d cameraPos = mod.getPlayer().getCameraPosVec(0.0F);
       Vec3d rotationVector = this.getRotationVector(pitch, yaw);
       Vec3d vec3d3 = cameraPos.add(rotationVector.x * maxDistance, rotationVector.y * maxDistance, rotationVector.z * maxDistance);
-      return mod.getPlayer().getWorld().raycast(new RaycastContext(cameraPos, vec3d3, ShapeType.OUTLINE,
+      return ServerPlayerEntityVer.getWorld(mod.getPlayer()).raycast(new RaycastContext(cameraPos, vec3d3, ShapeType.OUTLINE,
               FluidHandling.NONE, mod.getPlayer()));
    }
 

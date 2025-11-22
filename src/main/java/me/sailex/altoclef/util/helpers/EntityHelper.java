@@ -67,7 +67,7 @@ public class EntityHelper {
 
    public static double calculateResultingPlayerDamage(ServerPlayerEntity player, DamageSource src, double damageAmount) {
       DamageSourceWrapper source = DamageSourceWrapper.of(src);
-      if (player.isInvulnerableTo(/*? >=1.21.8 {*/ /* ServerPlayerEntityVer.getWorld(player), src *//*?} else {*/ src /*?}*/)) {
+      if (player.isInvulnerableTo(/*? >=1.21.8 {*/  /*ServerPlayerEntityVer.getWorld(player), src *//*?} else {*/ src /*?}*/)) {
          return 0.0;
       } else {
          if (!source.bypassesArmor()) {

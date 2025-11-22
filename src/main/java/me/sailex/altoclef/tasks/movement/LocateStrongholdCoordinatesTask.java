@@ -90,16 +90,16 @@ public class LocateStrongholdCoordinatesTask extends Task {
                this.cachedEyeDirection = null;
                this.cachedEyeDirection2 = null;
             } else if (this.cachedEyeDirection == null) {
-               this.cachedEyeDirection = new EyeDirection(this.currentThrownEye.getPos());
+               this.cachedEyeDirection = new EyeDirection(EntityVer.getPos(this.currentThrownEye));
             } else {
-               this.cachedEyeDirection2 = new EyeDirection(this.currentThrownEye.getPos());
+               this.cachedEyeDirection2 = new EyeDirection(EntityVer.getPos(this.currentThrownEye));
             }
          }
 
          if (this.cachedEyeDirection2 != null) {
-            this.cachedEyeDirection2.updateEyePos(this.currentThrownEye.getPos());
+            this.cachedEyeDirection2.updateEyePos(EntityVer.getPos(this.currentThrownEye));
          } else if (this.cachedEyeDirection != null) {
-            this.cachedEyeDirection.updateEyePos(this.currentThrownEye.getPos());
+            this.cachedEyeDirection.updateEyePos(EntityVer.getPos(this.currentThrownEye));
          }
 
          if (mod.getEntityTracker().getClosestEntity(EyeOfEnderEntity.class).isPresent() && !mod.getBaritone().getPathingBehavior().isPathing()) {
@@ -121,13 +121,13 @@ public class LocateStrongholdCoordinatesTask extends Task {
                Vec3d throwDelta2 = this.cachedEyeDirection2.getDelta();
                this.strongholdEstimatePos = calculateIntersection(throwOrigin, throwDelta, throwOrigin2, throwDelta2);
                Debug.logMessage(
-                     "Stronghold is at "
-                           + this.strongholdEstimatePos.getX()
-                           + ", "
-                           + this.strongholdEstimatePos.getZ()
-                           + " ("
-                           + (int) EntityVer.getPos(mod.getPlayer()).distanceTo(Vec3d.of(this.strongholdEstimatePos))
-                           + " blocks away)");
+                 "Stronghold is at "
+                       + this.strongholdEstimatePos.getX()
+                       + ", "
+                       + this.strongholdEstimatePos.getZ()
+                       + " ("
+                       + (int) EntityVer.getPos(mod.getPlayer()).distanceTo(Vec3d.of(this.strongholdEstimatePos))
+                       + " blocks away)");
             }
          }
 
@@ -180,8 +180,7 @@ public class LocateStrongholdCoordinatesTask extends Task {
       if (blockPos != null) {
          EyeOfEnderEntity eyeOfEnderEntity = new EyeOfEnderEntity(world, user.getX(), user.getBodyY(0.5), user.getZ());
          eyeOfEnderEntity.setItem(user.getMainHandStack());
-         eyeOfEnderEntity
-               .initTargetPos(/*? >=1.21.8 {*/ /*blockPos.toCenterPos() *//*?} else {*/  blockPos /*?}*/);
+         eyeOfEnderEntity.initTargetPos(/*? >=1.21.8 {*/ /*blockPos.toCenterPos() *//*?} else {*/  blockPos /*?}*/);
          world.emitGameEvent(GameEvent.PROJECTILE_SHOOT, EntityVer.getPos(eyeOfEnderEntity), Emitter.of(user));
          world.spawnEntity(eyeOfEnderEntity);
          world.playSound(

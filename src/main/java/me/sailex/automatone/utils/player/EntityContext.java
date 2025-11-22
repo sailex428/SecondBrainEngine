@@ -75,7 +75,7 @@ public class EntityContext implements IEntityContext {
     @Override
     public ServerWorld world() {
         World world = ServerPlayerEntityVer.getWorld(this.entity);
-        if (world.isClient) throw new IllegalStateException();
+        if (world.isClient()) throw new IllegalStateException();
         return (ServerWorld) world;
     }
 

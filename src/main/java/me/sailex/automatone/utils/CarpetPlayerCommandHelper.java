@@ -17,6 +17,8 @@
 
 package me.sailex.automatone.utils;
 
+import com.mojang.authlib.GameProfile;
+import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.IBaritone;
 import me.sailex.automatone.api.utils.ICommandHelper;
@@ -37,13 +39,14 @@ public class CarpetPlayerCommandHelper implements ICommandHelper {
 
     public CarpetPlayerCommandHelper(Baritone baritone, ServerPlayerEntity player) {
         this.baritone = baritone;
-        MinecraftServer server = player.getServer();
+        MinecraftServer server = ServerPlayerEntityVer.getWorld(player).getServer();
         this.commandManager = server.getCommandManager();
         this.commandSource = server.getCommandSource();
     }
 
     private void buildPlayerCommand() {
-        buildPlayerCommand(baritone.getPlayerContext().entity().getGameProfile().getName());
+        GameProfile profile = baritone.getPlayerContext().entity().getGameProfile();
+        buildPlayerCommand(/*? >=1.21.10 {*/ /*profile.name() *//*?} else {*/ profile.getName() /*?}*/);
     }
 
     private void buildPlayerCommand(String playerName) {

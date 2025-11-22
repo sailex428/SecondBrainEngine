@@ -4,7 +4,6 @@ import carpet.patches.EntityPlayerMPFake;
 import carpet.patches.FakeClientConnection;
 import com.mojang.authlib.GameProfile;
 import me.sailex.otomaton.mixin.PlayerEntityAccessor;
-import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.network.packet.s2c.play.EntitySetHeadYawS2CPacket;
 import net.minecraft.registry.RegistryKey;
@@ -21,21 +20,33 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-//? if >=1.21.8 {
+//? >=1.21.10 {
+/*import net.minecraft.component.type.ProfileComponent;
+import net.minecraft.network.packet.s2c.play.EntityPositionSyncS2CPacket;
+import net.minecraft.server.network.ConnectedClientData;
+import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
+import net.minecraft.entity.attribute.EntityAttributes;
+import java.util.Set;
+*///?} elif >=1.21.8 {
+
 /*import net.minecraft.network.packet.s2c.play.EntityPositionSyncS2CPacket;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
 import net.minecraft.entity.attribute.EntityAttributes;
 import java.util.Set;
+import net.minecraft.block.entity.SkullBlockEntity;
 *///?} elif >=1.21.1 {
-
-/*import net.minecraft.server.network.ConnectedClientData;
+/*
+import net.minecraft.block.entity.SkullBlockEntity;
+import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
 import me.sailex.otomaton.mixin.PlayerEntityAccessor;
 import net.minecraft.block.entity.SkullBlockEntity;
 *///?} else {
+
+import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
 import me.sailex.otomaton.mixin.PlayerEntityAccessor;
 import net.minecraft.block.entity.SkullBlockEntity;
@@ -56,6 +67,16 @@ public class NPCSpawner {
             BlockPos spawnPos,
             Consumer<ServerPlayerEntity> npcConsumer
     ) {
+        //? >=1.21.10 {
+        /*fetchGameProfile(server, profile.name()).thenAcceptAsync(p -> {
+            GameProfile current = profile;
+            if (p != null && p.name().equals(profile.name())) {
+                current = p;
+            }
+            spawnEntity(server, current, spawnPos, npcConsumer);
+        }, server);
+        *///?} else {
+        
         fetchGameProfile(profile).thenAcceptAsync(p -> {
             GameProfile current = profile;
             if (p.isPresent() && p.get().getName().equals(profile.getName())) {
@@ -63,6 +84,7 @@ public class NPCSpawner {
             }
             spawnEntity(server, current, spawnPos, npcConsumer);
         }, server);
+        //?}
     }
 
     private static void spawnEntity(
@@ -76,48 +98,81 @@ public class NPCSpawner {
         ServerWorld worldIn = server.getOverworld();
         RegistryKey<World> dimensionKey = worldIn.getRegistryKey();
 
-        EntityPlayerMPFake instance = EntityPlayerMPFake.respawnFake(server, worldIn, gameProfile /*? >=1.21.1 {*/ /*, SyncedClientOptions.createDefault() *//*?} else {*//*?}*/);
-
-        BlockPos finalSpawnPos = spawnPos != null ? spawnPos : worldIn.getSpawnPos();
+        //? >=1.21.10 {
+        /*EntityPlayerMPFake instance = EntityPlayerMPFake.respawnFake(server, worldIn, gameProfile, SyncedClientOptions.createDefault());
+        BlockPos finalSpawnPos = spawnPos != null ? spawnPos : worldIn.getSpawnPoint().getPos();
         instance.fixStartingPosition = () -> instance.refreshPositionAndAngles(finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), (float) yaw, (float) pitch);
-        server.getPlayerManager().onPlayerConnect(new FakeClientConnection(NetworkSide.SERVERBOUND), instance /*? >=1.21.1 {*/ /*, new ConnectedClientData(gameProfile, 0, instance.getClientOptions(), false) *//*?} else {*//*?}*/);
-        //? if >=1.21.8 {
-        /*instance.teleport(worldIn, finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), Set.of(), (float) yaw,
+        server.getPlayerManager().onPlayerConnect(new FakeClientConnection(NetworkSide.SERVERBOUND), instance, new ConnectedClientData(gameProfile, 0, instance.getClientOptions(), false));
+        instance.teleport(worldIn, finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), Set.of(), (float) yaw,
                 (float) pitch, true);
-        *///?} else {
-        instance.teleport(worldIn, finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), (float) yaw,
-                (float) pitch);
-        //?}
         instance.setHealth(20.0F);
-        //((EntityAccessor) instance).unsetRemoved();
-
-        //? if >=1.21.1 {
-        /*instance.getAttributeInstance(/^? >=1.21.8 {^/ /^EntityAttributes.STEP_HEIGHT^//^?} else {^/EntityAttributes.GENERIC_STEP_HEIGHT/^?}^/).setBaseValue(0.6F);
-         *///?} else {
-        instance.setStepHeight(0.6F);
-        //?}
-
+        instance.getAttributeInstance(EntityAttributes.STEP_HEIGHT).setBaseValue(0.6F);
         instance.interactionManager.changeGameMode(GameMode.SURVIVAL);
         server.getPlayerManager().sendToDimension(new EntitySetHeadYawS2CPacket(instance,
                 (byte) (instance.headYaw * 256 / 360)), dimensionKey);
+        EntityPositionSyncS2CPacket positionPacket = EntityPositionSyncS2CPacket.create(instance);
+        *///?} elif >=1.21.8 {
+        
+        /*EntityPlayerMPFake instance = EntityPlayerMPFake.respawnFake(server, worldIn, gameProfile, SyncedClientOptions.createDefault());
+        BlockPos finalSpawnPos = spawnPos != null ? spawnPos : worldIn.getSpawnPos();
+        instance.fixStartingPosition = () -> instance.refreshPositionAndAngles(finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), (float) yaw, (float) pitch);
+        server.getPlayerManager().onPlayerConnect(new FakeClientConnection(NetworkSide.SERVERBOUND), instance, new ConnectedClientData(gameProfile, 0, instance.getClientOptions(), false));
+        instance.teleport(worldIn, finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), Set.of(), (float) yaw,
+                (float) pitch, true);
+        instance.setHealth(20.0F);
+        instance.getAttributeInstance(EntityAttributes.STEP_HEIGHT).setBaseValue(0.6F);
+        instance.interactionManager.changeGameMode(GameMode.SURVIVAL);
+        server.getPlayerManager().sendToDimension(new EntitySetHeadYawS2CPacket(instance,
+                (byte) (instance.headYaw * 256 / 360)), dimensionKey);
+        EntityPositionSyncS2CPacket positionPacket = EntityPositionSyncS2CPacket.create(instance);
 
-        //? if >=1.21.8 {
-        /*EntityPositionSyncS2CPacket positionPacket = EntityPositionSyncS2CPacket.create(instance);
-         *///?} else {
+        *///?} elif >=1.21.1 {
+        /*
+        EntityPlayerMPFake instance = EntityPlayerMPFake.respawnFake(server, worldIn, gameProfile, SyncedClientOptions.createDefault());
+        BlockPos finalSpawnPos = spawnPos != null ? spawnPos : worldIn.getSpawnPos();
+        instance.fixStartingPosition = () -> instance.refreshPositionAndAngles(finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), (float) yaw, (float) pitch);
+        server.getPlayerManager().onPlayerConnect(new FakeClientConnection(NetworkSide.SERVERBOUND), instance, new ConnectedClientData(gameProfile, 0, instance.getClientOptions(), false));
+        instance.teleport(worldIn, finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), (float) yaw, (float) pitch);
+        instance.setHealth(20.0F);
+        instance.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT).setBaseValue(0.6F);
+        instance.interactionManager.changeGameMode(GameMode.SURVIVAL);
+        server.getPlayerManager().sendToDimension(new EntitySetHeadYawS2CPacket(instance,
+                (byte) (instance.headYaw * 256 / 360)), dimensionKey);
+        EntityPositionS2CPacket positionPacket = new EntityPositionS2CPacket(instance);
+        *///?} else {
+        
+        EntityPlayerMPFake instance = EntityPlayerMPFake.respawnFake(server, worldIn, gameProfile);
+        BlockPos finalSpawnPos = spawnPos != null ? spawnPos : worldIn.getSpawnPos();
+        instance.fixStartingPosition = () -> instance.refreshPositionAndAngles(finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), (float) yaw, (float) pitch);
+        server.getPlayerManager().onPlayerConnect(new FakeClientConnection(NetworkSide.SERVERBOUND), instance);
+        instance.teleport(worldIn, finalSpawnPos.getX(), finalSpawnPos.getY(), finalSpawnPos.getZ(), (float) yaw, (float) pitch);
+        instance.setHealth(20.0F);
+        instance.setStepHeight(0.6F);
+        instance.interactionManager.changeGameMode(GameMode.SURVIVAL);
+        server.getPlayerManager().sendToDimension(new EntitySetHeadYawS2CPacket(instance,
+                (byte) (instance.headYaw * 256 / 360)), dimensionKey);
         EntityPositionS2CPacket positionPacket = new EntityPositionS2CPacket(instance);
         //?}
-        instance.getDataTracker().set(PlayerEntityAccessor.getPlayerModelParts(), (byte) 0x7f);
 
+        instance.getDataTracker().set(PlayerEntityAccessor.getPlayerModelParts(), (byte) 0x7f);
         server.getPlayerManager().sendToDimension(positionPacket, dimensionKey);
         instance.getAbilities().flying = false;
         npcConsumer.accept(instance);
     }
 
+    //? >=1.21.10 {
+    /*private static CompletableFuture<GameProfile> fetchGameProfile(MinecraftServer server, final String name) {
+        final ProfileComponent resolvableProfile = ProfileComponent.ofDynamic(name);
+        return resolvableProfile.resolve(server.getApiServices().profileResolver());
+    }
+    *///?} elif >=1.21.1 {
+    
+    /*private static CompletableFuture<Optional<GameProfile>> fetchGameProfile(final GameProfile profile) {
+        return SkullBlockEntity.fetchProfileByName(profile.getName());
+    }
+    *///?} else {
+    
     private static CompletableFuture<Optional<GameProfile>> fetchGameProfile(final GameProfile profile) {
-        //? >=1.21.1 {
-        /*return SkullBlockEntity.fetchProfileByName(profile.getName());
-         *///?} else {
-
         CompletableFuture<Optional<GameProfile>> future = new CompletableFuture<>();
         SkullBlockEntity.loadProperties(profile, gp -> {
             if (gp != null) {
@@ -127,8 +182,8 @@ public class NPCSpawner {
             }
         });
         return future;
-        //?}
     }
+    //?}
 
     public static void remove(UUID uuid, PlayerManager playerManager) {
         ServerPlayerEntity player = playerManager.getPlayer(uuid);

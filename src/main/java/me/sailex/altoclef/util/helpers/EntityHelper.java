@@ -3,6 +3,7 @@ package me.sailex.altoclef.util.helpers;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.multiversion.DamageSourceWrapper;
 import me.sailex.altoclef.multiversion.MethodWrapper;
+import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.DamageUtil;
 import net.minecraft.entity.Entity;
@@ -66,7 +67,7 @@ public class EntityHelper {
 
    public static double calculateResultingPlayerDamage(ServerPlayerEntity player, DamageSource src, double damageAmount) {
       DamageSourceWrapper source = DamageSourceWrapper.of(src);
-      if (player.isInvulnerableTo(/*? >=1.21.8 {*/ /*player.getWorld(), src *//*?} else {*/ src /*?}*/)) {
+      if (player.isInvulnerableTo(/*? >=1.21.8 {*/ /* ServerPlayerEntityVer.getWorld(player), src *//*?} else {*/ src /*?}*/)) {
          return 0.0;
       } else {
          if (!source.bypassesArmor()) {
@@ -86,7 +87,7 @@ public class EntityHelper {
             if (damageAmount <= 0.0) {
                damageAmount = 0.0;
             } else {
-               float k = EnchantmentHelper.getProtectionAmount(/*? >=1.21.8 {*/ /*player.getWorld(), player, src *//*?} elif >=1.21 {*//* player.getServerWorld(), player, src *//*?} else {*/ player.getArmorItems(), src /*?}*/);
+               float k = EnchantmentHelper.getProtectionAmount(/*? >=1.21.8 {*/ /*ServerPlayerEntityVer.getWorld(player), player, src *//*?} elif >=1.21 {*//* ServerPlayerEntityVer.getWorld(player), player, src *//*?} else {*/ player.getArmorItems(), src /*?}*/);
                if (k > 0.0F) {
                   damageAmount = DamageUtil.getInflictedDamage((float)damageAmount, k);
                }

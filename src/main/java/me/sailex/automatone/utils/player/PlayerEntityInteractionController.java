@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.utils.player;
 
+import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
 import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import me.sailex.automatone.api.utils.InteractionController;
 import me.sailex.automatone.utils.accessor.IServerPlayerInteractionManager;
@@ -59,7 +60,9 @@ public class PlayerEntityInteractionController implements InteractionController 
         if (interactionManager.isMining()) {
             int progress = interactionManager.getBlockBreakingProgress();
             if (progress >= 10) {
-                this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, side, HeightLimitViewVer.getTopY(this.player.getWorld()), sequence++);
+                this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(),
+                        PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, side,
+                        HeightLimitViewVer.getTopY(ServerPlayerEntityVer.getWorld(this.player)), sequence++);
             }
             return true;
         }
@@ -70,7 +73,9 @@ public class PlayerEntityInteractionController implements InteractionController 
     public void resetBlockRemoving() {
         IServerPlayerInteractionManager interactionManager = (IServerPlayerInteractionManager) this.player.interactionManager;
         if (interactionManager.isMining()) {
-            this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(), PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, Direction.UP, HeightLimitViewVer.getTopY(this.player.getWorld()), sequence++);
+            this.player.interactionManager.processBlockBreakingAction(interactionManager.getMiningPos(),
+                    PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, Direction.UP,
+                    HeightLimitViewVer.getTopY(ServerPlayerEntityVer.getWorld(this.player)), sequence++);
         }
     }
 
@@ -81,22 +86,27 @@ public class PlayerEntityInteractionController implements InteractionController 
 
     @Override
     public ActionResult processRightClickBlock(PlayerEntity player, World world, Hand hand, BlockHitResult result) {
-        return this.player.interactionManager.interactBlock(this.player, this.player.getWorld(), this.player.getStackInHand(hand), hand, result);
+        return this.player.interactionManager.interactBlock(this.player, ServerPlayerEntityVer.getWorld(this.player),
+                this.player.getStackInHand(hand), hand, result);
     }
 
     @Override
     public ActionResult processRightClick(PlayerEntity player, World world, Hand hand) {
-        return this.player.interactionManager.interactItem(this.player, this.player.getWorld(), this.player.getStackInHand(hand), hand);
+        return this.player.interactionManager.interactItem(this.player, ServerPlayerEntityVer.getWorld(this.player),
+                this.player.getStackInHand(hand), hand);
     }
 
     @Override
     public boolean clickBlock(BlockPos loc, Direction face) {
-        BlockState state = this.player.getWorld().getBlockState(loc);
-        if (state.isAir()) return false;
+        BlockState state = ServerPlayerEntityVer.getWorld(this.player).getBlockState(loc);
+        if (state.isAir())
+            return false;
 
-        this.player.interactionManager.processBlockBreakingAction(loc, PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, face, HeightLimitViewVer.getTopY(this.player.getWorld()), sequence++);
+        this.player.interactionManager.processBlockBreakingAction(loc, PlayerActionC2SPacket.Action.START_DESTROY_BLOCK,
+                face, HeightLimitViewVer.getTopY(ServerPlayerEntityVer.getWorld(this.player)), sequence++);
         // Success = starting the mining process or insta-mining
-        return ((IServerPlayerInteractionManager) this.player.interactionManager).isMining() || this.player.getWorld().isAir(loc);
+        return ((IServerPlayerInteractionManager) this.player.interactionManager).isMining()
+                || ServerPlayerEntityVer.getWorld(this.player).isAir(loc);
     }
 
     @Override

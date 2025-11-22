@@ -127,7 +127,7 @@ public interface LookHelper {
          end = start.add(direction);
       }
 
-      World world = entity.getWorld();
+      World world = EntityVer.getWorld(entity);
       RaycastContext context = new RaycastContext(start, end, ShapeType.COLLIDER, FluidHandling.NONE, entity);
       return world.raycast(context);
    }

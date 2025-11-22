@@ -5,6 +5,7 @@ import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
 import me.sailex.altoclef.commands.BlockScanner;
 import me.sailex.altoclef.multiversion.EnchantmentVer;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.multiversion.item.ToolItemVer;
@@ -259,7 +260,7 @@ public class BeatMinecraftTask extends Task {
             if (optionalPos.isEmpty()) {
                return pair;
             } else {
-               double distance = Math.sqrt(BlockPosVer.getSquaredDistance(optionalPos.get(), mod.getPlayer().getPos()));
+               double distance = Math.sqrt(BlockPosVer.getSquaredDistance(optionalPos.get(), EntityVer.getPos(mod.getPlayer())));
                if (distance > 55.0) {
                   return pair;
                } else {
@@ -568,7 +569,7 @@ public class BeatMinecraftTask extends Task {
          if (chest.isEmpty()) {
             return pair;
          } else {
-            double dst = Math.sqrt(BlockPosVer.getSquaredDistance(chest.get(), mod.getPlayer().getPos()));
+            double dst = Math.sqrt(BlockPosVer.getSquaredDistance(chest.get(), EntityVer.getPos(mod.getPlayer())));
             pair.setRight(30.0 / dst * 175.0);
             pair.setLeft(new GetToBlockTask(chest.get().up()));
             return pair;

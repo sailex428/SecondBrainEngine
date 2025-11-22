@@ -2,8 +2,10 @@ package me.sailex.altoclef.tasks.entity;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasksystem.Task;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundCategory;
@@ -29,7 +31,7 @@ public class ShearSheepTask extends AbstractDoToEntityTask {
       } else {
          if (mod.getSlotHandler().forceEquipItem(Items.SHEARS)) {
             ((SheepEntity)entity).sheared(/*? >=1.21.8 {*/ /*mod.getWorld(), SoundCategory.PLAYERS, mod.getPlayer().getMainHandStack() *//*?} else {*/ SoundCategory.PLAYERS /*?}*/);
-            mod.getPlayer().getMainHandStack().damage(1, mod.getPlayer(), /*? >=1.21 {*/ /*SheepEntity.getSlotForHand(Hand.MAIN_HAND) *//*?} else {*/ e -> {} /*?}*/ );
+            mod.getPlayer().getMainHandStack().damage(1, mod.getPlayer(), /*? >=1.21 {*/ /*EquipmentSlot.MAINHAND *//*?} else {*/ e -> {} /*?}*/ );
          }
 
          return null;
@@ -40,7 +42,7 @@ public class ShearSheepTask extends AbstractDoToEntityTask {
    protected Optional<Entity> getEntityTarget(AltoClefController mod) {
       return mod.getEntityTracker()
          .getClosestEntity(
-            mod.getPlayer().getPos(), entity -> !(entity instanceof SheepEntity sheep) ? false : sheep.isShearable() && !sheep.isSheared(), SheepEntity.class
+                 EntityVer.getPos(mod.getPlayer()), entity -> !(entity instanceof SheepEntity sheep) ? false : sheep.isShearable() && !sheep.isSheared(), SheepEntity.class
          );
    }
 

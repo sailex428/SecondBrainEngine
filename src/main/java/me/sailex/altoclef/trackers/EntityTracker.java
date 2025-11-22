@@ -3,6 +3,7 @@ package me.sailex.altoclef.trackers;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.eventbus.EventBus;
 import me.sailex.altoclef.eventbus.events.PlayerCollidedWithEntityEvent;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.mixins.PersistentProjectileEntityAccessor;
 import me.sailex.altoclef.trackers.blacklisting.EntityLocateBlacklist;
 import me.sailex.altoclef.util.ItemTarget;
@@ -71,7 +72,7 @@ public class EntityTracker extends Tracker {
    }
 
    public Optional<ItemEntity> getClosestItemDrop(Item... items) {
-      return this.getClosestItemDrop(this.mod.getPlayer().getPos(), items);
+      return this.getClosestItemDrop(EntityVer.getPos(mod.getPlayer()), items);
    }
 
    public Optional<ItemEntity> getClosestItemDrop(Vec3d position, Item... items) {
@@ -83,7 +84,7 @@ public class EntityTracker extends Tracker {
    }
 
    public Optional<ItemEntity> getClosestItemDrop(Predicate<ItemEntity> acceptPredicate, Item... items) {
-      return this.getClosestItemDrop(this.mod.getPlayer().getPos(), acceptPredicate, items);
+      return this.getClosestItemDrop(EntityVer.getPos(mod.getPlayer()), acceptPredicate, items);
    }
 
    public Optional<ItemEntity> getClosestItemDrop(Vec3d position, Predicate<ItemEntity> acceptPredicate, Item... items) {
@@ -113,7 +114,7 @@ public class EntityTracker extends Tracker {
                if (this.itemDropped(item)) {
                   for (ItemEntity entity : this.itemDropLocations.get(item)) {
                      if (!this.entityBlacklist.unreachable(entity) && entity.getStack().getItem().equals(item) && acceptPredicate.test(entity)) {
-                        float cost = (float)BaritoneHelper.calculateGenericHeuristic(position, entity.getPos());
+                        float cost = (float)BaritoneHelper.calculateGenericHeuristic(position, EntityVer.getPos(entity));
                         if (cost < minCost) {
                            minCost = cost;
                            closestEntity = entity;
@@ -133,7 +134,7 @@ public class EntityTracker extends Tracker {
    }
 
    public Optional<Entity> getClosestEntity(Class... entityTypes) {
-      return this.getClosestEntity(this.mod.getPlayer().getPos(), entityTypes);
+      return this.getClosestEntity(EntityVer.getPos(mod.getPlayer()), entityTypes);
    }
 
    public Optional<Entity> getClosestEntity(Vec3d position, Class... entityTypes) {
@@ -141,7 +142,7 @@ public class EntityTracker extends Tracker {
    }
 
    public Optional<Entity> getClosestEntity(Predicate<Entity> acceptPredicate, Class... entityTypes) {
-      return this.getClosestEntity(this.mod.getPlayer().getPos(), acceptPredicate, entityTypes);
+      return this.getClosestEntity(EntityVer.getPos(mod.getPlayer()), acceptPredicate, entityTypes);
    }
 
    public Optional<Entity> getClosestEntity(Vec3d position, Predicate<Entity> acceptPredicate, Class... entityTypes) {
@@ -360,7 +361,7 @@ public class EntityTracker extends Tracker {
                            && !(projEntity instanceof EnderPearlEntity)
                            && !(projEntity instanceof ExperienceBottleEntity)
                            && !inGround) {
-                           proj.position = projEntity.getPos();
+                           proj.position = EntityVer.getPos(projEntity);
                            proj.velocity = projEntity.getVelocity();
                            proj.gravity = ProjectileHelper.hasGravity(projEntity) ? 0.05F : 0.0;
                            proj.projectileType = projEntity.getClass();
@@ -370,7 +371,7 @@ public class EntityTracker extends Tracker {
                   } else if (entity instanceof PlayerEntity player) {
                      String name = player.getName().getString();
                      this.playerMap.put(name, player);
-                     this.playerLastCoordinates.put(name, player.getPos());
+                     this.playerLastCoordinates.put(name, EntityVer.getPos(player));
                   }
                }
             }

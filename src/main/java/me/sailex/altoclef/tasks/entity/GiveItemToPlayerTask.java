@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.entity;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.BotBehaviour;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.MobEntityVer;
 import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
@@ -97,7 +98,7 @@ public class GiveItemToPlayerTask extends Task {
                   }
 
                   this.throwTimeout.forceElapse();
-                  if (!targetPos.isInRange(mod.getPlayer().getPos(), 4.0)) {
+                  if (!targetPos.isInRange(EntityVer.getPos(mod.getPlayer()), 4.0)) {
                      mod.log("Finished giving items.");
                      this.stop();
                      return null;
@@ -109,7 +110,7 @@ public class GiveItemToPlayerTask extends Task {
                this.setDebugState("Collecting resources...");
                return this.resourceTask;
             } else {
-               if (targetPos.isInRange(mod.getPlayer().getPos(), 4.0)) {
+               if (targetPos.isInRange(EntityVer.getPos(mod.getPlayer()), 4.0)) {
                   if (!mod.getEntityTracker().isPlayerLoaded(this.playerName)) {
                      String nearbyUsernames = String.join(",", mod.getEntityTracker().getAllLoadedPlayerUsernames());
                      this.fail(
@@ -123,7 +124,7 @@ public class GiveItemToPlayerTask extends Task {
                   }
 
                   PlayerEntity p = mod.getEntityTracker().getPlayerEntity(this.playerName).get();
-                  if ((p.getBlockPos().getY() <= mod.getPlayer().getBlockPos().getY() || p.getPos().distanceTo(mod.getPlayer().getPos()) <= 0.5)
+                  if ((p.getBlockPos().getY() <= mod.getPlayer().getBlockPos().getY() || EntityVer.getPos(p).distanceTo(EntityVer.getPos(mod.getPlayer())) <= 0.5)
                      && LookHelper.seesPlayer(p, mod.getPlayer(), 6.0)) {
                      this.droppingItems = true;
                      this.throwTarget.addAll(Arrays.asList(this.targets));

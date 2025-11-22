@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.construction.compound;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.TaskCatalogue;
 import me.sailex.altoclef.tasks.InteractWithBlockTask;
 import me.sailex.altoclef.tasks.construction.ClearLiquidTask;
@@ -133,7 +134,8 @@ public class ConstructNetherPortalBucketTask extends Task {
                this.refreshTimer.reset();
             }
 
-            if (this.portalOrigin != null && !this.portalOrigin.isWithinDistance(mod.getPlayer().getPos(), 2000.0)) {
+            if (this.portalOrigin != null
+                  && !this.portalOrigin.isWithinDistance(EntityVer.getPos(mod.getPlayer()), 2000.0)) {
                this.portalOrigin = null;
                this.currentDestroyTarget = null;
             }

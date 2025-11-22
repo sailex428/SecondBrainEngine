@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.container;
 
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.movement.GetToBlockTask;
 import me.sailex.altoclef.tasks.slot.EnsureFreeInventorySlotTask;
 import me.sailex.altoclef.tasksystem.Task;
@@ -9,6 +10,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
@@ -40,12 +42,13 @@ public class LootContainerTask extends Task {
 
    @Override
    protected Task onTick() {
+      Vec3d pos = EntityVer.getPos(controller.getEntity());
       if (this.finished) {
          return null;
       } else if (!this.containerPos
          .isWithinDistance(
             new Vec3i(
-               (int)this.controller.getEntity().getPos().x, (int)this.controller.getEntity().getPos().y, (int)this.controller.getEntity().getPos().z
+               (int)pos.x, (int)pos.y, (int)pos.z
             ),
             4.5
          )) {

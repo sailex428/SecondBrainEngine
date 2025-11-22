@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.ToolMaterialVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.multiversion.item.ToolItemVer;
@@ -164,7 +165,7 @@ public class MineAndCollectTask extends ResourceTask {
          if (obj instanceof BlockPos b) {
             return WorldHelper.toVec3d(b);
          } else if (obj instanceof ItemEntity item) {
-            return item.getPos();
+            return EntityVer.getPos(item);
          } else {
             throw new UnsupportedOperationException(
                "Shouldn't try to get the position of object " + obj + " of type " + (obj != null ? obj.getClass().toString() : "(null object)")
@@ -202,7 +203,7 @@ public class MineAndCollectTask extends ResourceTask {
 
       @Override
       protected Vec3d getOriginPos(AltoClefController mod) {
-         return mod.getPlayer().getPos();
+         return EntityVer.getPos(mod.getPlayer());
       }
 
       @Override

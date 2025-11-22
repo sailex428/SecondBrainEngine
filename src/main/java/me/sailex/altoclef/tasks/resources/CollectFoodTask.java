@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.item.ItemVer;
 import me.sailex.altoclef.tasks.CraftInInventoryTask;
 import me.sailex.altoclef.tasks.container.CraftInTableTask;
@@ -192,9 +193,9 @@ public class CollectFoodTask extends Task {
 
       for (CookableFoodTarget cookable : COOKABLE_FOODS) {
          if (controller.getEntityTracker().entityFound(cookable.mobToKill)) {
-            Optional<Entity> nearest = controller.getEntityTracker().getClosestEntity(controller.getEntity().getPos(), notBaby, cookable.mobToKill);
+            Optional<Entity> nearest = controller.getEntityTracker().getClosestEntity(EntityVer.getPos(controller.getEntity()), notBaby, cookable.mobToKill);
             if (nearest.isPresent()) {
-               double distanceSq = nearest.get().getPos().squaredDistanceTo(controller.getEntity().getPos());
+               double distanceSq = EntityVer.getPos(nearest.get()).squaredDistanceTo(EntityVer.getPos(controller.getEntity()));
                if (distanceSq != 0.0) {
                   double score = cookable.getCookedUnits() / distanceSq;
                   if (score > bestScore) {

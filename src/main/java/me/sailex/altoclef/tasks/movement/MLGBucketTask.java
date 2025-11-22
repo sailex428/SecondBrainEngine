@@ -4,6 +4,7 @@ import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.control.InputControls;
 import me.sailex.altoclef.multiversion.DamageSourceVer;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.helpers.ConfigHelper;
 import me.sailex.altoclef.util.helpers.EntityHelper;
@@ -76,13 +77,13 @@ public class MLGBucketTask extends Task {
 
       assert clientPlayerEntity != null;
 
-      double verticalDist = clientPlayerEntity.getPos().getY() - pos.getY() - 1.0;
+      double verticalDist = EntityVer.getPos(clientPlayerEntity).getY() - pos.getY() - 1.0;
       double verticalVelocity = -1.0 * clientPlayerEntity.getVelocity().y;
       double grav = 0.08;
       double movementSpeedPerTick = config.averageHorizontalMovementSpeedPerTick;
       double ticksToTravelSq = (-verticalVelocity + Math.sqrt(verticalVelocity * verticalVelocity + 2.0 * grav * verticalDist)) / grav;
       double maxMoveDistanceSq = movementSpeedPerTick * movementSpeedPerTick * ticksToTravelSq * ticksToTravelSq;
-      double horizontalDistance = WorldHelper.distanceXZ(clientPlayerEntity.getPos(), WorldHelper.toVec3d(pos)) - 0.8;
+      double horizontalDistance = WorldHelper.distanceXZ(EntityVer.getPos(clientPlayerEntity), WorldHelper.toVec3d(pos)) - 0.8;
       if (horizontalDistance < 0.0) {
          horizontalDistance = 0.0;
       }
@@ -240,7 +241,7 @@ public class MLGBucketTask extends Task {
          Rotation look = LookHelper.getLookRotation(this.controller);
          look = new Rotation(look.getYaw(), 0.0F);
          Vec3d forwardFacing = LookHelper.toVec3d(look).multiply(1.0, 0.0, 1.0).normalize();
-         Vec3d delta = WorldHelper.toVec3d(this.movingTorwards).subtract(mod.getPlayer().getPos()).multiply(1.0, 0.0, 1.0);
+         Vec3d delta = WorldHelper.toVec3d(this.movingTorwards).subtract(EntityVer.getPos(mod.getPlayer())).multiply(1.0, 0.0, 1.0);
          Vec3d velocity = mod.getPlayer().getVelocity().multiply(1.0, 0.0, 1.0);
          Vec3d pd = delta.subtract(velocity.multiply(3.0));
          double forwardStrength = pd.dotProduct(forwardFacing);
@@ -313,7 +314,7 @@ public class MLGBucketTask extends Task {
          moveLeftRight(mod, 0);
       } else {
          Vec3d velocity = mod.getPlayer().getVelocity();
-         Vec3d deltaTarget = WorldHelper.toVec3d(this.movingTorwards).subtract(mod.getPlayer().getPos());
+         Vec3d deltaTarget = WorldHelper.toVec3d(this.movingTorwards).subtract(EntityVer.getPos(mod.getPlayer()));
          Rotation look = LookHelper.getLookRotation(this.controller);
          Vec3d forwardFacing = LookHelper.toVec3d(look).multiply(1.0, 0.0, 1.0).normalize();
          Vec3d rightVelocity = MathsHelper.projectOntoPlane(velocity, forwardFacing).multiply(1.0, 0.0, 1.0);
@@ -348,7 +349,7 @@ public class MLGBucketTask extends Task {
          }
       }
 
-      Vec3d center = mod.getPlayer().getPos();
+      Vec3d center = EntityVer.getPos(mod.getPlayer());
 
       for (int dx = -2; dx <= 2; dx++) {
          for (int dz = -2; dz <= 2; dz++) {
@@ -375,7 +376,7 @@ public class MLGBucketTask extends Task {
 
       assert clientPlayerEntity != null;
 
-      Vec3d origin = clientPlayerEntity.getPos();
+      Vec3d origin = EntityVer.getPos(clientPlayerEntity);
       double dy = config.epicClutchConeCastHeight;
       double dH = dy * Math.sin(Math.toRadians(pitch));
       double yawRad = Math.toRadians(yaw);
@@ -459,7 +460,7 @@ public class MLGBucketTask extends Task {
                boolean isDeadlyFall = !this.hasClutchItem && MLGBucketTask.isFallDeadly(MLGBucketTask.this.controller, check);
                if (!this.bestBlockIsSafe || water) {
                   double height = check.getY();
-                  double distSqXZ = WorldHelper.distanceXZSquared(WorldHelper.toVec3d(check), mod.getPlayer().getPos());
+                  double distSqXZ = WorldHelper.distanceXZSquared(WorldHelper.toVec3d(check), EntityVer.getPos(mod.getPlayer()));
                   boolean highestSoFar = height > this.highestY;
                   boolean closestSoFar = distSqXZ < this.closestXZ;
                   if ((

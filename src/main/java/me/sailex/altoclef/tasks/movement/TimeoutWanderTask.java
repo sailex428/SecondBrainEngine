@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.movement;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.entity.KillEntitiesTask;
 import me.sailex.altoclef.tasksystem.ITaskRequiresGrounded;
 import me.sailex.altoclef.tasksystem.Task;
@@ -144,7 +145,7 @@ public class TimeoutWanderTask extends Task implements ITaskRequiresGrounded {
       AltoClefController mod = this.controller;
       this.timer.reset();
       mod.getBaritone().getPathingBehavior().forceCancel();
-      this.origin = mod.getPlayer().getPos();
+      this.origin = EntityVer.getPos(mod.getPlayer());
       this.progressChecker.reset();
       this.stuckCheck.reset();
       this.failCounter = 0;
@@ -195,7 +196,7 @@ public class TimeoutWanderTask extends Task implements ITaskRequiresGrounded {
       } else {
          if (!this.progressChecker.check(mod) || !this.stuckCheck.check(mod)) {
             for (Entity CloseEntities : mod.getEntityTracker().getCloseEntities()) {
-               if (CloseEntities instanceof MobEntity && CloseEntities.getPos().isInRange(mod.getPlayer().getPos(), 1.0) && CloseEntities != mod.getEntity()) {
+               if (CloseEntities instanceof MobEntity && EntityVer.getPos(CloseEntities).isInRange(EntityVer.getPos(mod.getPlayer()), 1.0) && CloseEntities != mod.getEntity()) {
                   this.setDebugState("Killing annoying entity.");
                   return new KillEntitiesTask(CloseEntities.getClass());
                }
@@ -263,8 +264,8 @@ public class TimeoutWanderTask extends Task implements ITaskRequiresGrounded {
          return true;
       } else {
          LivingEntity player = this.controller.getPlayer();
-         if (player != null && player.getPos() != null && (player.isOnGround() || player.isTouchingWater())) {
-            double sqDist = player.getPos().squaredDistanceTo(this.origin);
+         if (player != null && EntityVer.getPos(player) != null && (player.isOnGround() || player.isTouchingWater())) {
+            double sqDist = EntityVer.getPos(player).squaredDistanceTo(this.origin);
             double toWander = this.distanceToWander + this.wanderDistanceExtension;
             return sqDist > toWander * toWander;
          } else {

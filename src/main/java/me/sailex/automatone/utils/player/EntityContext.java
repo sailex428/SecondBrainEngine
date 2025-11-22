@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.utils.player;
 
+import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
 import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.cache.IWorldData;
 import me.sailex.automatone.api.pathing.calc.Avoidance;
@@ -73,8 +74,8 @@ public class EntityContext implements IEntityContext {
 
     @Override
     public ServerWorld world() {
-        World world = this.entity.getWorld();
-        if (world.isClient) throw new IllegalStateException();
+        World world = ServerPlayerEntityVer.getWorld(this.entity);
+        if (world.isClient()) throw new IllegalStateException();
         return (ServerWorld) world;
     }
 

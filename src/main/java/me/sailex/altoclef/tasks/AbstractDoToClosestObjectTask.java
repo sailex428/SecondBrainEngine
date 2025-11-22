@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.movement.TimeoutWanderTask;
 import me.sailex.altoclef.tasksystem.Task;
 import net.minecraft.util.math.Vec3d;
@@ -61,7 +62,7 @@ public abstract class AbstractDoToClosestObjectTask<T> extends Task {
          } else if (this.goalTask != null) {
             this.setDebugState("Moving towards closest...");
             double currentHeuristic = this.getCurrentCalculatedHeuristic(mod);
-            double closestDistanceSqr = this.getPos(mod, this.currentlyPursuing).squaredDistanceTo(mod.getPlayer().getPos());
+            double closestDistanceSqr = this.getPos(mod, this.currentlyPursuing).squaredDistanceTo(EntityVer.getPos(mod.getPlayer()));
             int lastTick = this.controller.getWorld().getServer().getTicks();
             if (!this.heuristicMap.containsKey(this.currentlyPursuing)) {
                this.heuristicMap.put(this.currentlyPursuing, new CachedHeuristic());
@@ -73,7 +74,7 @@ public abstract class AbstractDoToClosestObjectTask<T> extends Task {
             h.setTickAttempted(lastTick);
             if (this.heuristicMap.containsKey(newClosest)) {
                CachedHeuristic maybeReAttempt = this.heuristicMap.get(newClosest);
-               double maybeClosestDistance = this.getPos(mod, newClosest).squaredDistanceTo(mod.getPlayer().getPos());
+               double maybeClosestDistance = this.getPos(mod, newClosest).squaredDistanceTo(EntityVer.getPos(mod.getPlayer()));
                if (maybeReAttempt.getHeuristicValue() < h.getHeuristicValue() || maybeClosestDistance < maybeReAttempt.getClosestDistanceSqr() / 4.0) {
                   this.setDebugState("Retrying old heuristic!");
                   this.currentlyPursuing = newClosest;

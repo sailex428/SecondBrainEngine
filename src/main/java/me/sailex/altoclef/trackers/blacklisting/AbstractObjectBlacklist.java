@@ -2,6 +2,7 @@ package me.sailex.altoclef.trackers.blacklisting;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.util.MiningRequirement;
 import me.sailex.altoclef.util.helpers.StorageHelper;
 import net.minecraft.util.math.Vec3d;
@@ -22,7 +23,7 @@ public abstract class AbstractObjectBlacklist<T> {
       }
 
       BlacklistEntry entry = this.entries.get(item);
-      double newDistance = this.getPos(item).squaredDistanceTo(mod.getPlayer().getPos());
+      double newDistance = this.getPos(item).squaredDistanceTo(EntityVer.getPos(mod.getPlayer()));
       MiningRequirement newTool = StorageHelper.getCurrentMiningRequirement(mod);
       if (newTool.ordinal() > entry.bestTool.ordinal() || newDistance < entry.bestDistanceSq - 1.0) {
          if (newTool.ordinal() > entry.bestTool.ordinal()) {

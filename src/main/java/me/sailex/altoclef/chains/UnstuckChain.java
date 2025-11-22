@@ -2,6 +2,7 @@ package me.sailex.altoclef.chains;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.construction.DestroyBlockTask;
 import me.sailex.altoclef.tasks.movement.GetOutOfWaterTask;
 import me.sailex.altoclef.tasks.movement.GetToBlockTask;
@@ -38,7 +39,7 @@ public class UnstuckChain extends SingleTaskChain {
       if (this.controller != null && this.controller.getTaskRunner().isActive()) {
          this.isProbablyStuck = false;
          LivingEntity player = this.controller.getEntity();
-         this.posHistory.addFirst(player.getPos());
+         this.posHistory.addFirst(EntityVer.getPos(player));
          if (this.posHistory.size() > 500) {
             this.posHistory.removeLast();
          }
@@ -101,9 +102,9 @@ public class UnstuckChain extends SingleTaskChain {
          this.isProbablyStuck = true;
          BlockPos playerPos = player.getBlockPos();
          BlockPos toBreak = null;
-         if (player.getWorld().getBlockState(playerPos).isOf(Blocks.POWDER_SNOW)) {
+         if (EntityVer.getWorld(player).getBlockState(playerPos).isOf(Blocks.POWDER_SNOW)) {
             toBreak = playerPos;
-         } else if (player.getWorld().getBlockState(playerPos.up()).isOf(Blocks.POWDER_SNOW)) {
+         } else if (EntityVer.getWorld(player).getBlockState(playerPos.up()).isOf(Blocks.POWDER_SNOW)) {
             toBreak = playerPos.up();
          }
 

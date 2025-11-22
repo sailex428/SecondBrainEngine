@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.movement;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.AbstractDoToClosestObjectTask;
 import me.sailex.altoclef.tasks.resources.SatisfyMiningRequirementTask;
 import me.sailex.altoclef.tasks.slot.EnsureFreeInventorySlotTask;
@@ -252,9 +253,9 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
    protected Vec3d getPos(AltoClefController mod, ItemEntity obj) {
       if (!obj.isOnGround() && !obj.isTouchingWater()) {
          BlockPos p = obj.getBlockPos();
-         return !WorldHelper.isSolidBlock(this.controller, p.down(3)) ? obj.getPos().subtract(0.0, 2.0, 0.0) : obj.getPos().subtract(0.0, 1.0, 0.0);
+         return !WorldHelper.isSolidBlock(this.controller, p.down(3)) ? EntityVer.getPos(obj).subtract(0.0, 2.0, 0.0) : EntityVer.getPos(obj).subtract(0.0, 1.0, 0.0);
       } else {
-         return obj.getPos();
+         return EntityVer.getPos(obj);
       }
    }
 
@@ -265,7 +266,7 @@ public class PickupDroppedItemTask extends AbstractDoToClosestObjectTask<ItemEnt
 
    @Override
    protected Vec3d getOriginPos(AltoClefController mod) {
-      return mod.getPlayer().getPos();
+      return EntityVer.getPos(mod.getPlayer());
    }
 
    protected Task getGoalTask(ItemEntity itemEntity) {

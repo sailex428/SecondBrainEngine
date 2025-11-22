@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.speedrun.beatgame.prioritytask.prioritycalculat
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.multiversion.item.ItemVer;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.resources.CollectFoodTask;
 import me.sailex.altoclef.util.helpers.StorageHelper;
 import me.sailex.altoclef.util.helpers.WorldHelper;
@@ -123,7 +124,8 @@ public class CollectFoodPriorityCalculator extends ItemPriorityCalculator {
 
          for (CollectFoodTask.CookableFoodTarget cookable : CollectFoodTask.COOKABLE_FOODS) {
             if (mod.getEntityTracker().entityFound(cookable.mobToKill)) {
-               Optional<Entity> nearest = mod.getEntityTracker().getClosestEntity(mod.getPlayer().getPos(), notBaby, cookable.mobToKill);
+               Optional<Entity> nearest = mod.getEntityTracker().getClosestEntity(EntityVer.getPos(mod.getPlayer()),
+                     notBaby, cookable.mobToKill);
                if (!nearest.isEmpty()) {
                   int hungerPerformance = cookable.getCookedUnits();
                   double sqDistance = nearest.get().squaredDistanceTo(mod.getPlayer());
@@ -151,14 +153,16 @@ public class CollectFoodPriorityCalculator extends ItemPriorityCalculator {
 
    private double pickupBlockTaskOrNull(AltoClefController mod, Block blockToCheck, Item itemToGrab, Predicate<BlockPos> accept, double maxRange) {
       Predicate<BlockPos> acceptPlus = blockPos -> !WorldHelper.canBreak(mod, blockPos) ? false : accept.test(blockPos);
-      Optional<BlockPos> nearestBlock = mod.getBlockScanner().getNearestBlock(mod.getPlayer().getPos(), acceptPlus, blockToCheck);
-      if (nearestBlock.isPresent() && !nearestBlock.get().isWithinDistance(mod.getPlayer().getPos(), maxRange)) {
+      Optional<BlockPos> nearestBlock = mod.getBlockScanner().getNearestBlock(EntityVer.getPos(mod.getPlayer()),
+            acceptPlus, blockToCheck);
+      if (nearestBlock.isPresent()
+            && !nearestBlock.get().isWithinDistance(EntityVer.getPos(mod.getPlayer()), maxRange)) {
          nearestBlock = Optional.empty();
       }
 
       Optional<ItemEntity> nearestDrop = Optional.empty();
       if (mod.getEntityTracker().itemDropped(itemToGrab)) {
-         nearestDrop = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().getPos(), itemToGrab);
+         nearestDrop = mod.getEntityTracker().getClosestItemDrop(EntityVer.getPos(mod.getPlayer()), itemToGrab);
       }
 
       if (nearestDrop.isPresent()) {
@@ -175,7 +179,7 @@ public class CollectFoodPriorityCalculator extends ItemPriorityCalculator {
    private double pickupTaskOrNull(AltoClefController mod, Item itemToGrab, double maxRange) {
       Optional<ItemEntity> nearestDrop = Optional.empty();
       if (mod.getEntityTracker().itemDropped(itemToGrab)) {
-         nearestDrop = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().getPos(), itemToGrab);
+         nearestDrop = mod.getEntityTracker().getClosestItemDrop(EntityVer.getPos(mod.getPlayer()), itemToGrab);
       }
 
       if (nearestDrop.isPresent() && nearestDrop.get().isInRange(mod.getPlayer(), maxRange)) {

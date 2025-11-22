@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.PlaceObsidianBucketTask;
 import me.sailex.altoclef.tasks.movement.TimeoutWanderTask;
@@ -89,7 +90,7 @@ public class CollectObsidianTask extends ResourceTask {
       } else if (this.forceCompleteTask != null && this.forceCompleteTask.isActive() && !this.forceCompleteTask.isFinished()) {
          return this.forceCompleteTask;
       } else {
-         Predicate<BlockPos> goodObsidian = blockPos -> blockPos.isWithinDistance(mod.getPlayer().getPos(), 800.0) && WorldHelper.canBreak(mod, blockPos);
+         Predicate<BlockPos> goodObsidian = blockPos -> blockPos.isWithinDistance(EntityVer.getPos(mod.getPlayer()), 800.0) && WorldHelper.canBreak(mod, blockPos);
          if (mod.getBlockScanner().anyFound(goodObsidian, Blocks.OBSIDIAN) || mod.getEntityTracker().itemDropped(Items.OBSIDIAN)) {
             this.setDebugState("Mining/Collecting obsidian");
             this.placeObsidianTask = null;
@@ -112,7 +113,7 @@ public class CollectObsidianTask extends ResourceTask {
 
             if (this.placeObsidianTask != null
                && !mod.getItemStorage().hasItem(Items.LAVA_BUCKET)
-               && !this.placeObsidianTask.getPos().isWithinDistance(mod.getPlayer().getPos(), 4.0)) {
+               && !this.placeObsidianTask.getPos().isWithinDistance(EntityVer.getPos(mod.getPlayer()), 4.0)) {
                BlockPos goodPos = getGoodObsidianPosition(mod);
                if (goodPos != null) {
                   Debug.logMessage("(nudged obsidian target closer)");

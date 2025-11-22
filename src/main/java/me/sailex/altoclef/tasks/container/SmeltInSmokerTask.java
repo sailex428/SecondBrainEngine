@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.container;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.mixins.MixinAbstractFurnaceBlockEntity;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.PlaceBlockNearbyTask;
@@ -21,6 +22,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
@@ -113,9 +115,10 @@ public class SmeltInSmokerTask extends ResourceTask {
                this.smokerPos = nearestSmoker.get();
             }
 
+            Vec3d pos = EntityVer.getPos(controller.getPlayer());
             if (!this.smokerPos
                .isWithinDistance(
-                  new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z), 4.5
+                  new Vec3i((int)pos.x, (int)pos.y, (int)pos.z), 4.5
                )) {
                this.setDebugState("Going to smoker.");
                return new GetCloseToBlockTask(this.smokerPos);

@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.api.utils;
 
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.automatone.api.BaritoneAPI;
 import me.sailex.automatone.api.IBaritone;
 import net.minecraft.block.AbstractFireBlock;
@@ -197,8 +198,8 @@ public final class RotationUtils {
             return possibleRotation;
         }
 
-        BlockState state = entity.getWorld().getBlockState(pos);
-        VoxelShape shape = state.getOutlineShape(entity.getWorld(), pos);
+        BlockState state = EntityVer.getWorld(entity).getBlockState(pos);
+        VoxelShape shape = state.getOutlineShape(EntityVer.getWorld(entity), pos);
         if (shape.isEmpty()) {
             shape = VoxelShapes.fullCube();
         }
@@ -234,7 +235,7 @@ public final class RotationUtils {
             if (((BlockHitResult) result).getBlockPos().equals(pos)) {
                 return Optional.of(rotation);
             }
-            if (entity.getWorld().getBlockState(pos).getBlock() instanceof AbstractFireBlock && ((BlockHitResult) result).getBlockPos().equals(pos.down())) {
+            if (EntityVer.getWorld(entity).getBlockState(pos).getBlock() instanceof AbstractFireBlock && ((BlockHitResult) result).getBlockPos().equals(pos.down())) {
                 return Optional.of(rotation);
             }
         }
@@ -251,7 +252,7 @@ public final class RotationUtils {
      * @return The optional rotation
      */
     public static Optional<Rotation> reachableCenter(Entity entity, BlockPos pos, double blockReachDistance, boolean wouldSneak) {
-        return reachableOffset(entity, pos, VecUtils.calculateBlockCenter(entity.getWorld(), pos), blockReachDistance, wouldSneak);
+        return reachableOffset(entity, pos, VecUtils.calculateBlockCenter(EntityVer.getWorld(entity), pos), blockReachDistance, wouldSneak);
     }
 
     public static Vec3d getCameraPosVec(Entity entity) {

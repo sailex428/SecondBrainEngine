@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.api.utils;
 
+import me.sailex.altoclef.multiversion.EntityVer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.util.hit.HitResult;
@@ -62,7 +63,7 @@ public final class RayTraceUtils {
                 direction.y * blockReachDistance,
                 direction.z * blockReachDistance
         );
-        return entity.getWorld().raycast(new RaycastContext(start, end, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, entity));
+        return EntityVer.getWorld(entity).raycast(new RaycastContext(start, end, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, entity));
     }
 
     public static Vec3d inferSneakingEyePosition(Entity entity) {

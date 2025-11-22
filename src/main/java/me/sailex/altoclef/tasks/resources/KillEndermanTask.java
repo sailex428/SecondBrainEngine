@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.entity.KillEntitiesTask;
 import me.sailex.altoclef.tasks.entity.KillEntityTask;
@@ -65,7 +66,7 @@ public class KillEndermanTask extends ResourceTask {
          int TOO_FAR_AWAY = WorldHelper.getCurrentDimension(mod) == Dimension.NETHER ? 10 : 256;
 
          for (EndermanEntity entity : mod.getEntityTracker().getTrackedEntities(EndermanEntity.class)) {
-            if (entity.isAlive() && belowNetherRoof.test(entity) && entity.isAngry() && entity.getPos().isInRange(mod.getPlayer().getPos(), TOO_FAR_AWAY)
+            if (entity.isAlive() && belowNetherRoof.test(entity) && entity.isAngry() && EntityVer.getPos(entity).isInRange(EntityVer.getPos(mod.getPlayer()), TOO_FAR_AWAY)
                )
              {
                return new KillEntityTask(entity);

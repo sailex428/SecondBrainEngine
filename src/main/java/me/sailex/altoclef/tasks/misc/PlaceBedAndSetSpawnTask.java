@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.misc;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.tasks.DoToClosestBlockTask;
 import me.sailex.altoclef.tasks.InteractWithBlockTask;
@@ -153,7 +154,7 @@ public class PlaceBedAndSetSpawnTask extends Task {
       } else if (mod.getBlockScanner()
          .anyFound(
             blockPosx -> WorldHelper.canReach(this.controller, blockPosx)
-                  && blockPosx.isWithinDistance(mod.getPlayer().getPos(), 40.0)
+                  && blockPosx.isWithinDistance(EntityVer.getPos(mod.getPlayer()), 40.0)
                   && mod.getItemStorage().hasItem(ItemHelper.BED)
                || WorldHelper.canReach(this.controller, blockPosx) && !mod.getItemStorage().hasItem(ItemHelper.BED),
             ItemHelper.itemsToBlocks(ItemHelper.BED)
@@ -162,7 +163,7 @@ public class PlaceBedAndSetSpawnTask extends Task {
          return new DoToClosestBlockTask(
             toSleepIn -> {
                boolean closeEnough = toSleepIn.isWithinDistance(
-                  new Vec3i((int)mod.getPlayer().getPos().x, (int)mod.getPlayer().getPos().y, (int)mod.getPlayer().getPos().z), 3.0
+                  new Vec3i((int)EntityVer.getPos(mod.getPlayer()).x, (int)EntityVer.getPos(mod.getPlayer()).y, (int)EntityVer.getPos(mod.getPlayer()).z), 3.0
                );
                if (closeEnough) {
                   Vec3d centerBed = new Vec3d(toSleepIn.getX() + 0.5, toSleepIn.getY() + 0.2, toSleepIn.getZ() + 0.5);
@@ -366,7 +367,7 @@ public class PlaceBedAndSetSpawnTask extends Task {
          for (int z = origin.getZ() - 10; z < origin.getZ() + 10; z++) {
             for (int y = origin.getY() - 10; y < origin.getY() + 10; y++) {
                BlockPos attemptPos = new BlockPos(x, y, z);
-               double distance = BlockPosVer.getSquaredDistance(attemptPos, mod.getPlayer().getPos());
+               double distance = BlockPosVer.getSquaredDistance(attemptPos, EntityVer.getPos(mod.getPlayer()));
                Debug.logInternal("Checking position: " + attemptPos);
                if (distance > closestDist) {
                   Debug.logInternal("Skipping position: " + attemptPos);

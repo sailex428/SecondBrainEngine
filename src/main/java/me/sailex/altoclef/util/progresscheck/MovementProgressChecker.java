@@ -1,6 +1,7 @@
 package me.sailex.altoclef.util.progresscheck;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.util.helpers.WorldHelper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -45,7 +46,7 @@ public class MovementProgressChecker {
          return !this.mineChecker.failed();
       } else {
          this.mineChecker.reset();
-         this.distanceChecker.setProgress(mod.getPlayer().getPos());
+         this.distanceChecker.setProgress(EntityVer.getPos(mod.getPlayer()));
          return !this.distanceChecker.failed();
       }
    }

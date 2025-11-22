@@ -1,6 +1,7 @@
 package me.sailex.altoclef.util.baritone;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.util.helpers.BaritoneHelper;
 import me.sailex.automatone.api.pathing.goals.Goal;
 import me.sailex.automatone.api.pathing.goals.GoalXZ;
@@ -31,7 +32,7 @@ public abstract class GoalRunAwayFromEntities implements Goal {
                if (entity != null && entity.isAlive()) {
                   double sqDistance;
                   if (this.xzOnly) {
-                     sqDistance = entity.getPos().subtract(x, y, z).multiply(1.0, 0.0, 1.0).lengthSquared();
+                     sqDistance = EntityVer.getPos(entity).subtract(x, y, z).multiply(1.0, 0.0, 1.0).lengthSquared();
                   } else {
                      sqDistance = entity.squaredDistanceTo(x, y, z);
                   }

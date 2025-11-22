@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.speedrun;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.entity.DoToClosestEntityTask;
 import me.sailex.altoclef.tasks.entity.KillEntitiesTask;
 import me.sailex.altoclef.tasks.movement.GetToBlockTask;
@@ -106,7 +107,7 @@ public class WaitForDragonAndPearlTask extends Task {
                   Debug.logMessage("THROWING PEARL!!");
                   return this.throwPearlTask;
                } else if (mod.getPlayer().getBlockPos().getY() < minHeight) {
-                  if (mod.getEntityTracker().entityFound(entity -> mod.getPlayer().getPos().isInRange(entity.getPos(), 4.0), AreaEffectCloudEntity.class)) {
+                  if (mod.getEntityTracker().entityFound(entity -> EntityVer.getPos(mod.getPlayer()).isInRange(EntityVer.getPos(entity), 4.0), AreaEffectCloudEntity.class)) {
                      if (mod.getEntityTracker().getClosestEntity(EnderDragonEntity.class).isPresent() && !mod.getBaritone().getPathingBehavior().isPathing()) {
                         LookHelper.lookAt(mod, mod.getEntityTracker().getClosestEntity(EnderDragonEntity.class).get().getEyePos());
                      }
@@ -127,13 +128,11 @@ public class WaitForDragonAndPearlTask extends Task {
                               LookHelper.lookAt(mod, mod.getEntityTracker().getClosestEntity(EnderDragonEntity.class).get().getEyePos());
                            }
 
-                           return null;
-                        }
-                     }, EndCrystalEntity.class) : this.heightPillarTask);
-                  } else if (!WorldHelper.inRangeXZ(mod.getPlayer(), this.targetToPearl, 38.0) && mod.getPlayer().getPos().getY() < minHeight && !this.hasPillar
-                     )
-                   {
-                     if (mod.getEntityTracker().entityFound(entity -> mod.getPlayer().getPos().isInRange(entity.getPos(), 4.0), AreaEffectCloudEntity.class)) {
+                         return null;
+                      }
+                   }, EndCrystalEntity.class) : this.heightPillarTask);
+                  } else if (!WorldHelper.inRangeXZ(mod.getPlayer(), this.targetToPearl, 38.0) && EntityVer.getPos(mod.getPlayer()).getY() < minHeight && !this.hasPillar) {
+                     if (mod.getEntityTracker().entityFound(entity -> EntityVer.getPos(mod.getPlayer()).isInRange(EntityVer.getPos(entity), 4.0), AreaEffectCloudEntity.class)) {
                         if (mod.getEntityTracker().getClosestEntity(EnderDragonEntity.class).isPresent() && !mod.getBaritone().getPathingBehavior().isPathing()) {
                            LookHelper.lookAt(mod, mod.getEntityTracker().getClosestEntity(EnderDragonEntity.class).get().getEyePos());
                         }
@@ -154,9 +153,7 @@ public class WaitForDragonAndPearlTask extends Task {
                } else {
                   this.setDebugState("We're high enough.");
                   Optional<Entity> dragonFireball = mod.getEntityTracker().getClosestEntity(DragonFireballEntity.class);
-                  if (dragonFireball.isPresent()
-                     && dragonFireball.get().isInRange(mod.getPlayer(), 40.0)
-                     && LookHelper.cleanLineOfSight(mod.getPlayer(), dragonFireball.get().getPos(), 40.0)) {
+                  if (dragonFireball.isPresent() && dragonFireball.get().isInRange(mod.getPlayer(), 40.0) && LookHelper.cleanLineOfSight(mod.getPlayer(), EntityVer.getPos(dragonFireball.get()), 40.0)) {
                      this.pillarUpFurther = new GetToYTask(mod.getPlayer().getBlockY() + 5);
                      Debug.logMessage("HOLDUP");
                      return this.pillarUpFurther;
@@ -212,7 +209,7 @@ public class WaitForDragonAndPearlTask extends Task {
          return false;
       } else {
          boolean fireballTooClose = fireball.get().isInRange(mod.getPlayer(), 40.0);
-         boolean fireballInSight = LookHelper.cleanLineOfSight(mod.getPlayer(), fireball.get().getPos(), 40.0);
+         boolean fireballInSight = LookHelper.cleanLineOfSight(mod.getPlayer(), EntityVer.getPos(fireball.get()), 40.0);
          return fireballTooClose && fireballInSight;
       }
    }

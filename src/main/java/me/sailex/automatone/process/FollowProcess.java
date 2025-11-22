@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.process;
 
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.pathing.goals.Goal;
 import me.sailex.automatone.api.pathing.goals.GoalComposite;
@@ -59,7 +60,7 @@ public final class FollowProcess extends BaritoneProcessHelper implements IFollo
         if (baritone.settings().followOffsetDistance.get() == 0) {
             pos = following.getBlockPos();
         } else {
-            GoalXZ g = GoalXZ.fromDirection(following.getPos(), baritone.settings().followOffsetDirection.get(), baritone.settings().followOffsetDistance.get());
+            GoalXZ g = GoalXZ.fromDirection(EntityVer.getPos(following), baritone.settings().followOffsetDirection.get(), baritone.settings().followOffsetDistance.get());
             pos = BlockPos.ofFloored(g.getX(), following.getY(), g.getZ());
         }
         return new GoalNear(pos, baritone.settings().followRadius.get());

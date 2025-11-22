@@ -17,6 +17,7 @@
 
 package me.sailex.automatone;
 
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.automatone.api.IBaritone;
 import me.sailex.automatone.api.IBaritoneProvider;
 import me.sailex.automatone.api.Settings;
@@ -53,7 +54,7 @@ public final class BaritoneProvider implements IBaritoneProvider {
 
     @Override
     public IBaritone getBaritone(ServerPlayerEntity entity) {
-        if (entity.getWorld().isClient()) throw new IllegalStateException("lol we only support servers now");
+        if (EntityVer.getWorld(entity).isClient()) throw new IllegalStateException("lol we only support servers now");
 
         IBaritone baritone = playerToBaritone.get(entity);
         if (baritone == null) {

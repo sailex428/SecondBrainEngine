@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.tasks.DoToClosestBlockTask;
 import me.sailex.altoclef.tasks.InteractWithBlockTask;
@@ -74,7 +75,7 @@ public class CollectCropTask extends ResourceTask {
          }
 
          if (mod.getEntityTracker().itemDropped(this.cropSeed)) {
-            Optional<ItemEntity> closest = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().getPos(), this.cropSeed);
+            Optional<ItemEntity> closest = mod.getEntityTracker().getClosestItemDrop(EntityVer.getPos(mod.getPlayer()), this.cropSeed);
             if (closest.isPresent() && closest.get().isInRange(mod.getPlayer(), 7.0)) {
                return this.collectSeedTask;
             }

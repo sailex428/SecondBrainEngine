@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.resources;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.entity.AbstractDoToEntityTask;
 import me.sailex.altoclef.tasks.movement.TimeoutWanderTask;
@@ -141,7 +142,7 @@ public class TradeWithPiglinsTask extends ResourceTask {
             return null;
          } else {
             if (this.currentlyBartering != null && !EntityHelper.isTradingPiglin(this.currentlyBartering)) {
-               Optional<Entity> closestHoglin = mod.getEntityTracker().getClosestEntity(this.currentlyBartering.getPos(), HoglinEntity.class);
+               Optional<Entity> closestHoglin = mod.getEntityTracker().getClosestEntity(EntityVer.getPos(this.currentlyBartering), HoglinEntity.class);
                if (closestHoglin.isPresent() && closestHoglin.get().isInRange(entity, 64.0)) {
                   Debug.logMessage("Aborting further trading because a hoglin showed up");
                   this.blacklisted.add(this.currentlyBartering);
@@ -163,14 +164,13 @@ public class TradeWithPiglinsTask extends ResourceTask {
       @Override
       protected Optional<Entity> getEntityTarget(AltoClefController mod) {
          Optional<Entity> found = mod.getEntityTracker()
-            .getClosestEntity(
-               mod.getPlayer().getPos(),
+            .getClosestEntity(EntityVer.getPos(mod.getPlayer()),
                entity -> {
                   if (!this.blacklisted.contains(entity)
                      && !EntityHelper.isTradingPiglin(entity)
                      && (!(entity instanceof LivingEntity) || !((LivingEntity)entity).isBaby())
                      && (this.currentlyBartering == null || entity.isInRange(this.currentlyBartering, 10.0))) {
-                     Optional<Entity> closestHoglin = mod.getEntityTracker().getClosestEntity(entity.getPos(), HoglinEntity.class);
+                     Optional<Entity> closestHoglin = mod.getEntityTracker().getClosestEntity(EntityVer.getPos(entity), HoglinEntity.class);
                      return closestHoglin.isEmpty() || !closestHoglin.get().isInRange(entity, 64.0);
                   } else {
                      return false;

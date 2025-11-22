@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.speedrun;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.mixins.LivingEntityMixin;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.tasks.DoToClosestBlockTask;
 import me.sailex.altoclef.tasks.entity.AbstractKillEntityTask;
@@ -259,7 +260,7 @@ public class KillEnderDragonTask extends Task {
                         Entity head = dragon.head;
                         if (head.isInRange(mod.getPlayer(), 7.5) && dragon.ticksSinceDeath <= 1) {
                            AbstractKillEntityTask.equipWeapon(mod);
-                           Vec3d targetLookPos = head.getPos().add(0.0, 3.0, 0.0);
+                           Vec3d targetLookPos = EntityVer.getPos(head).add(0.0, 3.0, 0.0);
                            Rotation targetRotation = RotationUtils.calcRotationFromVec3d(
                               mod.getBaritone().getPlayerContext().headPos(), targetLookPos, mod.getBaritone().getPlayerContext().entityRotations()
                            );
@@ -279,7 +280,7 @@ public class KillEnderDragonTask extends Task {
                               for (int dz = -2; dz <= 2; dz++) {
                                  if (Math.abs(dx) != 2 || Math.abs(dz) != 2) {
                                     BlockPos toCheck = KillEnderDragonTask.this.exitPortalTop.add(dx, bottomYDelta, dz);
-                                    double distSq = BlockPosVer.getSquaredDistance(toCheck, head.getPos());
+                                    double distSq = BlockPosVer.getSquaredDistance(toCheck, EntityVer.getPos(head));
                                     if (distSq < closestDist) {
                                        closest = toCheck;
                                        closestDist = distSq;

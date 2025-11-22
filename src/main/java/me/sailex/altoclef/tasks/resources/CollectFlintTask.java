@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.DoToClosestBlockTask;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.DestroyBlockTask;
@@ -36,11 +37,11 @@ public class CollectFlintTask extends ResourceTask {
    protected Task onResourceTick(AltoClefController mod) {
       Optional<BlockPos> closest = mod.getBlockScanner()
          .getNearestBlock(
-            mod.getPlayer().getPos(),
+                 EntityVer.getPos(mod.getPlayer()),
             validGravel -> WorldHelper.fallingBlockSafeToBreak(this.controller, validGravel) && WorldHelper.canBreak(this.controller, validGravel),
             Blocks.GRAVEL
          );
-      if (closest.isPresent() && closest.get().isWithinDistance(mod.getPlayer().getPos(), 10.0)) {
+      if (closest.isPresent() && closest.get().isWithinDistance(EntityVer.getPos(mod.getPlayer()), 10.0)) {
          return new DoToClosestBlockTask(DestroyBlockTask::new, Blocks.GRAVEL);
       } else {
          return (Task)(mod.getItemStorage().hasItem(Items.GRAVEL) ? new PlaceBlockNearbyTask(Blocks.GRAVEL) : TaskCatalogue.getItemTask(Items.GRAVEL, 1));

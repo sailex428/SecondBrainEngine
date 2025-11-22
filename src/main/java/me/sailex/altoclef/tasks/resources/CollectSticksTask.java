@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.CraftInInventoryTask;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasksystem.Task;
@@ -53,7 +54,7 @@ public class CollectSticksTask extends ResourceTask {
          );
       } else {
          Optional<BlockPos> nearestBush = mod.getBlockScanner().getNearestBlock(Blocks.DEAD_BUSH);
-         return (Task)(nearestBush.isPresent() && nearestBush.get().isWithinDistance(mod.getPlayer().getPos(), 20.0)
+         return (Task)(nearestBush.isPresent() && nearestBush.get().isWithinDistance(EntityVer.getPos(mod.getPlayer()), 20.0)
             ? new MineAndCollectTask(Items.DEAD_BUSH, 1, new Block[]{Blocks.DEAD_BUSH}, MiningRequirement.HAND)
             : new CraftInInventoryTask(
                new RecipeTarget(

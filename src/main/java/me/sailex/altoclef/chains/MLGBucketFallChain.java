@@ -2,6 +2,7 @@ package me.sailex.altoclef.chains;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.movement.MLGBucketTask;
 import me.sailex.altoclef.tasksystem.ITaskOverridesGrounded;
 import me.sailex.altoclef.tasksystem.TaskRunner;
@@ -59,7 +60,7 @@ public class MLGBucketFallChain extends SingleTaskChain implements ITaskOverride
                   isPlacedWater = false;
                }
 
-               if (placed != null && placed.isWithinDistance(mod.getPlayer().getPos(), 5.5) && isPlacedWater) {
+               if (placed != null && placed.isWithinDistance(EntityVer.getPos(mod.getPlayer()), 5.5) && isPlacedWater) {
                   mod.getBehaviour().push();
                   mod.getBehaviour().setRayTracingFluidHandling(FluidHandling.SOURCE_ONLY);
                   Optional<Rotation> reach = LookHelper.getReach(this.controller, placed, Direction.UP);

@@ -4,10 +4,10 @@ import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.eventbus.EventBus;
 import me.sailex.altoclef.eventbus.events.BlockBreakingCancelEvent;
 import me.sailex.altoclef.eventbus.events.BlockBreakingEvent;
+import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.message.SignedMessage;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 
@@ -47,7 +47,7 @@ public class PlayerExtraController {
      */
     public void chat(String message) {
         //? >=1.21.8 {
-        /*mod.getPlayer().getServer().getPlayerManager().broadcast(
+        /*ServerPlayerEntityVer.getWorld(mod.getPlayer()).getServer().getPlayerManager().broadcast(
                 SignedMessage.ofUnsigned(message), mod.getPlayer(),
                 MessageType.params(MessageType.CHAT, mod.getPlayer())
         );

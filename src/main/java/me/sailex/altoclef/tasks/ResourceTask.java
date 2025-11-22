@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.BotBehaviour;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.tasks.container.PickupFromContainerTask;
 import me.sailex.altoclef.tasks.movement.DefaultGoToDimensionTask;
@@ -84,14 +85,14 @@ public abstract class ResourceTask extends Task implements ITaskCanForce {
                   return this.pickupTask;
                }
 
-               Optional<ItemEntity> closest = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().getPos(), this.itemTargets);
+               Optional<ItemEntity> closest = mod.getEntityTracker().getClosestItemDrop(EntityVer.getPos(mod.getPlayer()), this.itemTargets);
                if (closest.isPresent() && !closest.get().isInRange(mod.getPlayer(), 10.0)) {
                   return this.onResourceTick(mod);
                }
             }
 
             double range = this.getPickupRange(mod);
-            Optional<ItemEntity> closest = mod.getEntityTracker().getClosestItemDrop(mod.getPlayer().getPos(), this.itemTargets);
+            Optional<ItemEntity> closest = mod.getEntityTracker().getClosestItemDrop(EntityVer.getPos(mod.getPlayer()), this.itemTargets);
             if (range < 0.0
                || closest.isPresent() && closest.get().isInRange(mod.getPlayer(), range)
                || this.pickupTask.isActive() && !this.pickupTask.isFinished()) {
@@ -108,11 +109,11 @@ public abstract class ResourceTask extends Task implements ITaskCanForce {
                );
             if (!containersWithItem.isEmpty()) {
                ContainerCache closest = containersWithItem.stream()
-                  .min(StlHelper.compareValues(container -> BlockPosVer.getSquaredDistance(container.getBlockPos(), mod.getPlayer().getPos())))
+                  .min(StlHelper.compareValues(container -> BlockPosVer.getSquaredDistance(container.getBlockPos(), EntityVer.getPos(mod.getPlayer()))))
                   .get();
                if (closest.getBlockPos()
                   .isWithinDistance(
-                     new Vec3i((int)mod.getPlayer().getPos().x, (int)mod.getPlayer().getPos().y, (int)mod.getPlayer().getPos().z),
+                     new Vec3i((int)EntityVer.getPos(mod.getPlayer()).x, (int)EntityVer.getPos(mod.getPlayer()).y, (int)EntityVer.getPos(mod.getPlayer()).z),
                      mod.getModSettings().getResourceChestLocateRange()
                   )) {
                   this.currentContainer = closest;
@@ -142,7 +143,7 @@ public abstract class ResourceTask extends Task implements ITaskCanForce {
                if (closest.isPresent()
                   && closest.get()
                      .isWithinDistance(
-                        new Vec3i((int)mod.getPlayer().getPos().x, (int)mod.getPlayer().getPos().y, (int)mod.getPlayer().getPos().z),
+                        new Vec3i((int)EntityVer.getPos(mod.getPlayer()).x, (int)EntityVer.getPos(mod.getPlayer()).y, (int)EntityVer.getPos(mod.getPlayer()).z),
                         mod.getModSettings().getResourceMineRange()
                      )) {
                   this.mineLastClosest = closest.get();
@@ -151,7 +152,7 @@ public abstract class ResourceTask extends Task implements ITaskCanForce {
                if (this.mineLastClosest != null
                   && this.mineLastClosest
                      .isWithinDistance(
-                        new Vec3i((int)mod.getPlayer().getPos().x, (int)mod.getPlayer().getPos().y, (int)mod.getPlayer().getPos().z),
+                        new Vec3i((int)EntityVer.getPos(mod.getPlayer()).x, (int)EntityVer.getPos(mod.getPlayer()).y, (int)EntityVer.getPos(mod.getPlayer()).z),
                         mod.getModSettings().getResourceMineRange() * 1.5 + 20.0
                      )) {
                   return new MineAndCollectTask(this.itemTargets, this.mineIfPresent, MiningRequirement.HAND);
@@ -173,7 +174,7 @@ public abstract class ResourceTask extends Task implements ITaskCanForce {
       return range < 0.0
          ? true
          : controller.getEntityTracker()
-            .getClosestItemDrop(controller.getEntity().getPos(), this.itemTargets)
+            .getClosestItemDrop(EntityVer.getPos(controller.getEntity()), this.itemTargets)
             .map(itemEntity -> itemEntity.isInRange(controller.getEntity(), range) || this.pickupTask.isActive() && !this.pickupTask.isFinished())
             .orElse(false);
    }

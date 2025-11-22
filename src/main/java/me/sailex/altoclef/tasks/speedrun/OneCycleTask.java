@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.speedrun;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.movement.GetToBlockTask;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.helpers.ItemHelper;
@@ -58,7 +59,7 @@ public class OneCycleTask extends Task {
 
          Direction offsetDir = dir.getAxis() == Axis.X ? Direction.SOUTH : Direction.WEST;
          BlockPos targetBlock = endPortalTop.down(3).offset(offsetDir, 3).offset(dir);
-         double d = this.distanceIgnoreY(WorldHelper.toVec3d(targetBlock), mod.getPlayer().getPos());
+         double d = this.distanceIgnoreY(WorldHelper.toVec3d(targetBlock), EntityVer.getPos(mod.getPlayer()));
          if (d > 0.7) {
             mod.log(d + "");
             return new GetToBlockTask(targetBlock);

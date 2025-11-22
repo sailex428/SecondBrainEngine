@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.speedrun.beatgame.prioritytask.tasks;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.resources.MineAndCollectTask;
 import me.sailex.altoclef.tasks.speedrun.beatgame.prioritytask.prioritycalculators.DistancePriorityCalculator;
 import me.sailex.altoclef.tasksystem.Task;
@@ -92,9 +93,11 @@ public class MineBlockPriorityTask extends PriorityTask {
    }
 
    private double getClosestDist(AltoClefController mod) {
-      Vec3d pos = mod.getPlayer().getPos();
-      Pair<Double, Optional<BlockPos>> closestBlock = MineAndCollectTask.MineOrCollectTask.getClosestBlock(mod, pos, this.toMine);
-      Pair<Double, Optional<ItemEntity>> closestDrop = MineAndCollectTask.MineOrCollectTask.getClosestItemDrop(mod, pos, this.droppedItemTargets);
-      return Math.min((Double)closestBlock.getLeft(), (Double)closestDrop.getLeft());
+      Vec3d pos = EntityVer.getPos(mod.getPlayer());
+      Pair<Double, Optional<BlockPos>> closestBlock = MineAndCollectTask.MineOrCollectTask.getClosestBlock(mod, pos,
+            this.toMine);
+      Pair<Double, Optional<ItemEntity>> closestDrop = MineAndCollectTask.MineOrCollectTask.getClosestItemDrop(mod, pos,
+            this.droppedItemTargets);
+      return Math.min((Double) closestBlock.getLeft(), (Double) closestDrop.getLeft());
    }
 }

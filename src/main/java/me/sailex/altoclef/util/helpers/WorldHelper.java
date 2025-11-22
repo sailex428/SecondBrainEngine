@@ -4,6 +4,7 @@ import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import me.sailex.mixins.EntityAccessor;
 import me.sailex.altoclef.multiversion.MethodWrapper;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.world.WorldVer;
 import me.sailex.altoclef.util.Dimension;
 import me.sailex.automatone.pathing.movement.CalculationContext;
@@ -57,11 +58,11 @@ public interface WorldHelper {
    }
 
    static Vec3i toVec3i(Vec3d pos) {
-      return new Vec3i((int)pos.getX(), (int)pos.getY(), (int)pos.getZ());
+      return new Vec3i((int) pos.getX(), (int) pos.getY(), (int) pos.getZ());
    }
 
    static BlockPos toBlockPos(Vec3d pos) {
-      return new BlockPos((int)pos.getX(), (int)pos.getY(), (int)pos.getZ());
+      return new BlockPos((int) pos.getX(), (int) pos.getY(), (int) pos.getZ());
    }
 
    static boolean isSourceBlock(AltoClefController controller, BlockPos pos, boolean onlyAcceptStill) {
@@ -98,7 +99,7 @@ public interface WorldHelper {
    }
 
    static boolean inRangeXZ(Entity entity, Vec3d to, double range) {
-      return inRangeXZ(entity.getPos(), to, range);
+      return inRangeXZ(EntityVer.getPos(entity), to, range);
    }
 
    static boolean inRangeXZ(Entity entity, BlockPos to, double range) {
@@ -106,7 +107,7 @@ public interface WorldHelper {
    }
 
    static boolean inRangeXZ(Entity entity, Entity to, double range) {
-      return inRangeXZ(entity, to.getPos(), range);
+      return inRangeXZ(entity, EntityVer.getPos(to), range);
    }
 
    static Dimension getCurrentDimension(AltoClefController controller) {
@@ -265,7 +266,7 @@ public interface WorldHelper {
    }
 
    static boolean isInsidePlayer(AltoClefController controller, BlockPos pos) {
-      return pos.isWithinDistance(controller.getPlayer().getPos(), 2.0);
+      return pos.isWithinDistance(EntityVer.getPos(controller.getPlayer()), 2.0);
    }
 
    static Iterable<BlockPos> getBlocksTouchingPlayer(LivingEntity player) {

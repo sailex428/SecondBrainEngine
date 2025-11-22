@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.InteractWithBlockTask;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.PlaceBlockTask;
@@ -68,7 +69,7 @@ public class CollectHoneycombTask extends ResourceTask {
          this.setDebugState("Getting shears");
          return new CataloguedResourceTask(new ItemTarget(Items.SHEARS, 1));
       } else if ((Integer)mod.getWorld().getBlockState(this.nest).get(Properties.HONEY_LEVEL) != 5) {
-         if (!this.nest.isWithinDistance(mod.getPlayer().getPos(), 20.0)) {
+         if (!this.nest.isWithinDistance(EntityVer.getPos(mod.getPlayer()), 20.0)) {
             this.setDebugState("Getting close to nest");
             return new GetCloseToBlockTask(this.nest);
          } else {

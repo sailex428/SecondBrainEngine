@@ -2,6 +2,7 @@ package me.sailex.altoclef.util.baritone;
 
 import me.sailex.automatone.api.pathing.goals.Goal;
 import me.sailex.automatone.api.pathing.goals.GoalBlock;
+import me.sailex.altoclef.multiversion.EntityVer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 
@@ -17,14 +18,15 @@ public class GoalFollowEntity implements Goal {
    @Override
    public boolean isInGoal(int x, int y, int z) {
       BlockPos p = new BlockPos(x, y, z);
-      return this.entity.getBlockPos().equals(p) || p.isWithinDistance(this.entity.getPos(), this.closeEnoughDistance);
+      return this.entity.getBlockPos().equals(p)
+            || p.isWithinDistance(EntityVer.getPos(this.entity), this.closeEnoughDistance);
    }
 
    @Override
    public double heuristic(int x, int y, int z) {
-      double xDiff = x - this.entity.getPos().getX();
+      double xDiff = x - EntityVer.getPos(this.entity).getX();
       int yDiff = y - this.entity.getBlockPos().getY();
-      double zDiff = z - this.entity.getPos().getZ();
+      double zDiff = z - EntityVer.getPos(this.entity).getZ();
       return GoalBlock.calculate(xDiff, yDiff, zDiff);
    }
 }

@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.movement;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.helpers.WorldHelper;
 import net.minecraft.block.Blocks;
@@ -39,9 +40,10 @@ public class GoToStrongholdPortalTask extends Task {
          }
       }
 
-      if (mod.getPlayer().getPos().distanceTo(WorldHelper.toVec3d(this.strongholdCoordinates)) < 10.0
-         && !mod.getBlockScanner().anyFound(Blocks.END_PORTAL_FRAME)) {
-         mod.log("Something went wrong whilst triangulating the stronghold... either the action got disrupted or the second eye went to a different stronghold");
+      if (EntityVer.getPos(mod.getPlayer()).distanceTo(WorldHelper.toVec3d(this.strongholdCoordinates)) < 10.0
+            && !mod.getBlockScanner().anyFound(Blocks.END_PORTAL_FRAME)) {
+         mod.log(
+               "Something went wrong whilst triangulating the stronghold... either the action got disrupted or the second eye went to a different stronghold");
          mod.log("We will try to triangulate again now...");
          this.strongholdCoordinates = null;
          this.locateCoordsTask = new LocateStrongholdCoordinatesTask(this.targetEyes);

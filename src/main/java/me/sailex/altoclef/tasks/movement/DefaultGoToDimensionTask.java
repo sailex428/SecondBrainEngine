@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.movement;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.construction.compound.ConstructNetherPortalBucketTask;
 import me.sailex.altoclef.tasks.construction.compound.ConstructNetherPortalObsidianTask;
 import me.sailex.altoclef.tasksystem.Task;
@@ -8,6 +9,7 @@ import me.sailex.altoclef.util.Dimension;
 import me.sailex.altoclef.util.helpers.WorldHelper;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.Optional;
@@ -125,9 +127,10 @@ public class DefaultGoToDimensionTask extends Task {
          return false;
       } else {
          Optional<BlockPos> closest = mod.getBlockScanner().getNearestBlock(Blocks.NETHER_PORTAL);
+          Vec3d pos = EntityVer.getPos(mod.getPlayer());
          return closest.isPresent()
             && closest.get()
-               .isWithinDistance(new Vec3i((int)mod.getPlayer().getPos().x, (int)mod.getPlayer().getPos().y, (int)mod.getPlayer().getPos().z), 2000.0);
+               .isWithinDistance(new Vec3i((int)pos.x, (int)pos.y, (int)pos.z), 2000.0);
       }
    }
 

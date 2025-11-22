@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.container;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.PlaceBlockNearbyTask;
 import me.sailex.altoclef.tasks.misc.EquipArmorTask;
@@ -80,9 +81,11 @@ public class UpgradeInSmithingTableTask extends ResourceTask {
             }
 
             if (!this.tablePos
-               .isWithinDistance(
-                  new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z), 4.5
-               )) {
+                  .isWithinDistance(
+                        new Vec3i((int) EntityVer.getPos(controller.getEntity()).x,
+                              (int) EntityVer.getPos(controller.getEntity()).y,
+                              (int) EntityVer.getPos(controller.getEntity()).z),
+                        4.5)) {
                this.setDebugState("Going to smithing table.");
                return new GetToBlockTask(this.tablePos);
             } else {

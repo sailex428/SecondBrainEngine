@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.PutOutFireTask;
@@ -76,12 +77,12 @@ public class CollectBlazeRodsTask extends ResourceTask {
 
             if (this.foundBlazeSpawner != null && toKill.isPresent()) {
                Entity kill = toKill.get();
-               Vec3d nearest = kill.getPos();
-               double sqDistanceToPlayer = nearest.squaredDistanceTo(mod.getPlayer().getPos());
+               Vec3d nearest = EntityVer.getPos(kill);
+               double sqDistanceToPlayer = nearest.squaredDistanceTo(EntityVer.getPos(mod.getPlayer()));
                if (sqDistanceToPlayer > 1024.0) {
                   BlockHitResult hit = mod.getWorld()
                      .raycast(new RaycastContext(mod.getPlayer().getCameraPosVec(1.0F), kill.getCameraPosVec(1.0F), ShapeType.OUTLINE, FluidHandling.NONE, mod.getPlayer()));
-                  if (hit != null && BlockPosVer.getSquaredDistance(hit.getBlockPos(), mod.getPlayer().getPos()) < sqDistanceToPlayer) {
+                  if (hit != null && BlockPosVer.getSquaredDistance(hit.getBlockPos(), EntityVer.getPos(mod.getPlayer())) < sqDistanceToPlayer) {
                      toKill = Optional.empty();
                   }
                }
@@ -101,7 +102,7 @@ public class CollectBlazeRodsTask extends ResourceTask {
             }
 
             if (this.foundBlazeSpawner != null) {
-               if (!this.foundBlazeSpawner.isWithinDistance(mod.getPlayer().getPos(), 4.0)) {
+               if (!this.foundBlazeSpawner.isWithinDistance(EntityVer.getPos(mod.getPlayer()), 4.0)) {
                   this.setDebugState("Going to blaze spawner");
                   return new GetToBlockTask(this.foundBlazeSpawner.up(), false);
                } else {

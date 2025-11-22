@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.movement;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.construction.compound.ConstructNetherPortalObsidianTask;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.Dimension;
@@ -85,8 +86,10 @@ public class FastTravelTask extends Task {
             if (!this.forceOverworldWalking) {
                Optional<BlockPos> portalEntrance = mod.getMiscBlockTracker().getLastUsedNetherPortal(Dimension.NETHER);
                if (portalEntrance.isPresent()
-                  && !portalEntrance.get()
-                     .isWithinDistance(new Vec3i((int)mod.getPlayer().getPos().x, (int)mod.getPlayer().getPos().y, (int)mod.getPlayer().getPos().z), 3.0)) {
+                     && !portalEntrance.get()
+                           .isWithinDistance(new Vec3i((int) EntityVer.getPos(mod.getPlayer()).x,
+                                 (int) EntityVer.getPos(mod.getPlayer()).y, (int) EntityVer.getPos(mod.getPlayer()).z),
+                                 3.0)) {
                   this.forceOverworldWalking = true;
                }
             }

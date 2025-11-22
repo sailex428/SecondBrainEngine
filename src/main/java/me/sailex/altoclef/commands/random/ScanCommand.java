@@ -7,6 +7,7 @@ import me.sailex.altoclef.commandsystem.ArgParser;
 import me.sailex.altoclef.commandsystem.Command;
 import me.sailex.altoclef.commandsystem.CommandException;
 import me.sailex.altoclef.util.helpers.FuzzySearchHelper;
+import me.sailex.altoclef.multiversion.EntityVer;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +36,7 @@ public class ScanCommand extends Command {
             String fieldName = field.getName();
             allBlockNames.add(fieldName.toLowerCase());
             if (fieldName.equalsIgnoreCase(blockStr)) {
-               block = (Block)field.get(Blocks.class);
+               block = (Block) field.get(Blocks.class);
             }
          } catch (IllegalAccessException var12) {
             throw new RuntimeException(var12);
@@ -51,7 +52,7 @@ public class ScanCommand extends Command {
          this.finish();
       } else {
          BlockScanner blockScanner = mod.getBlockScanner();
-         Optional<BlockPos> p = blockScanner.getNearestBlock(block, mod.getPlayer().getPos());
+         Optional<BlockPos> p = blockScanner.getNearestBlock(block, EntityVer.getPos(mod.getPlayer()));
          if (p.isPresent()) {
             mod.log("Closest " + blockStr + ": " + p.get().toString());
          } else {

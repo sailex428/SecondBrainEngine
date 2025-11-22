@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.container;
 
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.movement.GetToBlockTask;
 import me.sailex.altoclef.tasks.slot.EnsureFreeInventorySlotTask;
 import me.sailex.altoclef.tasksystem.Task;
@@ -32,14 +33,15 @@ public class PickupFromContainerTask extends Task {
       if (this.isFinished()) {
          return null;
       } else if (!this.containerPos
-         .isWithinDistance(
-            new Vec3i(
-               (int)this.controller.getEntity().getPos().x, (int)this.controller.getEntity().getPos().y, (int)this.controller.getEntity().getPos().z
-            ),
-            4.5
-         )) {
+            .isWithinDistance(
+                  new Vec3i(
+                        (int) EntityVer.getPos(this.controller.getEntity()).x,
+                        (int) EntityVer.getPos(this.controller.getEntity()).y,
+                        (int) EntityVer.getPos(this.controller.getEntity()).z),
+                  4.5)) {
          return new GetToBlockTask(this.containerPos);
-      } else if (!(this.controller.getWorld().getBlockEntity(this.containerPos) instanceof LootableContainerBlockEntity container)) {
+      } else if (!(this.controller.getWorld()
+            .getBlockEntity(this.containerPos) instanceof LootableContainerBlockEntity container)) {
          Debug.logWarning("Block at " + this.containerPos + " is not a lootable container. Stopping.");
          return null;
       } else {

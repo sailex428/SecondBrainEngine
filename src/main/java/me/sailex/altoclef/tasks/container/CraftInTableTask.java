@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.container;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.PlaceBlockNearbyTask;
 import me.sailex.altoclef.tasks.movement.GetCloseToBlockTask;
@@ -91,7 +92,7 @@ public class CraftInTableTask extends ResourceTask {
             }
          } else if (!this.craftingTablePos
             .isWithinDistance(
-               new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z), 3.5
+               new Vec3i((int) EntityVer.getPos(controller.getEntity()).x, (int)EntityVer.getPos(controller.getEntity()).y, (int)EntityVer.getPos(controller.getEntity()).z), 3.5
             )) {
             this.setDebugState("Going to crafting table at: " + this.craftingTablePos.toShortString());
             return new GetCloseToBlockTask(this.craftingTablePos);

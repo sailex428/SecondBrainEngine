@@ -6,6 +6,7 @@ import me.sailex.altoclef.eventbus.EventBus;
 import me.sailex.altoclef.eventbus.Subscription;
 import me.sailex.altoclef.eventbus.events.BlockPlaceEvent;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.movement.TimeoutWanderTask;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.helpers.ItemHelper;
@@ -205,7 +206,7 @@ public class PlaceBlockNearbyTask extends Task {
             && WorldHelper.canReach(this.controller, blockPos)
             && WorldHelper.canPlace(this.controller, blockPos)) {
             boolean hasBelow = WorldHelper.isSolidBlock(this.controller, blockPos.down());
-            double distSq = BlockPosVer.getSquaredDistance(blockPos, mod.getPlayer().getPos());
+            double distSq = BlockPosVer.getSquaredDistance(blockPos, EntityVer.getPos(mod.getPlayer()));
             double score = distSq + (solid ? 4 : 0) + (hasBelow ? 0 : 10) + (inside ? 3 : 0);
             if (score < smallestScore) {
                best = blockPos;

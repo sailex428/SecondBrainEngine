@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.movement;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasksystem.Task;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -35,7 +36,7 @@ public class FollowPlayerTask extends Task {
          return null;
       } else {
          Vec3d target = lastPos.get();
-         if (target.isInRange(mod.getPlayer().getPos(), 1.0) && !mod.getEntityTracker().isPlayerLoaded(this.playerName)) {
+         if (target.isInRange(EntityVer.getPos(mod.getPlayer()), 1.0) && !mod.getEntityTracker().isPlayerLoaded(this.playerName)) {
             mod.logWarning("Failed to get to player \"" + this.playerName + "\". We moved to where we last saw them but now have no idea where they are.");
             this.stop();
             return null;

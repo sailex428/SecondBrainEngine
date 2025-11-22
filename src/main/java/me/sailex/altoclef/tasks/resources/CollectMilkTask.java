@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.resources;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.entity.AbstractDoToEntityTask;
@@ -82,7 +83,7 @@ public class CollectMilkTask extends ResourceTask {
 
       @Override
       protected Optional<Entity> getEntityTarget(AltoClefController mod) {
-         return mod.getEntityTracker().getClosestEntity(mod.getPlayer().getPos(), CowEntity.class);
+         return mod.getEntityTracker().getClosestEntity(EntityVer.getPos(mod.getPlayer()), CowEntity.class);
       }
 
       @Override

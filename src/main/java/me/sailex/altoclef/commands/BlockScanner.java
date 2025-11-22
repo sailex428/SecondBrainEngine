@@ -4,6 +4,8 @@ import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.eventbus.EventBus;
 import me.sailex.altoclef.eventbus.events.BlockPlaceEvent;
+import me.sailex.altoclef.multiversion.EntityVer;
+import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
 import me.sailex.altoclef.multiversion.blockpos.BlockPosVer;
 import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import me.sailex.altoclef.trackers.blacklisting.WorldLocateBlacklist;
@@ -127,7 +129,7 @@ public class BlockScanner {
    }
 
    public Optional<BlockPos> getNearestBlock(Block... blocks) {
-      return this.getNearestBlock(this.mod.getPlayer().getPos().add(0.0, 0.6F, 0.0), blocks);
+      return this.getNearestBlock(EntityVer.getPos(mod.getPlayer()).add(0.0, 0.6F, 0.0), blocks);
    }
 
    public Optional<BlockPos> getNearestBlock(Vec3d pos, Block... blocks) {
@@ -135,7 +137,7 @@ public class BlockScanner {
    }
 
    public Optional<BlockPos> getNearestBlock(Predicate<BlockPos> isValidTest, Block... blocks) {
-      return this.getNearestBlock(this.mod.getPlayer().getPos().add(0.0, 0.6F, 0.0), isValidTest, blocks);
+      return this.getNearestBlock(EntityVer.getPos(mod.getPlayer()).add(0.0, 0.6F, 0.0), isValidTest, blocks);
    }
 
    public Optional<BlockPos> getNearestBlock(Vec3d pos, Predicate<BlockPos> isValidTest, Block... blocks) {
@@ -181,7 +183,7 @@ public class BlockScanner {
    }
 
    public boolean anyFoundWithinDistance(double distance, Block... blocks) {
-      return this.anyFoundWithinDistance(this.mod.getPlayer().getPos().add(0.0, 0.6F, 0.0), distance, blocks);
+      return this.anyFoundWithinDistance(EntityVer.getPos(mod.getPlayer()).add(0.0, 0.6F, 0.0), distance, blocks);
    }
 
    public boolean anyFoundWithinDistance(Vec3d pos, double distance, Block... blocks) {
@@ -190,7 +192,7 @@ public class BlockScanner {
    }
 
    public double distanceToClosest(Block... blocks) {
-      return this.distanceToClosest(this.mod.getPlayer().getPos().add(0.0, 0.6F, 0.0), blocks);
+      return this.distanceToClosest(EntityVer.getPos(mod.getPlayer()).add(0.0, 0.6F, 0.0), blocks);
    }
 
    public double distanceToClosest(Vec3d pos, Block... blocks) {
@@ -281,7 +283,7 @@ public class BlockScanner {
 
       HashMap<Block, HashSet<BlockPos>> map = new HashMap<>();
       BlockPos pos = this.mod.getPlayer().getBlockPos();
-      World world = this.mod.getPlayer().getWorld();
+      World world = ServerPlayerEntityVer.getWorld(mod.getPlayer());
 
       for (int x = pos.getX() - 8; x <= pos.getX() + 8; x++) {
          for (int y = pos.getY() - 8; y < pos.getY() + 8; y++) {
@@ -303,7 +305,7 @@ public class BlockScanner {
       }
 
       for (Entry<Block, HashSet<BlockPos>> entry : map.entrySet()) {
-         this.getFirstFewPositions(entry.getValue(), this.mod.getPlayer().getPos());
+         this.getFirstFewPositions(entry.getValue(), EntityVer.getPos(mod.getPlayer()));
          if (!this.trackedBlocks.containsKey(entry.getKey())) {
             this.trackedBlocks.put(entry.getKey(), new HashSet<>());
          }
@@ -315,7 +317,7 @@ public class BlockScanner {
    private void rescan(int maxCount, int cutOffRadius) {
       long ms = System.currentTimeMillis();
       ChunkPos playerChunkPos = this.mod.getPlayer().getChunkPos();
-      Vec3d playerPos = this.mod.getPlayer().getPos();
+      Vec3d playerPos = EntityVer.getPos(mod.getPlayer());
       HashSet<ChunkPos> visited = new HashSet<>();
       Queue<Node> queue = new ArrayDeque<>();
       queue.add(new Node(playerChunkPos, 0));

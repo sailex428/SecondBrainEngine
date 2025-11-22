@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.entity;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.helpers.LookHelper;
 import me.sailex.altoclef.util.time.TimerGame;
@@ -86,7 +87,7 @@ public class ShootArrowSimpleProjectileTask extends Task {
             for (ArrowEntity arrow : mod.getEntityTracker().getTrackedEntities(ArrowEntity.class)) {
                if (arrow.getOwner() == mod.getPlayer()) {
                   Vec3d velocity = arrow.getVelocity();
-                  Vec3d delta = this.target.getPos().subtract(arrow.getPos());
+                  Vec3d delta = EntityVer.getPos(this.target).subtract(EntityVer.getPos(arrow));
                   boolean isMovingTowardsTarget = velocity.dotProduct(delta) > 0.0;
                   if (isMovingTowardsTarget) {
                      return null;

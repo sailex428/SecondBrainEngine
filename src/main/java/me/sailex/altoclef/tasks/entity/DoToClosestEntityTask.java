@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.entity;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.AbstractDoToClosestObjectTask;
 import me.sailex.altoclef.tasksystem.Task;
 import net.minecraft.entity.Entity;
@@ -38,7 +39,7 @@ public class DoToClosestEntityTask extends AbstractDoToClosestObjectTask<Entity>
    }
 
    protected Vec3d getPos(AltoClefController mod, Entity obj) {
-      return obj.getPos();
+      return EntityVer.getPos(obj);
    }
 
    @Override
@@ -50,7 +51,7 @@ public class DoToClosestEntityTask extends AbstractDoToClosestObjectTask<Entity>
 
    @Override
    protected Vec3d getOriginPos(AltoClefController mod) {
-      return this.getOriginPos != null ? this.getOriginPos.get() : mod.getPlayer().getPos();
+      return this.getOriginPos != null ? this.getOriginPos.get() : EntityVer.getPos(mod.getPlayer());
    }
 
    protected Task getGoalTask(Entity obj) {

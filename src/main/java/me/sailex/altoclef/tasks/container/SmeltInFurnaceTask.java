@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.container;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.TaskCatalogue;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.mixins.MixinAbstractFurnaceBlockEntity;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasks.construction.PlaceBlockNearbyTask;
@@ -21,6 +22,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.ArrayList;
@@ -105,10 +107,11 @@ public class SmeltInFurnaceTask extends ResourceTask {
 
             if (this.furnacePos == null || !controller.getWorld().getBlockState(this.furnacePos).isOf(Blocks.FURNACE)) {
                Optional<BlockPos> nearestFurnace = controller.getBlockScanner().getNearestBlock(Blocks.FURNACE);
+               Vec3d pos = EntityVer.getPos(controller.getEntity());
                if (nearestFurnace.isPresent()
                   && !nearestFurnace.get()
                      .isWithinDistance(
-                        new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z),
+                        new Vec3i((int)pos.x, (int)pos.y, (int)pos.z),
                         100.0
                      )) {
                   nearestFurnace = Optional.empty();
@@ -126,10 +129,10 @@ public class SmeltInFurnaceTask extends ResourceTask {
 
                this.furnacePos = nearestFurnace.get();
             }
-
+            Vec3d pos = EntityVer.getPos(controller.getEntity());
             if (!this.furnacePos
                .isWithinDistance(
-                  new Vec3i((int)controller.getEntity().getPos().x, (int)controller.getEntity().getPos().y, (int)controller.getEntity().getPos().z), 4.5
+                  new Vec3i((int)pos.x, (int)pos.y, (int)pos.z), 4.5
                )) {
                this.setDebugState("Going to furnace.");
                return new GetCloseToBlockTask(this.furnacePos);

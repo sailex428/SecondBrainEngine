@@ -1,6 +1,7 @@
 package me.sailex.altoclef.util.helpers;
 
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.util.baritone.CachedProjectile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
@@ -63,7 +64,7 @@ public class ProjectileHelper {
    }
 
    public static Vec3d getThrowOrigin(Entity entity) {
-      return entity.getPos().subtract(0.0, 0.1, 0.0);
+      return EntityVer.getPos(entity).subtract(0.0, 0.1, 0.0);
    }
 
    @Deprecated

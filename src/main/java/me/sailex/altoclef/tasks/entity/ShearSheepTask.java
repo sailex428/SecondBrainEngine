@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.entity;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasksystem.Task;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.SheepEntity;
@@ -40,7 +41,7 @@ public class ShearSheepTask extends AbstractDoToEntityTask {
    protected Optional<Entity> getEntityTarget(AltoClefController mod) {
       return mod.getEntityTracker()
          .getClosestEntity(
-            mod.getPlayer().getPos(), entity -> !(entity instanceof SheepEntity sheep) ? false : sheep.isShearable() && !sheep.isSheared(), SheepEntity.class
+                 EntityVer.getPos(mod.getPlayer()), entity -> !(entity instanceof SheepEntity sheep) ? false : sheep.isShearable() && !sheep.isSheared(), SheepEntity.class
          );
    }
 

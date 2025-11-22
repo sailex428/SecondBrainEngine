@@ -3,6 +3,7 @@ package me.sailex.altoclef.chains;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.control.KillAura;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.MobEntityVer;
 import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.multiversion.item.ItemVer;
@@ -514,7 +515,7 @@ public class MobDefenseChain extends SingleTaskChain {
       try {
          for (CreeperEntity creeper : mod.getEntityTracker().getTrackedEntities(CreeperEntity.class)) {
             if (creeper != null && !(MobEntityVer.getClientFuseTime(creeper, 1.0F) < 0.04)) {
-               double safety = getCreeperSafety(mod.getPlayer().getPos(), creeper);
+               double safety = getCreeperSafety(EntityVer.getPos(mod.getPlayer()), creeper);
                if (safety < worstSafety) {
                   target = creeper;
                }
@@ -533,7 +534,7 @@ public class MobDefenseChain extends SingleTaskChain {
 
       try {
          for (CachedProjectile projectile : projectiles) {
-            if (projectile.position.squaredDistanceTo(mod.getPlayer().getPos()) < 150.0) {
+            if (projectile.position.squaredDistanceTo(EntityVer.getPos(mod.getPlayer())) < 150.0) {
                boolean isGhastBall = projectile.projectileType == FireballEntity.class;
                if (isGhastBall) {
                   Optional<Entity> ghastBall = mod.getEntityTracker().getClosestEntity(FireballEntity.class);
@@ -558,8 +559,8 @@ public class MobDefenseChain extends SingleTaskChain {
                      }
                   }
 
-                  Vec3d expectedHit = ProjectileHelper.calculateArrowClosestApproach(projectile, mod.getPlayer().getPos());
-                  Vec3d delta = mod.getPlayer().getPos().subtract(expectedHit);
+                  Vec3d expectedHit = ProjectileHelper.calculateArrowClosestApproach(projectile, EntityVer.getPos(mod.getPlayer()));
+                  Vec3d delta = EntityVer.getPos(mod.getPlayer()).subtract(expectedHit);
                   double horizontalDistanceSq = delta.x * delta.x + delta.z * delta.z;
                   double verticalDistance = Math.abs(delta.y);
                   if (horizontalDistanceSq < 4.0 && verticalDistance < 10.0) {

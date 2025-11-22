@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasksystem.Task;
 import me.sailex.altoclef.util.helpers.WorldHelper;
 import net.minecraft.block.Block;
@@ -59,7 +60,7 @@ public class DoToClosestBlockTask extends AbstractDoToClosestObjectTask<BlockPos
 
    @Override
    protected Vec3d getOriginPos(AltoClefController mod) {
-      return this.getOriginPos != null ? this.getOriginPos.get() : mod.getPlayer().getPos();
+      return this.getOriginPos != null ? this.getOriginPos.get() : EntityVer.getPos(mod.getPlayer());
    }
 
    protected Task getGoalTask(BlockPos obj) {

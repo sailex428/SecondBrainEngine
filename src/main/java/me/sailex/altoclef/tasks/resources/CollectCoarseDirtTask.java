@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.CraftInInventoryTask;
 import me.sailex.altoclef.tasks.ResourceTask;
 import me.sailex.altoclef.tasksystem.Task;
@@ -40,7 +41,7 @@ public class CollectCoarseDirtTask extends ResourceTask {
       Optional<BlockPos> closest = mod.getBlockScanner().getNearestBlock(Blocks.COARSE_DIRT);
       if ((mod.getItemStorage().getItemCount(Items.DIRT) < c || mod.getItemStorage().getItemCount(Items.GRAVEL) < c)
          && closest.isPresent()
-         && closest.get().isWithinDistance(mod.getPlayer().getPos(), 128.0)) {
+         && closest.get().isWithinDistance(EntityVer.getPos(mod.getPlayer()), 128.0)) {
          return new MineAndCollectTask(new ItemTarget(Items.COARSE_DIRT), new Block[]{Blocks.COARSE_DIRT}, MiningRequirement.HAND)
             .forceDimension(Dimension.OVERWORLD);
       } else {

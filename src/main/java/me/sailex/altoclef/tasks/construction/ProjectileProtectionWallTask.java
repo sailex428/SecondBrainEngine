@@ -2,6 +2,7 @@ package me.sailex.altoclef.tasks.construction;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.multiversion.ActionResultVer;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.altoclef.tasksystem.ITaskRequiresGrounded;
 import me.sailex.altoclef.tasksystem.Task;
@@ -71,8 +72,8 @@ public class ProjectileProtectionWallTask extends Task implements ITaskRequiresG
                SkeletonEntity.class
             );
          if (sentity.isPresent()) {
-            Vec3d playerPos = this.mod.getPlayer().getPos();
-            Vec3d targetPos = sentity.get().getPos();
+            Vec3d playerPos = EntityVer.getPos(this.mod.getPlayer());
+            Vec3d targetPos = EntityVer.getPos(sentity.get());
             Vec3d direction = playerPos.subtract(targetPos).normalize();
             double x = playerPos.x - 2.0 * direction.x;
             double y = playerPos.y + direction.y;

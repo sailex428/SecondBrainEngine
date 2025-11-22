@@ -2,6 +2,7 @@ package me.sailex.altoclef.util.helpers;
 
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.automatone.api.utils.IEntityContext;
 import me.sailex.automatone.api.utils.RayTraceUtils;
 import me.sailex.automatone.api.utils.Rotation;
@@ -187,7 +188,7 @@ public interface LookHelper {
    }
 
    static boolean isLookingAt(Entity entity, Vec3d toLookAt, double angleThreshold) {
-      Vec3d head = entity.getPos().add(new Vec3d(0.0, entity.getStandingEyeHeight(), 0.0));
+      Vec3d head = EntityVer.getPos(entity).add(new Vec3d(0.0, entity.getStandingEyeHeight(), 0.0));
       Rotation rotation = new Rotation(entity.getYaw(), entity.getPitch());
       Vec3d look = calcLookDirectionFromRotation(rotation);
       Vec3d targetLook = toLookAt.subtract(head).normalize();

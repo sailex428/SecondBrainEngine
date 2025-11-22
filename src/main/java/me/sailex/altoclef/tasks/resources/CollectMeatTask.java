@@ -1,6 +1,7 @@
 package me.sailex.altoclef.tasks.resources;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasks.container.SmeltInSmokerTask;
 import me.sailex.altoclef.tasks.movement.PickupDroppedItemTask;
 import me.sailex.altoclef.tasks.movement.TimeoutWanderTask;
@@ -74,7 +75,7 @@ public class CollectMeatTask extends Task {
          return this.currentResourceTask;
       } else {
          Item[] allMeats = Arrays.stream(COOKABLE_MEATS).flatMap(meat -> Stream.of(meat.getRaw(), meat.getCooked())).toArray(Item[]::new);
-         Optional<ItemEntity> closestDrop = this.controller.getEntityTracker().getClosestItemDrop(this.controller.getPlayer().getPos(), allMeats);
+         Optional<ItemEntity> closestDrop = this.controller.getEntityTracker().getClosestItemDrop(EntityVer.getPos(this.controller.getPlayer()), allMeats);
          if (closestDrop.isPresent() && closestDrop.get().distanceTo(this.controller.getPlayer()) < 15.0) {
             this.setDebugState("Picking up nearby dropped meat");
             this.currentResourceTask = new PickupDroppedItemTask(new ItemTarget(allMeats, 9999), true);
@@ -138,9 +139,9 @@ public class CollectMeatTask extends Task {
 
       for (CollectFoodTask.CookableFoodTarget cookable : COOKABLE_MEATS) {
          if (controller.getEntityTracker().entityFound(cookable.mobToKill)) {
-            Optional<Entity> nearest = controller.getEntityTracker().getClosestEntity(controller.getEntity().getPos(), notBaby, cookable.mobToKill);
+            Optional<Entity> nearest = controller.getEntityTracker().getClosestEntity(EntityVer.getPos(controller.getEntity()), notBaby, cookable.mobToKill);
             if (nearest.isPresent()) {
-               double distanceSq = nearest.get().getPos().squaredDistanceTo(controller.getEntity().getPos());
+               double distanceSq = EntityVer.getPos(nearest.get()).squaredDistanceTo(EntityVer.getPos(controller.getEntity()));
                if (distanceSq != 0.0) {
                   double score = cookable.getCookedUnits() / distanceSq;
                   if (score > bestScore) {

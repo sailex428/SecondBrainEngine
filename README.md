@@ -7,7 +7,15 @@ These fake players behave like normal players and can be directed through the ta
 
 ## Usage
 
-A basic usage example can be found in the [Otomaton TestMod](src/testmod/java/me/sailex/otomaton/Otomaton.java).
+A basic usage example: (source: [Otomaton TestMod](src/testmod/java/me/sailex/otomaton/Otomaton.java)).
+
+```java
+NPCSpawner.spawn(new GameProfile(UUID.randomUUID(), "minusaura"), server, handler.player.getBlockPos(), npc -> {
+    IBaritone automatone = BaritoneAPI.getProvider().getBaritone(npc);
+    AltoClefController controller = new AltoClefController(automatone); // init automatone and altoclef instances
+    controller.runUserTask(new ConstructIronGolemTask()); // run any task
+});
+```
 
 ## License
 

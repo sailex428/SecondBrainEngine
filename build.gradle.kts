@@ -2,7 +2,7 @@ import net.fabricmc.loom.task.RemapJarTask
 import org.gradle.api.JavaVersion
 
 plugins {
-    id("fabric-loom") version "1.11-SNAPSHOT"
+    id("fabric-loom") version "1.13-SNAPSHOT"
 }
 
 group = project.property("maven_group").toString()

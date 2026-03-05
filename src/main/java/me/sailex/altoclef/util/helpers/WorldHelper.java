@@ -1,6 +1,7 @@
 package me.sailex.altoclef.util.helpers;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.DimensionVer;
 import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import me.sailex.mixins.EntityAccessor;
 import me.sailex.altoclef.multiversion.MethodWrapper;
@@ -114,10 +115,14 @@ public interface WorldHelper {
       World world = controller.getWorld();
       if (world == null) {
          return Dimension.OVERWORLD;
-      } else if (world.getDimension().ultrawarm()) {
+      } else if (DimensionVer.isUltrawarm(world)) {
          return Dimension.NETHER;
       } else {
+         //? >=1.21.11 {
+         /*return world.getRegistryKey() == World.OVERWORLD ? Dimension.OVERWORLD : Dimension.END;
+         *///?} else {
          return world.getDimension().natural() ? Dimension.OVERWORLD : Dimension.END;
+         //?}
       }
    }
 

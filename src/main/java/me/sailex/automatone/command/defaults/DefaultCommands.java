@@ -179,7 +179,11 @@ public final class DefaultCommands {
 
     private static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("automatone")
+                //? >=1.21.11 {
+                /*.requires(s -> s.getPermissions().hasPermission(new net.minecraft.command.permission.Permission.Level(net.minecraft.command.permission.PermissionLevel.GAMEMASTERS)))
+                *///?} else {
                 .requires(s -> s.hasPermissionLevel(2))
+                //?}
                 .then(CommandManager.argument("command", StringArgumentType.greedyString()).executes(command ->
                         runCommand(command.getSource(), command.getSource().getEntityOrThrow(), StringArgumentType.getString(command,"command"))))
         );

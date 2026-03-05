@@ -17,6 +17,7 @@
 
 package me.sailex.automatone.pathing.movement.movements;
 
+import me.sailex.altoclef.multiversion.DimensionVer;
 import me.sailex.altoclef.multiversion.PlayerInventoryVer;
 import me.sailex.automatone.Automatone;
 import me.sailex.automatone.api.IBaritone;
@@ -109,7 +110,7 @@ public class MovementFall extends Movement {
         boolean isWater = destState.getFluidState().getFluid() instanceof WaterFluid;
         if (!isWater && willPlaceBucket() && !playerFeet.equals(dest)) {
             PlayerInventory inventory = ctx.inventory();
-            if (inventory == null || !PlayerInventory.isValidHotbarIndex(InventoryBehavior.getSlotWithStack(inventory, Automatone.WATER_BUCKETS)) || ctx.world().getDimension().ultrawarm()) {
+            if (inventory == null || !PlayerInventory.isValidHotbarIndex(InventoryBehavior.getSlotWithStack(inventory, Automatone.WATER_BUCKETS)) || DimensionVer.isUltrawarm(ctx.world())) {
                 return state.setStatus(MovementStatus.UNREACHABLE);
             }
 

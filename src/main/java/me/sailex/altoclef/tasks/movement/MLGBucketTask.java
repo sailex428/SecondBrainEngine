@@ -3,6 +3,7 @@ package me.sailex.altoclef.tasks.movement;
 import me.sailex.altoclef.AltoClefController;
 import me.sailex.altoclef.Debug;
 import me.sailex.altoclef.control.InputControls;
+import me.sailex.altoclef.multiversion.DimensionVer;
 import me.sailex.altoclef.multiversion.DamageSourceVer;
 import me.sailex.altoclef.multiversion.EntityVer;
 import me.sailex.altoclef.tasksystem.Task;
@@ -197,7 +198,7 @@ public class MLGBucketTask extends Task {
             if (reachable.isPresent()) {
                this.setDebugState("Performing MLG");
                LookHelper.lookAt(this.controller, reachable.get());
-               boolean hasClutch = !mod.getWorld().getDimension().ultrawarm() && mod.getSlotHandler().forceEquipItem(Items.WATER_BUCKET);
+               boolean hasClutch = !DimensionVer.isUltrawarm(mod.getWorld()) && mod.getSlotHandler().forceEquipItem(Items.WATER_BUCKET);
                if (!hasClutch && !config.clutchItems.isEmpty()) {
                   for (Item tryEquip : config.clutchItems) {
                      if (mod.getSlotHandler().forceEquipItem(tryEquip)) {
@@ -400,7 +401,7 @@ public class MLGBucketTask extends Task {
    }
 
    private boolean hasClutchItem(AltoClefController mod) {
-      return !mod.getWorld().getDimension().ultrawarm() && mod.getItemStorage().hasItem(Items.WATER_BUCKET)
+      return !DimensionVer.isUltrawarm(mod.getWorld()) && mod.getItemStorage().hasItem(Items.WATER_BUCKET)
          ? true
          : config.clutchItems.stream().anyMatch(item -> mod.getItemStorage().hasItem(item));
    }

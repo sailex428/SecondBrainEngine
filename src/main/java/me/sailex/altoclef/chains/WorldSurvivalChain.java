@@ -1,6 +1,7 @@
 package me.sailex.altoclef.chains;
 
 import me.sailex.altoclef.AltoClefController;
+import me.sailex.altoclef.multiversion.DimensionVer;
 import me.sailex.altoclef.tasks.DoToClosestBlockTask;
 import me.sailex.altoclef.tasks.InteractWithBlockTask;
 import me.sailex.altoclef.tasks.construction.PutOutFireTask;
@@ -57,7 +58,7 @@ public class WorldSurvivalChain extends SingleTaskChain {
                if ((!(this.mainTask instanceof EscapeFromLavaTask) || !this.isCurrentlyRunning(mod))
                   && mod.getPlayer().isOnFire()
                   && !mod.getPlayer().hasStatusEffect(StatusEffects.FIRE_RESISTANCE)
-                  && !mod.getWorld().getDimension().ultrawarm()) {
+                  && !DimensionVer.isUltrawarm(mod.getWorld())) {
                   if (mod.getItemStorage().hasItem(Items.WATER_BUCKET)) {
                      BlockPos targetWaterPos = mod.getPlayer().getBlockPos();
                      if (WorldHelper.isSolidBlock(this.controller, targetWaterPos.down()) && WorldHelper.canPlace(this.controller, targetWaterPos)) {

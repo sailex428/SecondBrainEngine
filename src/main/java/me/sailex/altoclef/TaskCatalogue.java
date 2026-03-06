@@ -205,6 +205,7 @@ public class TaskCatalogue {
    }
 
    private static Item resolveItemFromRegistry(String name) {
+      if (name == null) return null;
       String id = name.startsWith("minecraft:") ? name : "minecraft:" + name;
       Item item = RegistriesVer.get(Registries.ITEM, IdentifierVer.getId(id));
       if (item != null && item != Items.AIR) {

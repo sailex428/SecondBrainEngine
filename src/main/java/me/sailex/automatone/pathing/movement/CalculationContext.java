@@ -18,6 +18,7 @@
 
 package me.sailex.automatone.pathing.movement;
 
+import me.sailex.altoclef.multiversion.DimensionVer;
 import me.sailex.altoclef.multiversion.world.HeightLimitViewVer;
 import me.sailex.automatone.Automatone;
 import me.sailex.automatone.Baritone;
@@ -112,7 +113,7 @@ public class CalculationContext {
         this.bsi = new BlockStateInterface(world);
         this.toolSet = player == null ? null : new ToolSet(player);
         this.hasThrowaway = baritone.settings().allowPlace.get() && ((Baritone) baritone).getInventoryBehavior().hasGenericThrowaway();
-        this.hasWaterBucket = player != null && baritone.settings().allowWaterBucketFall.get() && PlayerInventory.isValidHotbarIndex(InventoryBehavior.getSlotWithStack(player.getInventory(), Automatone.WATER_BUCKETS)) && !world.getDimension().ultrawarm();
+        this.hasWaterBucket = player != null && baritone.settings().allowWaterBucketFall.get() && PlayerInventory.isValidHotbarIndex(InventoryBehavior.getSlotWithStack(player.getInventory(), Automatone.WATER_BUCKETS)) && !DimensionVer.isUltrawarm(world);
         this.canSprint = player != null && baritone.settings().allowSprint.get() && player.getHungerManager().getFoodLevel() > 6;
         this.placeBlockCost = baritone.settings().blockPlacementPenalty.get();
         this.allowBreak = baritone.settings().allowBreak.get();

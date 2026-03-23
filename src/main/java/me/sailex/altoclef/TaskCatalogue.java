@@ -79,8 +79,11 @@ import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.passive.SalmonEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.passive.SquidEntity;
+import me.sailex.altoclef.multiversion.IdentifierVer;
+import me.sailex.altoclef.multiversion.RegistriesVer;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.DyeColor;
 
 import java.util.ArrayList;
@@ -132,7 +135,14 @@ public class TaskCatalogue {
    }
 
    public static Item[] getItemMatches(String name) {
-      return !nameToItemMatches.containsKey(name) ? new Item[0] : nameToItemMatches.get(name);
+      if (nameToItemMatches.containsKey(name)) {
+         return nameToItemMatches.get(name);
+      }
+      Item item = resolveItemFromRegistry(name);
+      if (item != null) {
+         return new Item[]{item};
+      }
+      return new Item[0];
    }
 
    public static boolean isObtainable(Item item) {
@@ -148,13 +158,16 @@ public class TaskCatalogue {
    }
 
    public static ResourceTask getItemTask(String name, int count) {
-      if (!taskExists(name)) {
-         Debug.logWarning("Task " + name + " does not exist. Error possibly.");
-         Debug.logStack();
-         return null;
-      } else {
+      if (nameToResourceTask.containsKey(name)) {
          return nameToResourceTask.get(name).getResource(count);
       }
+      Item item = resolveItemFromRegistry(name);
+      if (item != null && itemToResourceTask.containsKey(item)) {
+         return itemToResourceTask.get(item).getResource(count);
+      }
+      Debug.logWarning("Task " + name + " does not exist. Error possibly.");
+      Debug.logStack();
+      return null;
    }
 
    public static ResourceTask getItemTask(Item item, int count) {
@@ -176,7 +189,11 @@ public class TaskCatalogue {
    }
 
    public static boolean taskExists(String name) {
-      return nameToResourceTask.containsKey(name);
+      if (nameToResourceTask.containsKey(name)) {
+         return true;
+      }
+      Item item = resolveItemFromRegistry(name);
+      return item != null && itemToResourceTask.containsKey(item);
    }
 
    public static boolean taskExists(Item item) {
@@ -185,6 +202,16 @@ public class TaskCatalogue {
 
    public static Collection<String> resourceNames() {
       return nameToResourceTask.keySet();
+   }
+
+   private static Item resolveItemFromRegistry(String name) {
+      if (name == null) return null;
+      String id = name.startsWith("minecraft:") ? name : "minecraft:" + name;
+      Item item = RegistriesVer.get(Registries.ITEM, IdentifierVer.getId(id));
+      if (item != null && item != Items.AIR) {
+         return item;
+      }
+      return null;
    }
 
    private static CataloguedResource simple(String name, Item[] matches, Function<Integer, ResourceTask> getTask) {

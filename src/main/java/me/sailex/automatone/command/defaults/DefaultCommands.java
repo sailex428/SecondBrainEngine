@@ -37,6 +37,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
+//? >=1.21.11 {
+/*import net.minecraft.command.permission.Permission;
+import net.minecraft.command.permission.PermissionLevel;
+*///?}
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.CommandManager;
@@ -179,7 +183,11 @@ public final class DefaultCommands {
 
     private static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("automatone")
+                //? >=1.21.11 {
+                /*.requires(s -> s.getPermissions().hasPermission(new Permission.Level(PermissionLevel.GAMEMASTERS)))
+                *///?} else {
                 .requires(s -> s.hasPermissionLevel(2))
+                //?}
                 .then(CommandManager.argument("command", StringArgumentType.greedyString()).executes(command ->
                         runCommand(command.getSource(), command.getSource().getEntityOrThrow(), StringArgumentType.getString(command,"command"))))
         );

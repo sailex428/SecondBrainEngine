@@ -18,6 +18,7 @@
 package me.sailex.automatone.utils;
 
 import com.mojang.authlib.GameProfile;
+import me.sailex.altoclef.multiversion.CommandManagerVer;
 import me.sailex.altoclef.multiversion.ServerPlayerEntityVer;
 import me.sailex.automatone.Baritone;
 import me.sailex.automatone.api.IBaritone;
@@ -56,49 +57,49 @@ public class CarpetPlayerCommandHelper implements ICommandHelper {
     @Override
     public void executeMove(MoveDirection moveDirection) {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " move " + moveDirection.toString().toLowerCase());
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " move " + moveDirection.toString().toLowerCase());
     }
 
     @Override
     public void executeMoveStop() {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " move");
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " move");
     }
 
     @Override
     public void executeSpawn(String username) {
         buildPlayerCommand(username);
-        commandManager.executeWithPrefix(commandSource, playerCommand + " spawn");
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " spawn");
     }
 
     @Override
     public void executeLook(Direction lookDirection) {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " look " + lookDirection.name().toLowerCase());
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " look " + lookDirection.name().toLowerCase());
     }
 
     @Override
     public void executeSneak() {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " sneak");
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " sneak");
     }
 
     @Override
     public void executeUnSneak() {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " unsneak");
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " unsneak");
     }
 
     @Override
     public void executeJump() {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " jump");
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " jump");
     }
 
     @Override
     public void executeAttack() {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " attack");
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " attack");
     }
 
     @Override
@@ -110,12 +111,12 @@ public class CarpetPlayerCommandHelper implements ICommandHelper {
     @Override
     public void executeUse() {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " use");
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " use");
     }
 
     @Override
     public void executeStopAll() {
         buildPlayerCommand();
-        commandManager.executeWithPrefix(commandSource, playerCommand + " stop");
+        CommandManagerVer.executeWithPrefix(commandManager, commandSource, playerCommand + " stop");
     }
 }

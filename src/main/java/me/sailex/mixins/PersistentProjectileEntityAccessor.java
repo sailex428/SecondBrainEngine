@@ -11,11 +11,11 @@ public interface PersistentProjectileEntityAccessor {
 
     //? >=1.21.8 {
     /*@Invoker("isInGround")
-    boolean isInGround();
+    boolean getIsInGround();
     *///?} else {
     
     @Accessor("inGround")
-    boolean isInGround();
-    
+    boolean getIsInGround();
+
     //?}
 }

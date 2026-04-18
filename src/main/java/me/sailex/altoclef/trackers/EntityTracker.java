@@ -354,7 +354,7 @@ public class EntityTracker extends Tracker {
                         CachedProjectile proj = new CachedProjectile();
                         boolean inGround = false;
                         if (entity instanceof PersistentProjectileEntity) {
-                           inGround = ((PersistentProjectileEntityAccessor)entity).isInGround();
+                           inGround = ((PersistentProjectileEntityAccessor)entity).getIsInGround();
                         }
 
                         if (!(projEntity instanceof FishingBobberEntity)
